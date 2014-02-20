@@ -1,0 +1,9 @@
+#+TITLE:  Org Pages Generator
+#+AUTHOR: Xavier Garrido
+
+* README
+
+This repository holds a =zsh= script associated to a =org-mode= exporter to
+automatically generates documentation in =html= or =pdf= (through LaTeX
+processing). It converts any =org-mode= file to =html/pdf= to publish pages,
+documentations,...
