@@ -16,6 +16,7 @@ function org_generate_pages ()
     local append_list_of_cmd_arg
     local generate_pdf=0
     local generate_html=0
+    local clean_doc=0
     while [ -n "$1" ]; do
         local token="$1"
         if [ "${token[0,1]}" = "-" ]; then
@@ -32,20 +33,14 @@ function org_generate_pages ()
                 generate_pdf=1
             elif [ "${opt}" = "--html" ]; then
                 generate_html=1
+            elif [ "${opt}" = "--clean" ]; then
+                clean_doc=1
             else
-                if [[ "${opt}" == *=* || "${opt}" == *:* ]]; then
-                    append_list_of_options_arg+="${opt}\" "
-                else
-                    append_list_of_options_arg+="${opt} "
-                fi
+                append_list_of_options_arg+="${opt} "
             fi
         else
             if [ "x${token}" != "x" ]; then
-                if [[ "${token}" == *=* || "${token}" == *:* ]]; then
-                    append_list_of_cmd_arg+="${token}\" "
-                else
-                    append_list_of_cmd_arg+="${token} "
-                fi
+                append_list_of_cmd_arg+="${token} "
             fi
         fi
         shift
@@ -57,14 +52,22 @@ function org_generate_pages ()
     pkgtools__msg_devel "append_list_of_cmd_arg=${append_list_of_cmd_arg}"
     pkgtools__msg_devel "append_list_of_options_arg=${append_list_of_options_arg}"
 
+    if [ ${clean_doc} -eq 1 ]; then
+        find . -name doc -exec rm -rf {} \;
+        __pkgtools__at_function_exit
+        return 0
+    fi
+
+
+
     if [ ${generate_pdf} -eq 0 -a ${generate_html} -eq 0 ]; then
         pkgtools__msg_error "No output format (html/pdf) have been selected!"
         __pkgtools__at_function_exit
         return 1
     fi
 
-    ogp_path="/home/garrido/Development/org-generate-pages"
-    emacs_base_cmd+="emacs --batch --no-init-file "
+    local ogp_path="/home/garrido/Development/org-generate-pages"
+    local emacs_base_cmd="emacs --batch --no-init-file "
     emacs_base_cmd+="--eval \"(require 'org)\" "
     emacs_base_cmd+="--eval \"(org-babel-do-load-languages 'org-babel-load-languages '((sh . t)))\" "
     emacs_base_cmd+="--eval \"(setq org-confirm-babel-evaluate nil)\" "
@@ -87,12 +90,15 @@ function org_generate_pages ()
             pkgtools__msg_notice "Exporting pages to html..."
             emacs_cmd+="--funcall org-publish-html "
         elif [ ${generate_pdf} -eq 1 ]; then
-            pkgtools__msg_notice "Exporting pages to pdf (though latex)..."
+            pkgtools__msg_notice "Exporting pages to pdf (through latex)..."
+            emacs_cmd="TEXINPUTS=\""$PWD"/doc/pdf:\$TEXINPUTS\" "
+            emacs_cmd+=${emacs_base_cmd}" "
             emacs_cmd+="--funcall org-publish-pdf "
         fi
         emacs_cmd+="--visit \"README.org\" "
     fi
 
+    pkgtools__msg_debug ${emacs_cmd}
     echo $emacs_cmd | sh > /dev/null 2>&1
     if $(pkgtools__last_command_fails); then
         pkgtools__msg_error "Export has failed !"
@@ -100,6 +106,7 @@ function org_generate_pages ()
         return 1
     fi
 
+    pkgtools__msg_debug "Change directory hierarchy for css files"
     for file in $(find doc/html -name "*.html"); do
         count="${file//[^\/]}"
         rel_path=
@@ -108,6 +115,11 @@ function org_generate_pages ()
         done
         sed -i -e 's@href="css/@href="'${rel_path}'css/@g' $file
     done
+
+    pkgtools__msg_debug "Remove useless LaTeX files"
+    find . -regex ".*\.\(tex\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|pdf\|tex~\)" ! -path '*doc*' -prune -exec rm -f {} \;
+    find . -name "*latex.d*" -exec rm -rf {} \;
+
     pkgtools__msg_notice "Export successfully done"
 
     unset emacs_base_cmd emacs_cmd

@@ -495,14 +495,15 @@ We replace all occurences of =.org= that are related to internal =org= files to
 * PDF export
 ** LaTeX style file
 :PROPERTIES:
-:TANGLE: snemo-simu-latex.sty
+:MKDIRP: yes
+:TANGLE: (concat this-directory "doc/pdf/snemo-simu-latex.sty")
 :END:
-**** Basics
+*** Basics
 #+BEGIN_SRC latex
   \NeedsTeXFormat{LaTeX2e}
   \ProvidesPackage{snemo-simu-latex}[2013/10/16 v0.01 Bundling of SuperNEMO simulation style]
 #+END_SRC
-**** Package requirements
+*** Package requirements
 #+BEGIN_SRC latex
   \hypersetup{
     xetex,
@@ -516,7 +517,7 @@ We replace all occurences of =.org= that are related to internal =org= files to
     pagebackref
   }
 #+END_SRC
-**** Fonts
+*** Fonts
 #+BEGIN_SRC latex
   \setmonofont[Scale=0.9]{Inconsolata}
   \setsansfont[Mapping=tex-text]{Myriad Pro}
@@ -524,7 +525,7 @@ We replace all occurences of =.org= that are related to internal =org= files to
   \RequirePackage[eulergreek,EULERGREEK]{sansmath}
   \sansmath
 #+END_SRC
-**** Colors
+*** Colors
 #+BEGIN_SRC latex
   \definecolor{red}{RGB}{221,42,43}
   \definecolor{green}{RGB}{105,182,40}
@@ -532,17 +533,17 @@ We replace all occurences of =.org= that are related to internal =org= files to
   \definecolor{orange}{RGB}{192,128,64}
   \definecolor{gray}{gray}{0.7}
 #+END_SRC
-**** Minted lexer
+*** Minted lexer
 #+BEGIN_SRC latex
   \usemintedstyle{snemo}
 #+END_SRC
-**** Layout
-***** Geometry
+*** Layout
+**** Geometry
 #+BEGIN_SRC latex
   \RequirePackage{a4wide}
   \linespread{1.02}
 #+END_SRC
-***** Cover page
+**** Cover page
 #+BEGIN_SRC latex
   \newcommand{\HRule}{\rule{\linewidth}{1mm}}
   \renewcommand*{\maketitle}{%
@@ -561,7 +562,7 @@ We replace all occurences of =.org= that are related to internal =org= files to
     \end{flushright}}
   }
 #+END_SRC
-***** Footnote
+**** Footnote
 #+BEGIN_SRC latex
   \RequirePackage{fancyhdr}
   \renewcommand{\footnoterule}{\color{blue!75}%
@@ -570,21 +571,21 @@ We replace all occurences of =.org= that are related to internal =org= files to
   \renewcommand{\thefootnote}{\alph{footnote}}
   \interfootnotelinepenalty=10000
 #+END_SRC
-***** Caption
+**** Caption
 #+BEGIN_SRC latex
   \RequirePackage[margin=20pt,labelfont=bf,font=footnotesize,labelsep=endash]{caption}
 #+END_SRC
-**** Appearance tweaks
-***** Remove TOC dots
+*** Appearance tweaks
+**** Remove TOC dots
 #+BEGIN_SRC latex
   \renewcommand\@dotsep{10000}
 #+END_SRC
-***** Change section colors
+**** Change section colors
 #+BEGIN_SRC latex
   \RequirePackage{titlesec}
   \titleformat*{\section}{\usekomafont{sectioning}\usekomafont{section}\color{blue}}
 #+END_SRC
-***** SN@ilWare logo
+**** SN@ilWare logo
 #+BEGIN_SRC latex
   \RequirePackage{xspace}
   \def\Snailware{\mbox{$\overline{\text{SN@il}}$%
@@ -592,7 +593,7 @@ We replace all occurences of =.org= that are related to internal =org= files to
              {$\protect\underline{\text{Ware}}$}}\xspace}
 #+END_SRC
 
-**** VC status
+*** VC status
 #+NAME: vc-status
 #+BEGIN_SRC sh :results output :tangle no
   if [ -d .git ]; then
@@ -606,16 +607,16 @@ We replace all occurences of =.org= that are related to internal =org= files to
   <<vc-status()>>
 #+END_SRC
 ** =org= to LaTeX stuff
-**** Use smart quote when exporting
+*** Use smart quote when exporting
 #+BEGIN_SRC emacs-lisp
   (setq org-export-with-smart-quotes t)
 #+END_SRC
-**** Keep LaTeX logfiles
+*** Keep LaTeX logfiles
 #+BEGIN_SRC emacs-lisp
   (setq org-latex-remove-logfiles nil)
 #+END_SRC
 
-**** Default list of LaTeX packages
+*** Default list of LaTeX packages
 Only include one default package and remove all the crapppy stuff included by
 =org= \rightarrow =latex= translation.
 
@@ -623,7 +624,7 @@ Only include one default package and remove all the crapppy stuff included by
   (add-to-list 'org-latex-packages-alist '("" "org-preamble"))
 #+END_SRC
 
-**** Template
+*** Template
 #+BEGIN_SRC emacs-lisp
   (unless (boundp 'org-latex-classes)
     (setq org-latex-classes nil))
@@ -640,7 +641,7 @@ Only include one default package and remove all the crapppy stuff included by
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 #+END_SRC
-**** =minted= setup
+*** =minted= setup
 
 Code fragments are syntax highlighted using [[https://code.google.com/p/minted/][minted]] LaTeX package
 #+BEGIN_SRC emacs-lisp
@@ -652,12 +653,12 @@ Code fragments are syntax highlighted using [[https://code.google.com/p/minted/]
           ("xleftmargin"  "0.5cm")
           ))
 #+END_SRC
-**** Set LaTeX command
+*** Set LaTeX command
 #+BEGIN_SRC emacs-lisp
-  (setq org-latex-pdf-process '("latexmk -xelatex -shell-escape -quiet %f"))
+  (setq org-latex-pdf-process '("latexmk -xelatex -shell-escape %f"))
 #+END_SRC
 
-**** Markup filter
+*** Markup filter
 #+BEGIN_SRC emacs-lisp
   (defun latex::snailware-keyword-filter (contents backend info)
     (when (eq backend 'latex)
@@ -695,6 +696,6 @@ Code fragments are syntax highlighted using [[https://code.google.com/p/minted/]
   (defun org-publish-pdf ()
     (progn
       (org-publish-project "pdf-documentation" 'force)
-      (shell-command "mkdir -p latex.d && mv *.{tex,auxlock,toc,out,fls,aux,pdf,log,fdb_latexmk,sty} latex.d/.")
+;;      (shell-command "rm *.{tex,auxlock,toc,out,fls,aux,pdf,log,fdb_latexmk,sty}")
       ))
 #+END_SRC
