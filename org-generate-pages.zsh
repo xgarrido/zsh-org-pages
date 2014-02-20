@@ -14,8 +14,8 @@ function org_generate_pages ()
 
     local append_list_of_options_arg
     local append_list_of_cmd_arg
-    local generate_pdf_doc=0
-    local generate_html_doc=0
+    local generate_pdf=0
+    local generate_html=0
     while [ -n "$1" ]; do
         local token="$1"
         if [ "${token[0,1]}" = "-" ]; then
@@ -29,7 +29,9 @@ function org_generate_pages ()
             elif [ "${opt}" = "-v" -o "${opt}" = "--verbose" ]; then
                 pkgtools__msg_using_verbose
             elif [ "${opt}" = "--pdf" ]; then
-                generate_pdf_doc=1
+                generate_pdf=1
+            elif [ "${opt}" = "--html" ]; then
+                generate_html=1
             else
                 if [[ "${opt}" == *=* || "${opt}" == *:* ]]; then
                     append_list_of_options_arg+="${opt}\" "
@@ -56,18 +58,38 @@ function org_generate_pages ()
     pkgtools__msg_devel "append_list_of_options_arg=${append_list_of_options_arg}"
 
     ogp_path="/home/garrido/Development/org-generate-pages"
-    emacs_cmd+="emacs --batch --no-init-file "
-    emacs_cmd+="--eval \"(require 'org)\" "
-    emacs_cmd+="--eval \"(org-babel-do-load-languages 'org-babel-load-languages '((sh . t)))\" "
-    emacs_cmd+="--eval \"(setq org-confirm-babel-evaluate nil)\" "
-    emacs_cmd+="--eval '(let ((this-directory \""$PWD"/\")) "
-    emacs_cmd+="(org-babel-tangle-file \""${ogp_path}"/org-generate-pages.org\") "
-    emacs_cmd+="(org-babel-load-file \""${ogp_path}"/org-generate-pages.org\"))' "
-    emacs_cmd+="--visit \"README.org\" --funcall org-publish-html"
+    emacs_base_cmd+="emacs --batch --no-init-file "
+    emacs_base_cmd+="--eval \"(require 'org)\" "
+    emacs_base_cmd+="--eval \"(org-babel-do-load-languages 'org-babel-load-languages '((sh . t)))\" "
+    emacs_base_cmd+="--eval \"(setq org-confirm-babel-evaluate nil)\" "
+    emacs_base_cmd+="--eval '(let ((this-directory \""$PWD"/\")) "
+    emacs_base_cmd+="(org-babel-tangle-file \""${ogp_path}"/org-generate-pages.org\") "
+    emacs_base_cmd+="(org-babel-load-file \""${ogp_path}"/org-generate-pages.org\"))' "
 
-    echo $emacs_cmd | sh
-    unset emacs_cmd
+    if [ "${append_list_of_cmd_arg}" != "" ]; then
+        for file in ${append_list_of_cmd_arg}
+        do
+            emacs_cmd+=${emacs_base_cmd}"--visit "$file" "
+            if [ ${generate_pdf} -eq 1 ]; then
+                emacs_cmd+="--funcall org-publish-pdf-alone"
+            fi
+            echo ${emacs_cmd} | sh
+            emacs_cmd=""
+        done
+    else
+        emacs_cmd+=${emacs_base_cmd}
+        if [ ${generate_html} -eq 1 ]; then
+            emacs_cmd+="--funcall org-publish-html"
+        elif [ ${generate_pdf} -eq 1 ]; then
+            emacs_cmd+="--funcall org-publish-pdf"
+        fi
+        emacs_cmd+="--visit \"README.org\" "
+        echo $emacs_cmd | sh
+    fi
+
+    unset emacs_base_cmd  emacs_cmd
     unset ogp_path
+    unset generate_pdf generate_html
     __pkgtools__at_function_exit
     return 0
 }

@@ -51,14 +51,7 @@ We also globally define the current directory
      :time-stamp-file nil
      :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\">
                  <link rel=\"stylesheet\" href=\"css/org-pygments.css\">"
-     :html-preamble "<a href=\"simulation_config.html\">main</a>
-                     <a href=\"sngeometry_manager.html\">geometry manager</a>
-                     <a href=\"sng4_manager.html\">G4 manager</a>
-                     <a href=\"sngenbb_manager.html\">genbb manager</a>
-                     <a href=\"sngenvertex_manager.html\">vertex manager</a>
-                     <a href=\"step_hit_processor_factory.html\">step hit processors</a>
-                     <a href=\"snanalysis_manager.html\">analysis</a>
-                     "
+     :html-preamble ""
      :html-postamble "<<html-postamble()>>"))
   #+END_SRC
 ** Markup filtering
@@ -679,7 +672,7 @@ Code fragments are syntax highlighted using [[https://code.google.com/p/minted/]
      :base-extension "org"
      :publishing-directory ,(expand-file-name "pdf" doc-directory)
      :publishing-function org-latex-publish-to-pdf
-     :exclude "simulation_publish.org\\|README.org"
+     ;;:exclude ""
      :section-numbers 2
      :with-toc        t
      :latex-class "snemo-simu"
