@@ -565,9 +565,9 @@ We replace all occurences of =.org= that are related to internal =org= files to
 **** Footnote
 #+BEGIN_SRC latex
   \RequirePackage{fancyhdr}
-  \renewcommand{\footnoterule}{\color{blue!75}%
+  \renewcommand{\footnoterule}{\color{gray}%
     \vskip-\footruleskip\vskip-\footrulewidth%
-    \vspace{10pt}\hrule width\columnwidth height1.5pt \vspace{5pt} \color{blue!75}}
+    \vspace{10pt}\hrule width\columnwidth height0pt \vspace{5pt} \color{gray}}
   \renewcommand{\thefootnote}{\alph{footnote}}
   \interfootnotelinepenalty=10000
 #+END_SRC
@@ -598,8 +598,8 @@ We replace all occurences of =.org= that are related to internal =org= files to
 #+BEGIN_SRC sh :results output :tangle no
   if [ -d .git ]; then
       log=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"commit \texttt{%h} - %ad")
-      echo "\renewcommand*{\PrelimWords}{\textnormal{\small File under \texttt{git} version control}}"
-      echo "\renewcommand*{\PrelimText}{\textnormal{\small\textcolor{gray}{\PrelimWords\ -- ${log}}}}"
+      echo "\renewcommand*{\PrelimWords}{\textnormal{\small \texttt{git}}}"
+      echo "\renewcommand*{\PrelimText}{\textnormal{\small\textcolor{gray}{\PrelimWords\ ${log}}}}"
   fi
 #+END_SRC
 #+BEGIN_SRC latex :noweb yes
@@ -696,6 +696,5 @@ Code fragments are syntax highlighted using [[https://code.google.com/p/minted/]
   (defun org-publish-pdf ()
     (progn
       (org-publish-project "pdf-documentation" 'force)
-;;      (shell-command "rm *.{tex,auxlock,toc,out,fls,aux,pdf,log,fdb_latexmk,sty}")
       ))
 #+END_SRC
