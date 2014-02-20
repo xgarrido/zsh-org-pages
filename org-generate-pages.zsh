@@ -69,19 +69,18 @@ function org_generate_pages ()
     if [ "${append_list_of_cmd_arg}" != "" ]; then
         for file in ${append_list_of_cmd_arg}
         do
-            emacs_cmd+=${emacs_base_cmd}"--visit "$file" "
-            if [ ${generate_pdf} -eq 1 ]; then
-                emacs_cmd+="--funcall org-publish-pdf-alone"
-            fi
+            emacs_cmd+=${emacs_base_cmd}
+            emacs_cmd+="--funcall org-publish-pdf-alone "
+            emacs_cmd+="--visit "$file
             echo ${emacs_cmd} | sh
             emacs_cmd=""
         done
     else
         emacs_cmd+=${emacs_base_cmd}
         if [ ${generate_html} -eq 1 ]; then
-            emacs_cmd+="--funcall org-publish-html"
+            emacs_cmd+="--funcall org-publish-html "
         elif [ ${generate_pdf} -eq 1 ]; then
-            emacs_cmd+="--funcall org-publish-pdf"
+            emacs_cmd+="--funcall org-publish-pdf "
         fi
         emacs_cmd+="--visit \"README.org\" "
         echo $emacs_cmd | sh
