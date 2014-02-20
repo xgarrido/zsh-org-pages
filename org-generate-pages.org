@@ -46,6 +46,7 @@ We also globally define the current directory
      :publishing-directory ,(expand-file-name "html" doc-directory)
      :publishing-function org-html-publish-to-html
      ;;:exclude ""
+     :recursive t
      :section-numbers 2
      :with-toc        2
      :time-stamp-file nil

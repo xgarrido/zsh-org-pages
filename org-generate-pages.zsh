@@ -57,6 +57,12 @@ function org_generate_pages ()
     pkgtools__msg_devel "append_list_of_cmd_arg=${append_list_of_cmd_arg}"
     pkgtools__msg_devel "append_list_of_options_arg=${append_list_of_options_arg}"
 
+    if [ ${generate_pdf} -eq 0 -a ${generate_html} -eq 0 ]; then
+        pkgtools__msg_error "No output format (html/pdf) have been selected!"
+        __pkgtools__at_function_exit
+        return 1
+    fi
+
     ogp_path="/home/garrido/Development/org-generate-pages"
     emacs_base_cmd+="emacs --batch --no-init-file "
     emacs_base_cmd+="--eval \"(require 'org)\" "
@@ -78,15 +84,33 @@ function org_generate_pages ()
     else
         emacs_cmd+=${emacs_base_cmd}
         if [ ${generate_html} -eq 1 ]; then
+            pkgtools__msg_notice "Exporting pages to html..."
             emacs_cmd+="--funcall org-publish-html "
         elif [ ${generate_pdf} -eq 1 ]; then
+            pkgtools__msg_notice "Exporting pages to pdf (though latex)..."
             emacs_cmd+="--funcall org-publish-pdf "
         fi
         emacs_cmd+="--visit \"README.org\" "
-        echo $emacs_cmd | sh
     fi
 
-    unset emacs_base_cmd  emacs_cmd
+    echo $emacs_cmd | sh > /dev/null 2>&1
+    if $(pkgtools__last_command_fails); then
+        pkgtools__msg_error "Export has failed !"
+        __pkgtools__at_function_exit
+        return 1
+    fi
+
+    for file in $(find doc/html -name "*.html"); do
+        count="${file//[^\/]}"
+        rel_path=
+        for ((i=2;i<${#count};i++));do
+            rel_path+="../"
+        done
+        sed -i -e 's@href="css/@href="'${rel_path}'css/@g' $file
+    done
+    pkgtools__msg_notice "Export successfully done"
+
+    unset emacs_base_cmd emacs_cmd
     unset ogp_path
     unset generate_pdf generate_html
     __pkgtools__at_function_exit
