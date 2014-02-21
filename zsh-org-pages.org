@@ -46,6 +46,19 @@ We also globally define the current directory
      :publishing-directory ,(expand-file-name "html" doc-directory)
      :publishing-function org-html-publish-to-html
      ;;:exclude ""
+     :recursive nil
+     :section-numbers 2
+     :with-toc        2
+     :time-stamp-file nil
+     :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\">
+                 <link rel=\"stylesheet\" href=\"css/org-pygments.css\">"
+     :html-preamble ""
+     :html-postamble "<<html-postamble()>>")
+   `("html-documentation-recursive"
+     :base-directory ,this-directory
+     :base-extension "org"
+     :publishing-directory ,(expand-file-name "html" doc-directory)
+     :publishing-function org-html-publish-to-html
      :recursive t
      :section-numbers 2
      :with-toc        2
@@ -700,6 +713,12 @@ Code fragments are syntax highlighted using [[https://code.google.com/p/minted/]
   (defun org-publish-html ()
     (progn
       (org-publish-project "html-documentation" 'force)
+      (copy-file (expand-file-name "README.html" (expand-file-name "html" doc-directory))
+                 (expand-file-name "index.html" (expand-file-name "html" doc-directory)) t)
+      ))
+  (defun org-publish-html-recursive ()
+    (progn
+      (org-publish-project "html-documentation-recursive" 'force)
       (copy-file (expand-file-name "README.html" (expand-file-name "html" doc-directory))
                  (expand-file-name "index.html" (expand-file-name "html" doc-directory)) t)
       ))

@@ -19,6 +19,7 @@ function org-pages ()
     local clean=0
     local generate=0
     local publish=0
+    local recursive=0
     while [ -n "$1" ]; do
         local token="$1"
         if [ "${token[0,1]}" = "-" ]; then
@@ -31,6 +32,8 @@ function org-pages ()
                 pkgtools__msg_using_devel
             elif [ "${opt}" = "-v" -o "${opt}" = "--verbose" ]; then
                 pkgtools__msg_using_verbose
+            elif [ "${opt}" = "--recursive" ]; then
+                recursive=1
             elif [ "${opt}" = "--pdf" ]; then
                 generate_pdf=1
                 generate_html=0
@@ -80,6 +83,7 @@ function org-pages ()
     fi
 
     local ogp_path="${ADOTDIR}/repos/https-COLON--SLASH--SLASH-github.com-SLASH-xgarrido-SLASH-zsh-org-pages.git"
+    local emacs_cmd=""
     local emacs_base_cmd="emacs --batch --no-init-file "
     emacs_base_cmd+="--eval \"(require 'org)\" "
     emacs_base_cmd+="--eval \"(org-babel-do-load-languages 'org-babel-load-languages '((sh . t)))\" "
@@ -101,7 +105,11 @@ function org-pages ()
         emacs_cmd+=${emacs_base_cmd}
         if [ ${generate_html} -eq 1 ]; then
             pkgtools__msg_notice "Exporting pages to html..."
-            emacs_cmd+="--funcall org-publish-html "
+            if [ ${recursive} -eq 1 ]; then
+                emacs_cmd+="--funcall org-publish-html-recursive "
+            else
+                emacs_cmd+="--funcall org-publish-html "
+            fi
         elif [ ${generate_pdf} -eq 1 ]; then
             pkgtools__msg_notice "Exporting pages to pdf (through latex)..."
             emacs_cmd="TEXINPUTS=\""$PWD"/doc/pdf:\$TEXINPUTS\" "
@@ -129,8 +137,9 @@ function org-pages ()
         sed -i -e 's@href="css/@href="'${rel_path}'css/@g' $file
     done
 
-    pkgtools__msg_debug "Remove useless LaTeX files"
-    find . -regex ".*\.\(tex\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|pdf\|tex~\)" ! -path '*doc*' -prune -exec rm -f {} \;
+    pkgtools__msg_debug "Remove useless files"
+    find . -regex ".*\.\(tex\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|pdf\)" ! -path '*doc*' -prune -exec rm -f {} \;
+    find . -name "*~" -exec rm -rf {} \;
     find . -name "*latex.d*" -exec rm -rf {} \;
 
     pkgtools__msg_notice "Export successfully done"
