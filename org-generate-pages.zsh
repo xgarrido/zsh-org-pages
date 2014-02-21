@@ -7,7 +7,7 @@
 # Requirements: pkgtools
 # Status: not intended to be distributed yet
 
-function org_generate_pages ()
+function org-pages ()
 {
     __pkgtools__default_values
     __pkgtools__at_function_enter org_generate_pages
@@ -15,8 +15,10 @@ function org_generate_pages ()
     local append_list_of_options_arg
     local append_list_of_cmd_arg
     local generate_pdf=0
-    local generate_html=0
-    local clean_doc=0
+    local generate_html=1
+    local clean=0
+    local generate=0
+    local publish=0
     while [ -n "$1" ]; do
         local token="$1"
         if [ "${token[0,1]}" = "-" ]; then
@@ -33,13 +35,20 @@ function org_generate_pages ()
                 generate_pdf=1
             elif [ "${opt}" = "--html" ]; then
                 generate_html=1
-            elif [ "${opt}" = "--clean" ]; then
-                clean_doc=1
             else
                 append_list_of_options_arg+="${opt} "
             fi
         else
-            if [ "x${token}" != "x" ]; then
+            if [ "${token}" = "clean" ]; then
+                clean=1
+            elif [ "${token}" = "generate" ]; then
+                generate=1
+            elif [ "${token}" = "publish" ]; then
+                publish=1
+                generate=1
+                generate_html=1
+                generate_pdf=0
+            elif [ "x${token}" != "x" ]; then
                 append_list_of_cmd_arg+="${token} "
             fi
         fi
@@ -49,19 +58,21 @@ function org_generate_pages ()
     append_list_of_cmd_arg=$(echo ${append_list_of_cmd_arg} | sed 's/:/:\"/g')
     append_list_of_options_arg=$(echo ${append_list_of_options_arg} | sed 's/=/=\"/g')
 
+    pkgtools__msg_devel "generate=${generate}"
+    pkgtools__msg_devel " |- pdf=${generate_pdf}"
+    pkgtools__msg_devel " |- html=${generate_html}"
+    pkgtools__msg_devel "deploy=${deploy}"
     pkgtools__msg_devel "append_list_of_cmd_arg=${append_list_of_cmd_arg}"
     pkgtools__msg_devel "append_list_of_options_arg=${append_list_of_options_arg}"
 
-    if [ ${clean_doc} -eq 1 ]; then
+    if [ ${clean} -eq 1 ]; then
         find . -name doc -exec rm -rf {} \;
         __pkgtools__at_function_exit
         return 0
     fi
 
-
-
-    if [ ${generate_pdf} -eq 0 -a ${generate_html} -eq 0 ]; then
-        pkgtools__msg_error "No output format (html/pdf) have been selected!"
+    if [ ${generate} -eq 0 ]; then
+        pkgtools__msg_error "No output file will be generated !"
         __pkgtools__at_function_exit
         return 1
     fi
@@ -121,6 +132,17 @@ function org_generate_pages ()
     find . -name "*latex.d*" -exec rm -rf {} \;
 
     pkgtools__msg_notice "Export successfully done"
+
+    if [ ${publish} -eq 1 ]; then
+        pkgtools__msg_notice "Publishing to the web"
+	find doc -name *.*~ -exec rm -f {} \;
+	(cd doc/html && tar czvf /tmp/org-publish.tar.gz .)
+        rm -rf doc
+	git checkout gh-pages
+	tar xzvf /tmp/org-publish.tar.gz
+	if [ -n "`git status --porcelain`" ]; then git commit -am "update doc" && git push; fi
+	git checkout master
+    fi
 
     unset emacs_base_cmd emacs_cmd
     unset ogp_path

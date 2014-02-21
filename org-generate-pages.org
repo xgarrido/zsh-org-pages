@@ -77,73 +77,82 @@ We replace all occurences of =.org= that are related to internal =org= files to
 **** Google fonts
 #+BEGIN_SRC css
   @import url(https://fonts.googleapis.com/css?family=Lato:300italic,700italic,300,700);
+  @import url(https://fonts.googleapis.com/css?family=Open+Sans);
+  @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:400,700);
   @import url(https://fonts.googleapis.com/css?family=Inconsolata);
-  @import url(https://fonts.googleapis.com/css?family=Lobster);
 #+END_SRC
 
 **** Main =css= definitions
 ***** Body
 #+BEGIN_SRC css
   body {
-      width:860px;
-      margin:0 auto;
-      padding:50px;
-      font:14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-      color:#777;
-      font-weight:300;
+      width: 800px;
+      margin: 0 auto;
+      padding: 50px;
+      color: #777777;
+      font-family: 'Open Sans';
+      font-size: 10pt;
+      font-weight: 400;
+      /*font: 14px/1.5 Lato, sans-serif;
+      font-weight: 300;*/
   }
 #+END_SRC
 
 ***** Headline
 #+BEGIN_SRC css
   h1, h2, h3, h4, h5, h6 {
-      color:#222;
+      font-family: "Yanone Kaffeesatz", sans-serif;
       margin:0 0 20px;
   }
 
   h1, h2, h3 {
-      line-height:1.1;
+      line-height:0.5;
   }
 
   h1 {
-      font-family:Lobster;
-      font-size: 48px;
+      color:#393939;
+      margin: 0 0 50px;
+      padding: 0;
+      font-size: 300%;
   }
 
   h2 {
-      color:#393939;
+      color:#494949;
+      font-size: 175%;
   }
 
-  h3, h4, h5, h6 {
-      color:#494949;
+  h3 {
+      color:#555555;
+      font-size: 125%;
   }
 
   h4, h5, h6 {
-      font-style: italic;
+      color:#777777;
+      font-size: 110%;
   }
 #+END_SRC
 
 ***** Link
 #+BEGIN_SRC css
   a {
-      color:#39c;
+      color: #67ad00; /*#3399cc;*/
       font-weight:400;
       text-decoration:none;
   }
 
   a:hover {
-      color:#069;
+      color: #7fd600;/*#006699;*/
   }
 
   a small {
       font-size:11px;
-      color:#777;
+      color:#777777;
       margin-top:-0.6em;
       display:block;
   }
 
   a:hover small {
-      color:#777;
+      color:#777777;
   }
 #+END_SRC
 
@@ -161,7 +170,7 @@ We replace all occurences of =.org= that are related to internal =org= files to
   }
 
   code, pre {
-      font-family:Inconsolata, Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
+      font-family:Inconsolata;
       color:#777;
       font-size:12px;
   }
@@ -474,7 +483,7 @@ We replace all occurences of =.org= that are related to internal =org= files to
   .org-variable-name,
   .org-constant,
   .org-function-name {
-      color: #69B7F0;
+      color: #67ad00; /* #69B7F0;*/
   }
 
   .org-comment,
@@ -484,7 +493,7 @@ We replace all occurences of =.org= that are related to internal =org= files to
   }
 
   .org-keyword {
-      color: #D33682;
+      color: #69B7F0;/*#D33682;*/
   }
 
   pre {
@@ -598,7 +607,7 @@ We replace all occurences of =.org= that are related to internal =org= files to
 #+BEGIN_SRC sh :results output :tangle no
   if [ -d .git ]; then
       log=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"commit \texttt{%h} - %ad")
-      echo "\renewcommand*{\PrelimWords}{\textnormal{\small \texttt{git}}}"
+      echo "\renewcommand*{\PrelimWords}{\textnormal{\small\texttt{git}}}"
       echo "\renewcommand*{\PrelimText}{\textnormal{\small\textcolor{gray}{\PrelimWords\ ${log}}}}"
   fi
 #+END_SRC
