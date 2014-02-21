@@ -33,8 +33,10 @@ function org-pages ()
                 pkgtools__msg_using_verbose
             elif [ "${opt}" = "--pdf" ]; then
                 generate_pdf=1
+                generate_html=0
             elif [ "${opt}" = "--html" ]; then
                 generate_html=1
+                generate_pdf=0
             else
                 append_list_of_options_arg+="${opt} "
             fi
@@ -77,14 +79,14 @@ function org-pages ()
         return 1
     fi
 
-    local ogp_path="/home/garrido/Development/org-generate-pages"
+    local ogp_path="${ADOTDIR}/repos/https-COLON--SLASH--SLASH-github.com-SLASH-xgarrido-SLASH-zsh-org-pages.git"
     local emacs_base_cmd="emacs --batch --no-init-file "
     emacs_base_cmd+="--eval \"(require 'org)\" "
     emacs_base_cmd+="--eval \"(org-babel-do-load-languages 'org-babel-load-languages '((sh . t)))\" "
     emacs_base_cmd+="--eval \"(setq org-confirm-babel-evaluate nil)\" "
     emacs_base_cmd+="--eval '(let ((this-directory \""$PWD"/\")) "
-    emacs_base_cmd+="(org-babel-tangle-file \""${ogp_path}"/org-generate-pages.org\") "
-    emacs_base_cmd+="(org-babel-load-file \""${ogp_path}"/org-generate-pages.org\"))' "
+    emacs_base_cmd+="(org-babel-tangle-file \""${ogp_path}"/zsh-org-pages.org\") "
+    emacs_base_cmd+="(org-babel-load-file \""${ogp_path}"/zsh-org-pages.org\"))' "
 
     if [ "${append_list_of_cmd_arg}" != "" ]; then
         for file in ${append_list_of_cmd_arg}

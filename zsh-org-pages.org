@@ -589,6 +589,10 @@ We replace all occurences of =.org= that are related to internal =org= files to
 #+BEGIN_SRC latex
   \renewcommand\@dotsep{10000}
 #+END_SRC
+**** Change TOC name
+#+BEGIN_SRC latex
+  \renewcommand{\contentsname}{}
+#+END_SRC
 **** Change section colors
 #+BEGIN_SRC latex
   \RequirePackage{titlesec}
