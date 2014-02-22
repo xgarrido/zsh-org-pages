@@ -30,6 +30,42 @@ We also globally define the current directory
       LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"File under git version control - commit %h - %ad"
   fi
 #+END_SRC
+** Mathjax configuration
+#+BEGIN_SRC emacs-lisp :noweb yes
+    ;; (setq org-html-mathjax-options '((path  "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML")))
+  (setq org-html-mathjax-template "<script type=\"text/x-mathjax-config\">
+  <<mathjax.js>>
+    </script>
+    <script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>
+    ")
+  ;;(setq org-html-scripts "")
+#+END_SRC
+*** Javascript code for Mathjax
+#+NAME: mathjax.js
+#+BEGIN_SRC js :results output :tangle no
+  MathJax.Hub.Config({
+      TeX: {
+          Macros: {
+              vv: [\"{\\\\vec #1}\",1],
+              Upsigma: \"{\\\\Sigma}\",
+              rot: \"{\\\\overrightarrow\\\\text{rot}}\"
+          }
+      }
+  });
+  MathJax.Hub.Register.StartupHook(\"TeX Jax Ready\",function () {
+      var TEX = MathJax.InputJax.TeX;
+      TEX.Definitions.macros.unit = \"jaxunit\";
+      TEX.Parse.Augment({
+          jaxunit: function (name) {
+              var n = this.GetBrackets(name),
+              unit = this.GetArgument(name)
+              if (n == null) {n = \"\"}
+              var tex = n + '\\\\,\\\\text{'+unit+'}';
+              this.string = tex + this.string.slice(this.i); this.i = 0;
+          }
+      });
+  });
+#+END_SRC
 ** Project definition
 #+BEGIN_SRC emacs-lisp :noweb yes
   (unless (boundp 'org-publish-project-alist)
@@ -69,9 +105,6 @@ We also globally define the current directory
      :html-postamble "<<html-postamble()>>"))
   #+END_SRC
 ** Markup filtering
-We replace all occurences of =.org= that are related to internal =org= files to
-=.html= to make link working all together.
-
 #+BEGIN_SRC emacs-lisp
   (defun html::filter-keyword (contents backend info)
     (when (eq backend 'html)
@@ -79,6 +112,14 @@ We replace all occurences of =.org= that are related to internal =org= files to
                                 "<font style=\"text-decoration: overline;\">SN@il</font><font style=\"text-decoration: underline;\">Ware</font>"
                                 contents)))
   ;;(add-to-list 'org-export-filter-final-output-functions 'html::filter-keyword)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun html::src-block-hook (backend)
+    (when (eq backend 'html)
+          (delete-matching-lines "#\\+[BEGIN|END]")))
+
+  (add-hook 'org-export-before-parsing-hook 'html::src-block-hook)
 #+END_SRC
 
 ** CSS stylesheets
