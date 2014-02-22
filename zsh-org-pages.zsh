@@ -138,7 +138,8 @@ function org-pages ()
     done
 
     pkgtools__msg_debug "Remove useless files"
-    find . -regex ".*\.\(tex\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|pdf\)" ! -path '*doc*' -prune -exec rm -f {} \;
+    find . -regex ".*\.\(tex\|pyg\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|pdf\)" \
+        -not -path '*doc*' -not -path '*figures*' -exec rm -f {} \;
     find . -name "*~" -exec rm -rf {} \;
     find . -name "*latex.d*" -exec rm -rf {} \;
 
