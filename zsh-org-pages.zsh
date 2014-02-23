@@ -120,22 +120,38 @@ function org-pages ()
     fi
 
     pkgtools__msg_debug ${emacs_cmd}
-    echo $emacs_cmd | sh > /dev/null 2>&1
+    if [ ${__pkgtools__msg_debug} -eq 1 ]; then
+        echo $emacs_cmd | sh
+    else
+        echo $emacs_cmd | sh > /dev/null 2>&1
+    fi
     if $(pkgtools__last_command_fails); then
         pkgtools__msg_error "Export has failed !"
         __pkgtools__at_function_exit
         return 1
     fi
 
-    pkgtools__msg_debug "Change directory hierarchy for css files"
-    for file in $(find doc/html -name "*.html"); do
-        count="${file//[^\/]}"
-        rel_path=
-        for ((i=2;i<${#count};i++));do
-            rel_path+="../"
+    if [ ${generate_html} -eq 1 ]; then
+        pkgtools__msg_notice "Change directory hierarchy for css files"
+        for file in $(find doc/html -name "*.html"); do
+            count="${file//[^\/]}"
+            rel_path=
+            for ((i=2;i<${#count};i++));do
+                rel_path+="../"
+            done
+            sed -i -e 's@href="css/@href="'${rel_path}'css/@g' $file
+            sed -i \
+                -e 's@ding{192}@\(\\unicode{x2460}\\)@g' \
+	        -e 's@ding{193}@\(\\unicode{x2461}\\)@g' \
+	        -e 's@ding{194}@\(\\unicode{x2462}\\)@g' \
+                $file
         done
-        sed -i -e 's@href="css/@href="'${rel_path}'css/@g' $file
-    done
+        pkgtools__msg_notice "Exporting pdf figures"
+        mkdir -p doc/html/figures
+        for img in $(find . -name "*.pdf" -path "*figures*" -or -path "*plot*"); do
+            convert -density 100 $img doc/html/figures/$(basename ${img/.pdf/.png})
+        done
+    fi
 
     pkgtools__msg_debug "Remove useless files"
     find . -regex ".*\.\(tex\|pyg\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|pdf\)" \
