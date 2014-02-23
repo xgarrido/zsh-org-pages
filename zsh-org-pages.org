@@ -45,10 +45,17 @@ We also globally define the current directory
 #+BEGIN_SRC js :results output :tangle no
   MathJax.Hub.Config({
       TeX: {
+          extensions: [\"cancel.js\"],
           Macros: {
               vv: [\"{\\\\vec #1}\",1],
               Upsigma: \"{\\\\Sigma}\",
-              rot: \"{\\\\overrightarrow\\\\text{rot}}\"
+              Updelta: \"{\\\\Delta}\",
+              varoiint: \"{\\\\iint}\",
+              varoint: \"{\\\\int}\",
+              grad: \"{\\\\vec{\\\\nabla}}\",
+              div: \"{\\\\vec{\\\\nabla}.}\",
+              rot: \"{\\\\vec{\\\\nabla}\\\\times\\\\,}\",
+              ding: [\"{\\\\dang #1}\",1]
           }
       }
   });
@@ -105,6 +112,7 @@ We also globally define the current directory
      :html-postamble "<<html-postamble()>>"))
   #+END_SRC
 ** Markup filtering
+*** SN@ilWare keyword (not used)
 #+BEGIN_SRC emacs-lisp
   (defun html::filter-keyword (contents backend info)
     (when (eq backend 'html)
@@ -113,13 +121,23 @@ We also globally define the current directory
                                 contents)))
   ;;(add-to-list 'org-export-filter-final-output-functions 'html::filter-keyword)
 #+END_SRC
-
-#+BEGIN_SRC emacs-lisp
+*** Hook
+**** Remove LaTeX src block
+#+BEGIN_SRC emacs-lisp :tangle no
   (defun html::src-block-hook (backend)
     (when (eq backend 'html)
           (delete-matching-lines "#\\+[BEGIN|END]")))
-
-  (add-hook 'org-export-before-parsing-hook 'html::src-block-hook)
+  (add-hook 'org-before-parsing-hook 'html::src-block-hook)
+#+END_SRC
+**** Change image extension
+#+BEGIN_SRC emacs-lisp
+  (defun html::replace-img-ext-hook (backend)
+    (when (eq backend 'html)
+      (progn
+        (delete-matching-lines "#\\+[BEGIN|END]")
+        (while (re-search-forward "\.pdf" nil t)
+          (replace-match  "\.png")))))
+  (add-hook 'org-export-before-parsing-hook 'html::replace-img-ext-hook)
 #+END_SRC
 
 ** CSS stylesheets
@@ -262,6 +280,10 @@ We also globally define the current directory
   img {
       max-width:100%;
   }
+
+  .figure {
+      text-align: center;
+  }
 #+END_SRC
 ***** Misc. (bold, =hr= style)
 #+BEGIN_SRC css
@@ -279,6 +301,7 @@ We also globally define the current directory
       color:#222;
       font-weight:700;
   }
+
   small {
       font-size:11px;
   }
@@ -666,7 +689,7 @@ Code fragments are syntax highlighted using [[https://code.google.com/p/minted/]
 #+END_SRC
 
 *** Markup filter
-**** snailware filter
+**** SN@ilWare filter
 #+BEGIN_SRC emacs-lisp
   (defun latex::snailware-keyword-filter (contents backend info)
     (when (eq backend 'latex)
