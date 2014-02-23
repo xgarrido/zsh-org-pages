@@ -121,6 +121,15 @@ We also globally define the current directory
                                 contents)))
   ;;(add-to-list 'org-export-filter-final-output-functions 'html::filter-keyword)
 #+END_SRC
+*** Remove toc and footnotes name
+#+BEGIN_SRC emacs-lisp
+  (defun html::remove-toc-footnote (contents backend info)
+    (when (eq backend 'html)
+      (replace-regexp-in-string "Table of Contents" ""
+      (replace-regexp-in-string "Footnotes:" "" contents))))
+  (add-to-list 'org-export-filter-final-output-functions 'html::remove-toc-footnote)
+#+END_SRC
+
 *** Hook
 **** Remove LaTeX src block
 #+BEGIN_SRC emacs-lisp :tangle no
@@ -279,6 +288,10 @@ We also globally define the current directory
 
   img {
       max-width:100%;
+  }
+
+  img.hidden {
+      display: none;
   }
 
   .figure {
@@ -602,7 +615,7 @@ We also globally define the current directory
 ** =org= to LaTeX stuff
 *** Use smart quote when exporting
 #+BEGIN_SRC emacs-lisp
-  (setq org-export-with-smart-quotes t)
+  (setq org-export-with-smart-quotes nil)
 #+END_SRC
 *** Place table caption below table
 #+BEGIN_SRC emacs-lisp

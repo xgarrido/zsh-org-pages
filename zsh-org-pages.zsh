@@ -149,6 +149,7 @@ function org-pages ()
         pkgtools__msg_notice "Exporting pdf figures"
         mkdir -p doc/html/figures
         for img in $(find . -name "*.pdf" -path "*figures*" -or -path "*plot*"); do
+            pkgtools__msg_debug "Converting ${img}..."
             convert -density 100 $img doc/html/figures/$(basename ${img/.pdf/.png})
         done
     fi
