@@ -126,7 +126,7 @@ We also globally define the current directory
   (defun html::remove-toc-footnote (contents backend info)
     (when (eq backend 'html)
       (replace-regexp-in-string "Table of Contents" ""
-      (replace-regexp-in-string "Footnotes:" "" contents))))
+      (replace-regexp-in-string "Footnotes:" "Notes" contents))))
   (add-to-list 'org-export-filter-final-output-functions 'html::remove-toc-footnote)
 #+END_SRC
 
@@ -187,7 +187,7 @@ We also globally define the current directory
   }
 
   h1, h2, h3 {
-      line-height:0.5;
+      line-height:1.1;
   }
 
   h1 {
@@ -216,13 +216,15 @@ We also globally define the current directory
 ***** Link
 #+BEGIN_SRC css
   a {
-      color: #67ad00; /*#3399cc;*/
+      /*color: #67ad00;*/
+      color: #3399cc;
       font-weight:400;
       text-decoration:none;
   }
 
   a:hover {
-      color: #7fd600;/*#006699;*/
+      /*color: #7fd600;*/
+      color: #006699;
   }
 
   a small {
@@ -252,7 +254,7 @@ We also globally define the current directory
 
   code, pre {
       font-family:Inconsolata;
-      color:#777;
+      color:#777777;
       font-size:12px;
   }
 
@@ -269,6 +271,7 @@ We also globally define the current directory
       border-collapse:collapse;
       margin-left:auto;
       margin-right:auto;
+      margin-top: 20px;
   }
 
   th, td {
@@ -278,12 +281,12 @@ We also globally define the current directory
   }
 
   dt {
-      color:#444;
+      color:#444444;
       font-weight:700;
   }
 
   th {
-      color:#444;
+      color:#444444;
   }
 
   img {
@@ -296,6 +299,16 @@ We also globally define the current directory
 
   .figure {
       text-align: center;
+  }
+
+  .figure-number {
+      font-weight:700;
+  }
+#+END_SRC
+***** TOC
+#+BEGIN_SRC css
+  #table-of-contents {
+      margin-bottom: 50px;
   }
 #+END_SRC
 ***** Misc. (bold, =hr= style)
