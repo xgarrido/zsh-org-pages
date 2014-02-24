@@ -144,7 +144,9 @@ function org-pages ()
                 -e 's@ding{192}@\(\\unicode{x2460}\\)@g' \
 	        -e 's@ding{193}@\(\\unicode{x2461}\\)@g' \
 	        -e 's@ding{194}@\(\\unicode{x2462}\\)@g' \
-	        -e 's@ding{194}@\(\\unicode{x2463}\\)@g' \
+	        -e 's@ding{195}@\(\\unicode{x2463}\\)@g' \
+	        -e 's@cmark@\(\\unicode{x2713}\\)@g' \
+	        -e 's@xmark@\(\\unicode{x2717}\\)@g' \
                 $file
         done
         pkgtools__msg_notice "Exporting pdf figures"
