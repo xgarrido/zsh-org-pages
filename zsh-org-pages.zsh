@@ -10,7 +10,7 @@
 function org-pages ()
 {
     __pkgtools__default_values
-    __pkgtools__at_function_enter org_generate_pages
+    __pkgtools__at_function_enter org-pages
 
     local append_list_of_options_arg
     local append_list_of_cmd_arg
@@ -144,6 +144,7 @@ function org-pages ()
                 -e 's@ding{192}@\(\\unicode{x2460}\\)@g' \
 	        -e 's@ding{193}@\(\\unicode{x2461}\\)@g' \
 	        -e 's@ding{194}@\(\\unicode{x2462}\\)@g' \
+	        -e 's@ding{194}@\(\\unicode{x2463}\\)@g' \
                 $file
         done
         pkgtools__msg_notice "Exporting pdf figures"
