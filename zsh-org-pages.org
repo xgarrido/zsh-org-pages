@@ -34,7 +34,7 @@ We also globally define the current directory
 #+BEGIN_SRC emacs-lisp :noweb yes
     ;; (setq org-html-mathjax-options '((path  "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML")))
   (setq org-html-mathjax-template "<script type=\"text/x-mathjax-config\">
-  <<mathjax.js>>
+    <<mathjax.js>>
     </script>
     <script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>
     ")
@@ -43,35 +43,37 @@ We also globally define the current directory
 *** Javascript code for Mathjax
 #+NAME: mathjax.js
 #+BEGIN_SRC js :results output :tangle no
-  MathJax.Hub.Config({
-      TeX: {
-          extensions: [\"cancel.js\"],
-          Macros: {
-              vv: [\"{\\\\vec #1}\",1],
-              Upsigma: \"{\\\\Sigma}\",
-              Updelta: \"{\\\\Delta}\",
-              varoiint: \"{\\\\iint}\",
-              varoint: \"{\\\\int}\",
-              grad: \"{\\\\vec{\\\\nabla}}\",
-              div: \"{\\\\vec{\\\\nabla}.}\",
-              rot: \"{\\\\vec{\\\\nabla}\\\\times\\\\,}\",
-              ding: [\"{\\\\dang #1}\",1]
-          }
-      }
-  });
-  MathJax.Hub.Register.StartupHook(\"TeX Jax Ready\",function () {
-      var TEX = MathJax.InputJax.TeX;
-      TEX.Definitions.macros.unit = \"jaxunit\";
-      TEX.Parse.Augment({
-          jaxunit: function (name) {
-              var n = this.GetBrackets(name),
-              unit = this.GetArgument(name)
-              if (n == null) {n = \"\"}
-              var tex = n + '\\\\,\\\\text{'+unit+'}';
-              this.string = tex + this.string.slice(this.i); this.i = 0;
-          }
-      });
-  });
+    MathJax.Hub.Config({
+        TeX: {
+            extensions: [\"cancel.js\"],
+            Macros: {
+                vv: [\"{\\\\vec #1}\",1],
+                Upsigma: \"{\\\\Sigma}\",
+                Updelta: \"{\\\\Delta}\",
+                varoiint: \"{\\\\iint}\",
+                varoint: \"{\\\\int}\",
+                grad: \"{\\\\vec{\\\\nabla}}\",
+                div: \"{\\\\vec{\\\\nabla}.}\",
+                rot: \"{\\\\vec{\\\\nabla}\\\\times\\\\,}\",
+                ket: [\"{|#1 \\\\rangle}\",1],
+                bra: [\"{\\\\langle#1|}\",1],
+                psh: [\"{\\\\langle#1|#2 \\\\rangle}\",2]
+            }
+        }
+    });
+    MathJax.Hub.Register.StartupHook(\"TeX Jax Ready\",function () {
+        var TEX = MathJax.InputJax.TeX;
+        TEX.Definitions.macros.unit = \"jaxunit\";
+        TEX.Parse.Augment({
+            jaxunit: function (name) {
+                var n = this.GetBrackets(name),
+                unit = this.GetArgument(name)
+                if (n == null) {n = \"\"}
+                var tex = n + '\\\\,\\\\text{'+unit+'}';
+                this.string = tex + this.string.slice(this.i); this.i = 0;
+            }
+        });
+    });
 #+END_SRC
 ** Project definition
 #+BEGIN_SRC emacs-lisp :noweb yes
@@ -90,7 +92,7 @@ We also globally define the current directory
      :publishing-function org-html-publish-to-html
      ;;:exclude ""
      :recursive nil
-     :section-numbers 2
+     :section-numbers 3
      :with-toc        2
      :time-stamp-file nil
      :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\">
@@ -103,7 +105,7 @@ We also globally define the current directory
      :publishing-directory ,(expand-file-name "html" doc-directory)
      :publishing-function org-html-publish-to-html
      :recursive t
-     :section-numbers 2
+     :section-numbers 3
      :with-toc        2
      :time-stamp-file nil
      :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\">
@@ -144,8 +146,8 @@ We also globally define the current directory
     (when (eq backend 'html)
       (progn
         (delete-matching-lines "#\\+[BEGIN|END]")
-        (while (re-search-forward "\.pdf" nil t)
-          (replace-match  "\.png")))))
+        (while (re-search-forward "[.]pdf" nil t)
+          (replace-match  ".png")))))
   (add-hook 'org-export-before-parsing-hook 'html::replace-img-ext-hook)
 #+END_SRC
 
@@ -199,17 +201,17 @@ We also globally define the current directory
 
   h2 {
       color:#494949;
-      font-size: 175%;
+      font-size: 200%;
   }
 
   h3 {
       color:#555555;
-      font-size: 125%;
+      font-size: 175%;
   }
 
   h4, h5, h6 {
       color:#777777;
-      font-size: 110%;
+      font-size: 150%;
   }
 #+END_SRC
 
