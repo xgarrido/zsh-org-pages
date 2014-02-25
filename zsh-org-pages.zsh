@@ -20,6 +20,7 @@ function org-pages ()
     local generate=0
     local publish=0
     local recursive=0
+    local keep_tmp_files=0
     while [ -n "$1" ]; do
         local token="$1"
         if [ "${token[0,1]}" = "-" ]; then
@@ -40,6 +41,8 @@ function org-pages ()
             elif [ "${opt}" = "--html" ]; then
                 generate_html=1
                 generate_pdf=0
+            elif [ "${opt}" = "--keep-tmp-files" ]; then
+                keep_tmp_files=1
             else
                 append_list_of_options_arg+="${opt} "
             fi
@@ -151,17 +154,22 @@ function org-pages ()
         done
         pkgtools__msg_notice "Exporting pdf figures"
         mkdir -p doc/html/figures
-        for img in $(find . -name "*.pdf" -path "*figures*" -or -path "*plot*"); do
+        for img in $(find . -name "*.pdf" -path "*[figures|plot]*" -not -path "*doc*"); do
             pkgtools__msg_debug "Converting ${img}..."
             convert -density 100 $img doc/html/figures/$(basename ${img/.pdf/.png})
         done
+        find . -regex ".*\.\(jpg\|jpeg\|png\|gif\|svg\)" \
+            -path "*[figures|plot]*" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
     fi
 
-    pkgtools__msg_debug "Remove useless files"
-    find . -regex ".*\.\(tex\|pyg\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|pdf\)" \
-        -not -path '*doc*' -not -path '*figures*' -exec rm -f {} \;
-    find . -name "*~" -exec rm -rf {} \;
-    find . -name "*latex.d*" -exec rm -rf {} \;
+    if [ ${keep_tmp_files} -eq 0 ]; then
+        pkgtools__msg_debug "Remove useless files"
+        find . -regex ".*\.\(tex\|pyg\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|pdf\)" \
+            -not -path '*doc*' -not -path '*figures*' -exec rm -f {} \;
+        find . -name "*~" -exec rm -rf {} \;
+        #find . -name "*latex.d*" -exec rm -rf {} \;
+        rm -rf ./latex.d
+    fi
 
     pkgtools__msg_notice "Export successfully done"
 
