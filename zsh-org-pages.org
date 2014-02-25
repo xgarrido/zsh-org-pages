@@ -57,7 +57,8 @@ We also globally define the current directory
                 rot: \"{\\\\vec{\\\\nabla}\\\\times\\\\,}\",
                 ket: [\"{|#1 \\\\rangle}\",1],
                 bra: [\"{\\\\langle#1|}\",1],
-                psh: [\"{\\\\langle#1|#2 \\\\rangle}\",2]
+                psh: [\"{\\\\langle#1|#2 \\\\rangle}\",2],
+                bm: [\"{\\\\boldsymbol #1}\",1]
             }
         }
     });
@@ -123,6 +124,13 @@ We also globally define the current directory
                                 contents)))
   ;;(add-to-list 'org-export-filter-final-output-functions 'html::filter-keyword)
 #+END_SRC
+*** Change frame of table and set it to void
+#+BEGIN_SRC emacs-lisp
+  (defun html::void-table-frame (contents backend info)
+    (when (eq backend 'html)
+      (replace-regexp-in-string "hsides" "void" contents)))
+  (add-to-list 'org-export-filter-final-output-functions 'html::void-table-frame)
+#+END_SRC
 *** Remove toc and footnotes name
 #+BEGIN_SRC emacs-lisp
   (defun html::remove-toc-footnote (contents backend info)
@@ -133,19 +141,12 @@ We also globally define the current directory
 #+END_SRC
 
 *** Hook
-**** Remove LaTeX src block
-#+BEGIN_SRC emacs-lisp :tangle no
-  (defun html::src-block-hook (backend)
-    (when (eq backend 'html)
-          (delete-matching-lines "#\\+[BEGIN|END]")))
-  (add-hook 'org-before-parsing-hook 'html::src-block-hook)
-#+END_SRC
 **** Change image extension
 #+BEGIN_SRC emacs-lisp
   (defun html::replace-img-ext-hook (backend)
     (when (eq backend 'html)
       (progn
-        (delete-matching-lines "#\\+[BEGIN|END]")
+        (delete-matching-lines "#\\+[BEGIN_SRC|END_SRC]")
         (while (re-search-forward "[.]pdf" nil t)
           (replace-match  ".png")))))
   (add-hook 'org-export-before-parsing-hook 'html::replace-img-ext-hook)
@@ -274,6 +275,10 @@ We also globally define the current directory
       margin-left:auto;
       margin-right:auto;
       margin-top: 20px;
+  }
+
+  .table-number {
+      font-weight:700;
   }
 
   th, td {
