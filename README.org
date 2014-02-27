@@ -7,3 +7,63 @@ This repository holds a =zsh= script associated to a =org-mode= exporter to
 automatically generates documentation in =html= or =pdf= (through LaTeX
 processing). It converts any =org-mode= file to =html/pdf= to publish pages,
 documentations...
+
+* How to install
+** In your =~/.zshrc=
+
+*** Download the script or clone this repository:
+
+#+BEGIN_SRC sh
+  $ git clone git://github.com/xgarrido/zsh-org-pages.git
+#+END_SRC
+
+*** Add the cloned directory to =fpath= variable to make use of zsh completion:
+
+#+BEGIN_SRC sh
+  fpath=(/path/to/zsh-org-pages $fpath)
+#+END_SRC
+
+*** Source the script *at the end* of =~/.zshrc=:
+
+#+BEGIN_SRC sh
+  source /path/to/zsh-org-pages/zsh-org-pages.zsh
+#+END_SRC
+
+*** Source =~/.zshrc= to take changes into account:
+
+#+BEGIN_SRC sh
+  $ source ~/.zshrc
+#+END_SRC
+
+** With oh-my-zsh
+
+*** Download the script or clone this repository in [[http://github.com/robbyrussell/oh-my-zsh][oh-my-zsh]] plugins directory:
+
+#+BEGIN_SRC sh
+  $ cd ~/.oh-my-zsh/custom/plugins
+  $ git clone git://github.com/xgarrido/zsh-org-pages.git
+#+END_SRC
+
+*** Activate the plugin in =~/.zshrc= (in *last* position):
+
+#+BEGIN_SRC sh
+plugins=( [plugins...] zsh-org-pages)
+#+END_SRC
+
+*** Source =~/.zshrc=  to take changes into account:
+
+#+BEGIN_SRC sh
+$ source ~/.zshrc
+#+END_SRC
+
+** With [[https://github.com/zsh-users/antigen][antigen]]
+
+*** Add this line to your =~/.zshrc= file:
+
+#+BEGIN_SRC sh
+antigen-bundle xgarrido/zsh-org-pages
+#+END_SRC
+
+* How to use
+
+to be done
