@@ -85,6 +85,14 @@ function org-pages ()
         return 1
     fi
 
+    if [ ${generate_html} -eq 1 ]; then
+        pkgtools__msg_debug "Parsing org files..."
+        for file in $(find . -name "*.org"); do
+            \cp $file $file.save
+            sed -i -e "s/#+BEGIN_SRC latex/#+BEGIN_SRC latex :results drawer :exports results/g" $file
+        done
+    fi
+
     local ogp_path="${ADOTDIR}/repos/https-COLON--SLASH--SLASH-github.com-SLASH-xgarrido-SLASH-zsh-org-pages.git"
     local emacs_cmd=""
     local emacs_base_cmd="emacs --batch --no-init-file "
@@ -159,7 +167,14 @@ function org-pages ()
             convert -density 100 $img doc/html/figures/$(basename ${img/.pdf/.png})
         done
         find . -regex ".*\.\(jpg\|jpeg\|png\|gif\|svg\)" \
-            -path "*[figures|plot]*" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
+            -path "[figures|plot]" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
+        pkgtools__msg_debug "Parsing org files..."
+        for file in $(find . -name "*.org"); do
+            if [ -f $file.save ]; then
+                \mv $file.save $file
+            fi
+            #sed -i -e "s/#+BEGIN_SRC latex/#+BEGIN_SRC latex :results drawer :exports results/g" $file
+        done
     fi
 
     if [ ${keep_tmp_files} -eq 0 ]; then
