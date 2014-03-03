@@ -145,10 +145,9 @@ We also globally define the current directory
 #+BEGIN_SRC emacs-lisp
   (defun html::replace-img-ext-hook (backend)
     (when (eq backend 'html)
-      (progn
-        (delete-matching-lines "#\\+[BEGIN_SRC|END_SRC]")
-        (while (re-search-forward "[.]pdf" nil t)
-          (replace-match  ".png")))))
+      (while (re-search-forward "[.]pdf" nil t)
+        (replace-match  ".png"))
+      ))
   (add-hook 'org-export-before-parsing-hook 'html::replace-img-ext-hook)
 #+END_SRC
 
