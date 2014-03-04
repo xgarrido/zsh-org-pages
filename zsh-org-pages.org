@@ -32,16 +32,25 @@ We also globally define the current directory
 #+END_SRC
 ** Embedded Javascript code
 *** TOC popup
-#+BEGIN_SRC emacs-lisp
-     (setq org-html-scripts (concat org-html-scripts "
-  <script type=\"text/javascript\">
+#+NAME: toc.js
+#+BEGIN_SRC js :results output :tangle no
   function displayTOC() {
-         var first = document.getElementById(\"text-table-of-contents\").innerHTML;
-         var maincontent = '<a class=\"button\"><i class=\"fa fa-list\"></i></a>'
-         maincontent += \"<div>\" + first + \"</div>\";
-         document.getElementById(\"toc\").innerHTML = maincontent;
+      var first = document.getElementById(\"text-table-of-contents\").innerHTML;
+      if (first != \"\") {
+          var maincontent = '<a class=\"button\"><i class=\"fa fa-list\"></i></a>'
+          maincontent += \"<div>\" + first + \"</div>\";
+          document.getElementById(\"toc\").innerHTML = maincontent;
+      } else {
+          document.getElementById(\"toc\").style.display = \"none\";
+      }
      }
-  </script>"))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :noweb yes
+  (setq org-html-scripts (concat org-html-scripts "<script type=\"text/javascript\">
+  <<toc.js>>
+  </script>
+  "))
 #+END_SRC
 ** Mathjax configuration
 #+BEGIN_SRC emacs-lisp :noweb yes
@@ -210,7 +219,7 @@ We also globally define the current directory
 
   h1 {
       color:#393939;
-      margin: 0 0 50px;
+      margin: 0 0 40px;
       padding: 0;
       font-size: 300%;
   }
@@ -330,7 +339,7 @@ We also globally define the current directory
 ***** TOC
 #+BEGIN_SRC css
   #table-of-contents {
-      margin-bottom: 50px;
+      margin-bottom: 40px;
   }
 
   #toc {
@@ -338,6 +347,7 @@ We also globally define the current directory
       top: 10px;
       right: 20px;
       text-align: left;
+      background-color: white;
   }
 
   #toc .button {
@@ -351,20 +361,15 @@ We also globally define the current directory
   }
 
   #toc div {
-      overflow: hidden;
       height: 0;
       width: 0;
-      margin-top: 10px;
-      background: white;
+      margin-top: 15px;
   }
 
   #toc:hover div {
-      width: 200px;
+      width: auto;
       height: auto;
       padding: 1em 1em;
-      hyphens: auto;
-      -webkit-hyphens: auto;
-      -moz-hyphens: auto;
   }
 #+END_SRC
 ***** Misc. (bold, =hr= style)
