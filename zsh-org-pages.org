@@ -30,6 +30,19 @@ We also globally define the current directory
       LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"File under git version control - commit %h - %ad"
   fi
 #+END_SRC
+** Embedded Javascript code
+*** TOC popup
+#+BEGIN_SRC emacs-lisp
+     (setq org-html-scripts (concat org-html-scripts "
+  <script type=\"text/javascript\">
+  function displayTOC() {
+         var first = document.getElementById(\"text-table-of-contents\").innerHTML;
+         var maincontent = '<a class=\"button\"><i class=\"fa fa-list\"></i></a>'
+         maincontent += \"<div>\" + first + \"</div>\";
+         document.getElementById(\"toc\").innerHTML = maincontent;
+     }
+  </script>"))
+#+END_SRC
 ** Mathjax configuration
 #+BEGIN_SRC emacs-lisp :noweb yes
     ;; (setq org-html-mathjax-options '((path  "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML")))
@@ -38,7 +51,6 @@ We also globally define the current directory
     </script>
     <script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>
     ")
-  ;;(setq org-html-scripts "")
 #+END_SRC
 *** Javascript code for Mathjax
 #+NAME: mathjax.js
@@ -97,7 +109,8 @@ We also globally define the current directory
      :with-toc        2
      :time-stamp-file nil
      :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\">
-                 <link rel=\"stylesheet\" href=\"css/org-pygments.css\">"
+                 <link rel=\"stylesheet\" href=\"css/org-pygments.css\">
+                 <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\">"
      :html-preamble ""
      :html-postamble "<<html-postamble()>>")
    `("html-documentation-recursive"
@@ -110,7 +123,8 @@ We also globally define the current directory
      :with-toc        2
      :time-stamp-file nil
      :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\">
-                 <link rel=\"stylesheet\" href=\"css/org-pygments.css\">"
+                 <link rel=\"stylesheet\" href=\"css/org-pygments.css\">
+                 <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\">"
      :html-preamble ""
      :html-postamble "<<html-postamble()>>"))
   #+END_SRC
@@ -136,7 +150,9 @@ We also globally define the current directory
   (defun html::remove-toc-footnote (contents backend info)
     (when (eq backend 'html)
       (replace-regexp-in-string "Table of Contents" ""
-      (replace-regexp-in-string "Footnotes:" "Notes" contents))))
+      (replace-regexp-in-string "Footnotes:" "Notes"
+      (replace-regexp-in-string "<body>" "<body onload=\"displayTOC()\"><div id=\"toc\"></div>" contents)
+      ))))
   (add-to-list 'org-export-filter-final-output-functions 'html::remove-toc-footnote)
 #+END_SRC
 
@@ -315,6 +331,40 @@ We also globally define the current directory
 #+BEGIN_SRC css
   #table-of-contents {
       margin-bottom: 50px;
+  }
+
+  #toc {
+      position: fixed;
+      top: 10px;
+      right: 20px;
+      text-align: left;
+  }
+
+  #toc .button {
+      padding: 3px;
+      position: fixed;
+      right: 20px;
+      width: 100px;
+      text-align: right;
+      cursor: pointer;
+      font-size: 20px;
+  }
+
+  #toc div {
+      overflow: hidden;
+      height: 0;
+      width: 0;
+      margin-top: 10px;
+      background: white;
+  }
+
+  #toc:hover div {
+      width: 200px;
+      height: auto;
+      padding: 1em 1em;
+      hyphens: auto;
+      -webkit-hyphens: auto;
+      -moz-hyphens: auto;
   }
 #+END_SRC
 ***** Misc. (bold, =hr= style)
