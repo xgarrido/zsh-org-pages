@@ -172,8 +172,8 @@ function org-pages ()
         for file in $(find . -name "*.org"); do
             if [ -f $file.save ]; then
                 \mv $file.save $file
+                sed -i -e "s/#+BEGIN_SRC latex :results drawer :exports results/#+BEGIN_SRC latex/g" $file
             fi
-            #sed -i -e "s/#+BEGIN_SRC latex/#+BEGIN_SRC latex :results drawer :exports results/g" $file
         done
     fi
 
