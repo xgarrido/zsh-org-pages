@@ -179,7 +179,7 @@ function org-pages ()
 
     if [ ${keep_tmp_files} -eq 0 ]; then
         pkgtools__msg_debug "Remove useless files"
-        find . -regex ".*\.\(tex\|pyg\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|pdf\)" \
+        find . -regex ".*\.\(tex\|pyg\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\)" \
             -not -path '*doc*' -not -path '*figures*' -exec rm -f {} \;
         find . -name "*~" -exec rm -rf {} \;
         #find . -name "*latex.d*" -exec rm -rf {} \;
