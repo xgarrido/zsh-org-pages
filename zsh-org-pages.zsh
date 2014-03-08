@@ -162,12 +162,12 @@ function org-pages ()
         done
         pkgtools__msg_notice "Exporting pdf figures"
         mkdir -p doc/html/figures
-        for img in $(find . -name "*.pdf" -path "*[figures|plot]*" -not -path "*doc*"); do
+        for img in $(find . -name "*.pdf" -path "*figures*" -or -path "*plot*" -not -path "*doc*"); do
             pkgtools__msg_debug "Converting ${img}..."
             convert -density 100 $img doc/html/figures/$(basename ${img/.pdf/.png})
         done
         find . -regex ".*\.\(jpg\|jpeg\|png\|gif\|svg\)" \
-            -path "[figures|plot]" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
+            -path "*figures*" -or -path "*plot*" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
         pkgtools__msg_debug "Parsing org files..."
         for file in $(find . -name "*.org"); do
             if [ -f $file.save ]; then
