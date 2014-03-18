@@ -93,6 +93,8 @@ function org-pages ()
         done
     fi
 
+    export OGP_EXPORT_DIR=$PWD
+
     local ogp_path="${ADOTDIR}/repos/https-COLON--SLASH--SLASH-github.com-SLASH-xgarrido-SLASH-zsh-org-pages.git"
     local emacs_cmd=""
     local emacs_base_cmd="emacs --batch --no-init-file "
@@ -162,12 +164,12 @@ function org-pages ()
         done
         pkgtools__msg_notice "Exporting pdf figures"
         mkdir -p doc/html/figures
-        for img in $(find . -name "*.pdf" -path "*figures*" -or -path "*plot*" -not -path "*doc*"); do
+        for img in $(find . -name "*.pdf" -path "*figures*" -not -path "*doc*"); do
             pkgtools__msg_debug "Converting ${img}..."
             convert -density 100 $img doc/html/figures/$(basename ${img/.pdf/.png})
         done
         find . -regex ".*\.\(jpg\|jpeg\|png\|gif\|svg\)" \
-            -path "*figures*" -or -path "*plot*" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
+            -path "*figures*" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
         pkgtools__msg_debug "Parsing org files..."
         for file in $(find . -name "*.org"); do
             if [ -f $file.save ]; then
@@ -179,7 +181,7 @@ function org-pages ()
 
     if [ ${keep_tmp_files} -eq 0 ]; then
         pkgtools__msg_debug "Remove useless files"
-        find . -regex ".*\.\(tex\|pyg\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\)" \
+        find . -regex ".*\.\(pyg\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\)" \
             -not -path '*doc*' -not -path '*figures*' -exec rm -f {} \;
         find . -name "*~" -exec rm -rf {} \;
         #find . -name "*latex.d*" -exec rm -rf {} \;

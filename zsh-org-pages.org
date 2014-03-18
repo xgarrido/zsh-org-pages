@@ -16,8 +16,10 @@ We first clean the list of publich project and then add the HTML & PDF exporters
 #+END_SRC
 We also globally define the current directory
 #+BEGIN_SRC emacs-lisp
+  (setq this-directory (substitute-in-file-name "$OGP_EXPORT_DIR/"))
   (setq doc-directory (concat this-directory "doc/"))
 #+END_SRC
+
 * HTML export
 ** Requirements
 #+BEGIN_SRC emacs-lisp
@@ -675,10 +677,21 @@ We also globally define the current directory
 
 #+NAME: vc-status
 #+BEGIN_SRC sh :results output :tangle no
-  if [ -d .git ]; then
-      log=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"\texttt{git} commit \href{https://github.com/xgarrido/master_npp_teaching/commit/%H}{\color{gray}\texttt{%h}} \$-\$ %ad")
-      echo "\renewcommand*{\PrelimText}{\textnormal{\small\color{gray}${log}}}"
+  (
+  cd $OGP_EXPORT_DIR
+  if [ -d .svn ]; then
+    status=$(LC_MESSAGES=en svn info)
+    rev=$(echo -e $status | sed -n 's/.*Revision: *\([^ ]*\).*/\1/p')
+    date=$(echo -e $status | sed -n 's/.*Last Changed Date: *\([^ ]*\).*/\1/p')
+    url=$(echo -e $status | sed -n 's/.*URL: *\([^ ]*\).*/\1/p')
+    log="\texttt{svn} revision \href{$url}{\color{gray}\texttt{${rev}}} \$-\$ ${date}"
   fi
+  if [ -d .git ]; then
+    url=$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')
+    log=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"\texttt{git} commit \href{$url/commit/%H}{\color{gray}\texttt{%h}} -- %ad")
+  fi
+  echo "\renewcommand*{\PrelimText}{\small\textnormal{\color{gray}${log}}}"
+  )
 #+END_SRC
 
 #+BEGIN_SRC latex :noweb yes
