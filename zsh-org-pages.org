@@ -28,9 +28,12 @@ We also globally define the current directory
 ** Building html postamble
 #+NAME: html-postamble
 #+BEGIN_SRC sh :tangle no :results output
-  if [ -d .git ]; then
-      LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"File under git version control - commit %h - %ad"
-  fi
+  (
+      cd $OGP_EXPORT_DIR
+      if [ -d .git ]; then
+          LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"File under git version control - commit %h - %ad"
+      fi
+  )
 #+END_SRC
 ** Embedded Javascript code
 *** TOC popup
