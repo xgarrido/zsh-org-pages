@@ -35,7 +35,8 @@ We also globally define the current directory
   (
       cd $OGP_EXPORT_DIR
       if [ -d .git ]; then
-          LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"File under git version control - commit %h - %ad"
+          url=$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')
+          LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'File under git version control - commit <a href=\"url/commit/%H\">%h</a> - %ad' | sed "s#url#${url}#"
       fi
   )
 #+END_SRC
