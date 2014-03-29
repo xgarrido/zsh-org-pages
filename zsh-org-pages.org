@@ -206,12 +206,11 @@ We also globally define the current directory
       width: 800px;
       margin: 0 auto;
       padding: 50px;
-      color: #777777;
-      font-family: 'Open Sans';
-      font-size: 10pt;
-      font-weight: 400;
-      /*font: 14px/1.5 Lato, sans-serif;
-      font-weight: 300;*/
+      color: #555555;
+      /*font-family: 'Open Sans';
+      font-size: 10pt;*/
+      font: 14px/1.5 Lato, sans-serif;
+      font-weight: 300;
   }
 #+END_SRC
 
