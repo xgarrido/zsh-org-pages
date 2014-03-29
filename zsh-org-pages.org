@@ -25,6 +25,10 @@ We also globally define the current directory
 #+BEGIN_SRC emacs-lisp
   (require 'ox-html)
 #+END_SRC
+** Use unicode for checkbox
+#+BEGIN_SRC emacs-lisp
+  (setq org-html-checkbox-type "unicode")
+#+END_SRC
 ** Building html postamble
 #+NAME: html-postamble
 #+BEGIN_SRC sh :tangle no :results output
@@ -691,7 +695,7 @@ We also globally define the current directory
   fi
   if [ -d .git ]; then
     url=$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')
-    log=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"\texttt{git} commit \href{$url/commit/%H}{\color{gray}\texttt{%h}} -- %ad")
+    log=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"\texttt{git} commit \href{$url/commit/%H}{\color{gray}\texttt{%h}} - %ad")
   fi
   echo "\renewcommand*{\PrelimText}{\small\textnormal{\color{gray}${log}}}"
   )
