@@ -173,7 +173,7 @@ We also globally define the current directory
   (defun html::remove-toc-footnote (contents backend info)
     (when (eq backend 'html)
       (replace-regexp-in-string "Table of Contents" ""
-      (replace-regexp-in-string "Footnotes:" "Notes"
+      (replace-regexp-in-string "Footnotes:" ""
       (replace-regexp-in-string "<body>" "<body onload=\"displayTOC()\"><div id=\"toc\"></div>" contents)
       ))))
   (add-to-list 'org-export-filter-final-output-functions 'html::remove-toc-footnote)
@@ -818,6 +818,13 @@ environment into figure
   (add-to-list 'org-export-filter-table-functions 'latex::multicolumn-figure)
 #+END_SRC
 
+**** Change =.org= extension to =.pdf=
+#+BEGIN_SRC emacs-lisp
+  (defun latex::filter-link (contents backend info)
+    (when (org-export-derived-backend-p backend 'latex)
+      (replace-regexp-in-string ".org" ".pdf" contents)))
+  (add-to-list 'org-export-filter-link-functions 'latex::filter-link)
+#+END_SRC
 ** Project definition
 #+BEGIN_SRC emacs-lisp
   (add-to-list
@@ -828,6 +835,21 @@ environment into figure
      :publishing-directory ,(expand-file-name "pdf" doc-directory)
      :publishing-function org-latex-publish-to-pdf
      ;;:exclude ""
+     :recursive nil
+     :section-numbers 2
+     :with-toc        t
+     :latex-class "default-class"
+     :latex-header-extra ""
+     ))
+  (add-to-list
+   'org-publish-project-alist
+   `("pdf-documentation-recursive"
+     :base-directory ,this-directory
+     :base-extension "org"
+     :publishing-directory ,(expand-file-name "pdf" doc-directory)
+     :publishing-function org-latex-publish-to-pdf
+     ;;:exclude ""
+     :recursive t
      :section-numbers 2
      :with-toc        t
      :latex-class "default-class"
@@ -855,5 +877,9 @@ environment into figure
   (defun org-publish-pdf ()
     (progn
       (org-publish-project "pdf-documentation" 'force)
+      ))
+  (defun org-publish-pdf-recursive ()
+    (progn
+      (org-publish-project "pdf-documentation-recursive" 'force)
       ))
 #+END_SRC
