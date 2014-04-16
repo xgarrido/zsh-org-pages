@@ -33,12 +33,12 @@ We also globally define the current directory
 #+END_SRC
 ** Building html postamble
 #+NAME: html-postamble
-#+BEGIN_SRC sh :tangle no :results output
+#+BEGIN_SRC sh :results output :tangle no
   (
       cd $OGP_EXPORT_DIR
       if [ -d .git ]; then
-          url=$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')
-          LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'File under git version control - commit <a href=\"url/commit/%H\">%h</a> - %ad' | sed "s#url#${url}#"
+          LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'File under git version control - commit <a href=\"url/commit/%H\">%h</a> - %ad' \
+              | sed "s#url#"$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')"#"
       fi
   )
 #+END_SRC
@@ -146,8 +146,8 @@ We also globally define the current directory
      :with-toc        2
      :time-stamp-file nil
      :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\">
-                 <link rel=\"stylesheet\" href=\"css/org-pygments.css\">
-                 <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\">"
+                   <link rel=\"stylesheet\" href=\"css/org-pygments.css\">
+                   <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\">"
      :html-preamble ""
      :html-postamble "<<html-postamble()>>"))
   #+END_SRC
