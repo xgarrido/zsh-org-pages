@@ -130,10 +130,12 @@ We also globally define the current directory
      :with-toc        2
      :time-stamp-file nil
      :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\">
-                 <link rel=\"stylesheet\" href=\"css/org-pygments.css\">
-                 <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\">"
+                   <link rel=\"stylesheet\" href=\"css/org-pygments.css\">
+                   <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\">"
      :html-preamble ""
-     :html-postamble "<<html-postamble()>>")
+     :html-postamble "<<html-postamble()>>"))
+  (add-to-list
+   'org-publish-project-alist
    `("html-documentation-recursive"
      :base-directory ,this-directory
      :base-extension "org"
