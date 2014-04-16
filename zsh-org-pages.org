@@ -18,6 +18,8 @@ We also globally define the current directory
 #+BEGIN_SRC emacs-lisp
   (setq this-directory (substitute-in-file-name "$OGP_EXPORT_DIR/"))
   (setq doc-directory (concat this-directory "doc/"))
+  (setq base-name (file-name-nondirectory (directory-file-name this-directory)))
+  (setq org-publish-timestamp-directory (concat "/tmp/org-timestamps/" base-name "/"))
 #+END_SRC
 
 * HTML export
