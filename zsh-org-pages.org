@@ -210,10 +210,10 @@ We also globally define the current directory
       margin: 0 auto;
       padding: 50px;
       color: #555555;
-      /*font-family: 'Open Sans';
-      font-size: 10pt;*/
-      font: 14px/1.5 Lato, sans-serif;
-      font-weight: 300;
+      font-family: 'Open Sans';
+      font-size: 10pt;
+      /*font: 14px/1.5 Lato, sans-serif;
+      font-weight: 300;*/
   }
 #+END_SRC
 
@@ -254,15 +254,15 @@ We also globally define the current directory
 ***** Link
 #+BEGIN_SRC css
   a {
-      /*color: #67ad00;*/
-      color: #3399cc;
+      color: #67ad00;
+      /*color: #3399cc;*/
       font-weight:400;
       text-decoration:none;
   }
 
   a:hover {
-      /*color: #7fd600;*/
-      color: #006699;
+      color: #7fd600;
+      /*color: #006699;*/
   }
 
   a small {
