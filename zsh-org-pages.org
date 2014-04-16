@@ -696,8 +696,7 @@ We also globally define the current directory
     date=$(echo -e $status | sed -n 's/.*Last Changed Date: *\([^ ]*\).*/\1/p')
     url=$(echo -e $status | sed -n 's/.*URL: *\([^ ]*\).*/\1/p')
     log="\texttt{svn} revision \href{$url}{\color{gray}\texttt{${rev}}} \$-\$ ${date}"
-  fi
-  if [ -d .git ]; then
+  else
     url=$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')
     log=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"\texttt{git} commit \href{$url/commit/%H}{\color{gray}\texttt{%h}} - %ad")
   fi
