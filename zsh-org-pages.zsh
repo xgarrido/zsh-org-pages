@@ -195,10 +195,11 @@ function org-pages ()
 	find doc -name *.*~ -exec rm -f {} \;
 	(cd doc/html && tar czvf /tmp/org-publish.tar.gz .)
         rm -rf doc
+        current_branch_name=$(git branch | grep '*' | awk '{print $2}')
 	git checkout gh-pages
 	tar xzvf /tmp/org-publish.tar.gz
 	if [ -n "`git status --porcelain`" ]; then git commit -am "update doc" && git push; fi
-	git checkout master
+	git checkout ${current_branch_name}
     fi
 
     unset emacs_base_cmd emacs_cmd
