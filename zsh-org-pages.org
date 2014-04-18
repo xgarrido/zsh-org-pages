@@ -822,7 +822,7 @@ environment into figure
 #+BEGIN_SRC emacs-lisp
   (defun latex::filter-link (contents backend info)
     (when (org-export-derived-backend-p backend 'latex)
-      (replace-regexp-in-string ".org" ".pdf" contents)))
+      (replace-regexp-in-string "\\\\.org" ".pdf" contents)))
   (add-to-list 'org-export-filter-link-functions 'latex::filter-link)
 #+END_SRC
 ** Project definition
