@@ -14,13 +14,13 @@ function org-pages ()
 
     local append_list_of_options_arg
     local append_list_of_cmd_arg
-    local generate_pdf=0
-    local generate_html=1
-    local clean=0
-    local generate=0
-    local publish=0
-    local recursive=0
-    local keep_tmp_files=0
+    local generate_pdf=false
+    local generate_html=true
+    local clean=false
+    local generate=false
+    local publish=false
+    local recursive=false
+    local keep_tmp_files=false
     local generate_floating_footnote=true
     while [ -n "$1" ]; do
         local token="$1"
@@ -35,30 +35,30 @@ function org-pages ()
             elif [ "${opt}" = "-v" -o "${opt}" = "--verbose" ]; then
                 pkgtools__msg_using_verbose
             elif [ "${opt}" = "--recursive" ]; then
-                recursive=1
+                recursive=true
             elif [ "${opt}" = "--pdf" ]; then
-                generate_pdf=1
-                generate_html=0
+                generate_pdf=true
+                generate_html=false
             elif [ "${opt}" = "--html" ]; then
-                generate_html=1
-                generate_pdf=0
-            elif [ "${opt}" = "--floating-footnote" ]; then
-                generate_floating_footnote=true
+                generate_html=true
+                generate_pdf=false
+            elif [ "${opt}" = "--no-floating-footnote" ]; then
+                generate_floating_footnote=false
             elif [ "${opt}" = "--keep-tmp-files" ]; then
-                keep_tmp_files=1
+                keep_tmp_files=true
             else
                 append_list_of_options_arg+="${opt} "
             fi
         else
             if [ "${token}" = "clean" ]; then
-                clean=1
+                clean=true
             elif [ "${token}" = "generate" ]; then
-                generate=1
+                generate=true
             elif [ "${token}" = "publish" ]; then
-                publish=1
-                generate=1
-                generate_html=1
-                generate_pdf=0
+                publish=true
+                generate=true
+                generate_html=true
+                generate_pdf=false
             elif [ "x${token}" != "x" ]; then
                 append_list_of_cmd_arg+="${token} "
             fi
@@ -76,13 +76,13 @@ function org-pages ()
     pkgtools__msg_devel "append_list_of_cmd_arg=${append_list_of_cmd_arg}"
     pkgtools__msg_devel "append_list_of_options_arg=${append_list_of_options_arg}"
 
-    if [ ${clean} -eq 1 ]; then
+    if ${clean}; then
         find . -name doc -exec rm -rf {} \;
         __pkgtools__at_function_exit
         return 0
     fi
 
-    if [ ${generate} -eq 0 ]; then
+    if ! ${generate}; then
         pkgtools__msg_error "No output file will be generated !"
         __pkgtools__at_function_exit
         return 1
@@ -96,7 +96,7 @@ function org-pages ()
 
     pkgtools__msg_notice "Export successfully done"
 
-    if [ ${publish} -eq 1 ]; then
+    if ${publish}; then
         pkgtools__msg_notice "Publishing to the web"
 	find doc -name *.*~ -exec rm -f {} \;
 	(cd doc/html && tar czvf /tmp/org-publish.tar.gz .)
@@ -116,7 +116,7 @@ function org-pages ()
 function op::prepare_process()
 {
     __pkgtools__at_function_enter op::prepare_process
-    if [ ${generate_html} -eq 1 ]; then
+    if ${generate_html}; then
         pkgtools__msg_debug "Parsing org files..."
         for file in $(find . -name "*.org"); do
             \cp $file $file.save
@@ -153,14 +153,14 @@ function op::process()
         done
     else
         emacs_cmd+=${emacs_base_cmd}
-        if [ ${generate_html} -eq 1 ]; then
+        if ${generate_html}; then
             pkgtools__msg_notice "Exporting pages to html..."
-            if [ ${recursive} -eq 1 ]; then
+            if ${recursive}; then
                 emacs_cmd+="--funcall org-publish-html-recursive "
             else
                 emacs_cmd+="--funcall org-publish-html "
             fi
-        elif [ ${generate_pdf} -eq 1 ]; then
+        elif ${generate_pdf}; then
             pkgtools__msg_notice "Exporting pages to pdf (through latex)..."
             emacs_cmd="TEXINPUTS=\""$PWD"/doc/pdf:\$TEXINPUTS\" "
             emacs_cmd+=${emacs_base_cmd}" "
@@ -190,7 +190,7 @@ function op::process()
 function op::post_process()
 {
     __pkgtools__at_function_enter op::post_process
-    if [ ${generate_html} -eq 1 ]; then
+    if ${generate_html}; then
         pkgtools__msg_notice "Change directory hierarchy for css files"
         for file in $(find doc/html -name "*.html"); do
             count="${file//[^\/]}"
@@ -246,7 +246,7 @@ function op::post_process()
         fi
     fi
 
-    if [ ${keep_tmp_files} -eq 0 ]; then
+    if ! ${keep_tmp_files}; then
         pkgtools__msg_debug "Remove useless files"
         find . -regex ".*\.\(pyg\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|tex\)" \
             -not -path '*doc*' -not -path '*figures*' -exec rm -f {} \;
