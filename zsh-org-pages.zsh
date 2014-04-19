@@ -129,7 +129,7 @@ function op::prepare_process()
 
 function op::process()
 {
-    __pkgtools__at_function_enter process
+    __pkgtools__at_function_enter op::process
     export OGP_EXPORT_DIR=$PWD
 
     local ogp_path="${ADOTDIR}/repos/https-COLON--SLASH--SLASH-github.com-SLASH-xgarrido-SLASH-zsh-org-pages.git"
