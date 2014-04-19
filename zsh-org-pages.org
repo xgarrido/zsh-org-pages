@@ -257,14 +257,12 @@ We also globally define the current directory
 #+BEGIN_SRC css
   a {
       color: #67ad00;
-      /*color: #3399cc;*/
       font-weight:400;
       text-decoration:none;
   }
 
   a:hover {
       color: #7fd600;
-      /*color: #006699;*/
   }
 
   a small {
@@ -660,7 +658,7 @@ We also globally define the current directory
   .org-variable-name,
   .org-constant,
   .org-function-name {
-      color: #67ad00; /* #69B7F0;*/
+      color: #67ad00;
   }
 
   .org-comment,

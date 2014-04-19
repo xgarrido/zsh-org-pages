@@ -46,6 +46,8 @@ function org-pages ()
                 generate_floating_footnote=false
             elif [ "${opt}" = "--keep-tmp-files" ]; then
                 keep_tmp_files=true
+            elif [[ ${opt} == --color* ]]; then
+                color_scheme=$(echo ${opt} | sed 's/--color.*=//')
             else
                 append_list_of_options_arg+="${opt} "
             fi
@@ -66,13 +68,14 @@ function org-pages ()
         shift
     done
 
-    append_list_of_cmd_arg=$(echo ${append_list_of_cmd_arg} | sed 's/:/:\"/g')
-    append_list_of_options_arg=$(echo ${append_list_of_options_arg} | sed 's/=/=\"/g')
+    # append_list_of_cmd_arg=$(echo ${append_list_of_cmd_arg} | sed 's/:/:\"/g')
+    # append_list_of_options_arg=$(echo ${append_list_of_options_arg} | sed 's/=/=\"/g')
 
     pkgtools__msg_devel "generate=${generate}"
     pkgtools__msg_devel " |- pdf=${generate_pdf}"
     pkgtools__msg_devel " |- html=${generate_html}"
-    pkgtools__msg_devel "deploy=${deploy}"
+    pkgtools__msg_devel "publish=${publish}"
+    pkgtools__msg_devel "color scheme=${color_scheme}"
     pkgtools__msg_devel "append_list_of_cmd_arg=${append_list_of_cmd_arg}"
     pkgtools__msg_devel "append_list_of_options_arg=${append_list_of_options_arg}"
 
@@ -109,6 +112,13 @@ function org-pages ()
     fi
 
     unset generate_pdf generate_html
+    unset color_scheme
+    unset clean
+    unset generate
+    unset publish
+    unset recursive
+    unset keep_tmp_files
+    unset generate_floating_footnote
     __pkgtools__at_function_exit
     return 0
 }
@@ -201,11 +211,11 @@ function op::post_process()
             sed -i -e 's@href="css/@href="'${rel_path}'css/@g' $file
             sed -i \
                 -e 's@ding{192}@\(\\unicode{x2460}\\)@g' \
-	        -e 's@ding{193}@\(\\unicode{x2461}\\)@g' \
-	        -e 's@ding{194}@\(\\unicode{x2462}\\)@g' \
-	        -e 's@ding{195}@\(\\unicode{x2463}\\)@g' \
-	        -e 's@cmark@\(\\unicode{x2713}\\)@g' \
-	        -e 's@xmark@\(\\unicode{x2717}\\)@g' \
+                -e 's@ding{193}@\(\\unicode{x2461}\\)@g' \
+                -e 's@ding{194}@\(\\unicode{x2462}\\)@g' \
+                -e 's@ding{195}@\(\\unicode{x2463}\\)@g' \
+                -e 's@cmark@\(\\unicode{x2713}\\)@g' \
+                -e 's@xmark@\(\\unicode{x2717}\\)@g' \
                 $file
         done
         pkgtools__msg_notice "Exporting pdf figures"
@@ -245,6 +255,17 @@ function op::post_process()
                 unset IFS
             done
         fi
+
+        case ${color_scheme} in
+            blue)
+                pkgtools__msg_debug "Using blue colors"
+                sed -i -e 's/#67ad00/#3399cc/' doc/html/css/styles.css
+                sed -i -e 's/#7fd600/#006699/' doc/html/css/styles.css
+                sed -i -e 's/#67ad00/#69B7F0/' doc/html/css/org-pygments.css
+                ;;
+            *)
+                ;;
+        esac
     fi
 
     if ! ${keep_tmp_files}; then
