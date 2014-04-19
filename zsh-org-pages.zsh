@@ -231,12 +231,13 @@ function op::post_process()
             for file in $(find doc/html -name "*.html"); do
                 content=$(sed -n '/<div class=\"footdef\"/,/<\/div>/p' $file | sed 's/\\/\\\\/g' | \
                     awk 'BEGIN{j=0}{i=1;while (i<=NF) {line=line" "$i;if (match($i,"</div>")) {array[j]=line;j++;line=""} i++}}END{for (i=0;i<j;i++) print array[i]}')
+                sed -i -e '/<div class=\"footdef\"/,/<\/div>/d' $file
                 IFS=$'\n'
                 i=1
                 pkgtools__msg_debug "content=${content}"
                 for f in ${content}
                 do
-                    awk -v toto="$f" '/<sup><a id="fnr.'$i'"/{a++;}/<\/p>/&&a{$0=toto;a=0;}1' $file > $file.$i
+                    awk -v fn="$f" '/<sup><a id="fnr.'$i'"/{a++;}/<\/p>/&&a{$0=fn;a=0;}1' $file > $file.$i
                     mv $file.$i $file
                     let i=i+1
                 done
