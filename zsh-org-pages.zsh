@@ -21,6 +21,7 @@ function org-pages ()
     local publish=0
     local recursive=0
     local keep_tmp_files=0
+    local generate_floating_footnote=true
     while [ -n "$1" ]; do
         local token="$1"
         if [ "${token[0,1]}" = "-" ]; then
@@ -41,6 +42,8 @@ function org-pages ()
             elif [ "${opt}" = "--html" ]; then
                 generate_html=1
                 generate_pdf=0
+            elif [ "${opt}" = "--floating-footnote" ]; then
+                generate_floating_footnote=true
             elif [ "${opt}" = "--keep-tmp-files" ]; then
                 keep_tmp_files=1
             else
@@ -85,6 +88,34 @@ function org-pages ()
         return 1
     fi
 
+    pkgtools__msg_notice "Start export process..."
+
+    op::prepare_process
+    op::process
+    op::post_process
+
+    pkgtools__msg_notice "Export successfully done"
+
+    if [ ${publish} -eq 1 ]; then
+        pkgtools__msg_notice "Publishing to the web"
+	find doc -name *.*~ -exec rm -f {} \;
+	(cd doc/html && tar czvf /tmp/org-publish.tar.gz .)
+        rm -rf doc
+        current_branch_name=$(git branch | grep '*' | awk '{print $2}')
+	git checkout gh-pages
+	tar xzvf /tmp/org-publish.tar.gz
+	if [ -n "`git status --porcelain`" ]; then git commit -am "update doc" && git push; fi
+	git checkout ${current_branch_name}
+    fi
+
+    unset generate_pdf generate_html
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function op::prepare_process()
+{
+    __pkgtools__at_function_enter op::prepare_process
     if [ ${generate_html} -eq 1 ]; then
         pkgtools__msg_debug "Parsing org files..."
         for file in $(find . -name "*.org"); do
@@ -92,7 +123,13 @@ function org-pages ()
             sed -i -e "s/#+BEGIN_SRC latex/#+BEGIN_SRC latex :results drawer :exports results/g" $file
         done
     fi
+    __pkgtools__at_function_exit
+    return 0
+}
 
+function op::process()
+{
+    __pkgtools__at_function_enter process
     export OGP_EXPORT_DIR=$PWD
 
     local ogp_path="${ADOTDIR}/repos/https-COLON--SLASH--SLASH-github.com-SLASH-xgarrido-SLASH-zsh-org-pages.git"
@@ -144,6 +181,15 @@ function org-pages ()
         return 1
     fi
 
+    unset emacs_base_cmd emacs_cmd
+    unset ogp_path
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function op::post_process()
+{
+    __pkgtools__at_function_enter op::post_process
     if [ ${generate_html} -eq 1 ]; then
         pkgtools__msg_notice "Change directory hierarchy for css files"
         for file in $(find doc/html -name "*.html"); do
@@ -177,6 +223,26 @@ function org-pages ()
                 sed -i -e "s/#+BEGIN_SRC latex :results drawer :exports results/#+BEGIN_SRC latex/g" $file
             fi
         done
+
+        if ${generate_floating_footnote}; then
+            pkgtools__msg_notice "Generate floating footnotes"
+            pkgtools__msg_debug "Adding special CSS code"
+            sed -i -e "\$a.footdef{\nfont-size: 10px;\nright: 0;\nposition: absolute;\nwidth:180px;\n}" doc/html/css/styles.css
+            for file in $(find doc/html -name "*.html"); do
+                content=$(sed -n '/<div class=\"footdef\"/,/<\/div>/p' $file | sed 's/\\/\\\\/g' | \
+                    awk 'BEGIN{j=0}{i=1;while (i<=NF) {line=line" "$i;if (match($i,"</div>")) {array[j]=line;j++;line=""} i++}}END{for (i=0;i<j;i++) print array[i]}')
+                IFS=$'\n'
+                i=1
+                pkgtools__msg_debug "content=${content}"
+                for f in ${content}
+                do
+                    awk -v toto="$f" '/<sup><a id="fnr.'$i'"/{a++;}/<\/p>/&&a{$0=toto;a=0;}1' $file > $file.$i
+                    mv $file.$i $file
+                    let i=i+1
+                done
+                unset IFS
+            done
+        fi
     fi
 
     if [ ${keep_tmp_files} -eq 0 ]; then
@@ -187,24 +253,6 @@ function org-pages ()
         #find . -name "*latex.d*" -exec rm -rf {} \;
         rm -rf ./latex.d
     fi
-
-    pkgtools__msg_notice "Export successfully done"
-
-    if [ ${publish} -eq 1 ]; then
-        pkgtools__msg_notice "Publishing to the web"
-	find doc -name *.*~ -exec rm -f {} \;
-	(cd doc/html && tar czvf /tmp/org-publish.tar.gz .)
-        rm -rf doc
-        current_branch_name=$(git branch | grep '*' | awk '{print $2}')
-	git checkout gh-pages
-	tar xzvf /tmp/org-publish.tar.gz
-	if [ -n "`git status --porcelain`" ]; then git commit -am "update doc" && git push; fi
-	git checkout ${current_branch_name}
-    fi
-
-    unset emacs_base_cmd emacs_cmd
-    unset ogp_path
-    unset generate_pdf generate_html
     __pkgtools__at_function_exit
     return 0
 }
