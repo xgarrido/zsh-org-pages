@@ -234,10 +234,11 @@ function op::post_process()
                 sed -i -e '/<div class=\"footdef\"/,/<\/div>/d' $file
                 IFS=$'\n'
                 i=1
-                pkgtools__msg_debug "content=${content}"
-                for f in ${content}
+                pkgtools__msg_debug "footnote content=${content}"
+                for f in ${=content}
                 do
-                    awk -v fn="$f" '/<sup><a id="fnr.'$i'"/{a++;}/<\/p>/&&a{$0=fn;a=0;}1' $file > $file.$i
+                    pkgtools__msg_debug "footnote #$i=$f"
+                    awk -v fn=$f '/<sup><a id="fnr.'$i'"/{a++;}/<\/p>/&&a{$0=fn;a=0;}1' $file > $file.$i
                     mv $file.$i $file
                     let i=i+1
                 done
