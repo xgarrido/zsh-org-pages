@@ -162,6 +162,11 @@ function op::process()
             emacs_cmd=""
         done
     else
+        if [ ! -f README.org ]; then
+            pkgtools__msg_error "Missing README.org file !"
+            __pkgtools__at_function_exit
+            return 1
+        fi
         emacs_cmd+=${emacs_base_cmd}
         if ${generate_html}; then
             pkgtools__msg_notice "Exporting pages to html..."
