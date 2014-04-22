@@ -135,21 +135,27 @@ function op::prepare_process()
                          BEGIN{j=-1}
                          {
 			     if ($1 == "*") {
-				     j++;
-				     heading[j]=substr($0,3);
-                                     print heading[j]
+				     j++
+				     heading[j]=substr($0,3)
 				 } else {
-				     text[j]=text[j]"\n"substr($0,1);
+				     text[j]=text[j]"\n"substr($0,1)
 				 }
 			 }
                          END{
-			     for (i in heading) {
-                                     current_filename=current;
-                                     sub(".org", "_"i".split.org", current_filename);
-                                     print "#+TITLE:", heading[i] > current_filename;
-                                     print "#+OPTIONS: toc:nil"  >> current_filename;
-				     print text[i] >> current_filename;
+                             print "#+HTML: <div id=\"text-table-of-contents\">" > "toc.org"
+                             for (i in heading) {
+                                     current_filename=current
+                                     sub(".org", "_"i".org", current_filename)
+                                     printf("- [[./%s][%s]]\n", current_filename, heading[i]) >> "toc.org"
+                                     sub(".org", ".split.org", current_filename)
+                                     print "#+TITLE:", heading[i] > current_filename
+                                     print "#+OPTIONS: toc:nil"  >> current_filename
+                                     print "#+HTML: <div style=\"display:none;\">" >> current_filename
+                                     print "#+INCLUDE: toc.org"  >> current_filename
+                                     print "#+HTML: </div>" >> current_filename
+				     print text[i] >> current_filename
 				 }
+                             print "#+HTML: </div>" >> "toc.org"
 			 }'
                 mv $file $file.noexport
             fi
@@ -249,7 +255,9 @@ function op::post_process()
                 -e 's@xmark@\(\\unicode{x2717}\\)@g' \
                 $file
             if [[ "$file" = *".split."* ]]; then
-                mv $file ${file/.split/}
+                \mv $file ${file/.split/}
+            elif [[ "$file" = *"toc."* ]];then
+                \rm  -f $file
             fi
         done
         pkgtools__msg_notice "Exporting pdf figures"
@@ -268,6 +276,8 @@ function op::post_process()
             fi
             if [[ "$file" = *".split"* ]]; then
                 \rm -f $file
+            elif [[ "$file" = *"toc."* ]];then
+                \rm  -f $file
             fi
         done
         for file in $(find . -name "*.org.noexport"); do
