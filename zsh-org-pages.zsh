@@ -128,30 +128,32 @@ function op::prepare_process()
     __pkgtools__at_function_enter op::prepare_process
     if ${generate_html}; then
         pkgtools__msg_debug "Parsing org files..."
-        # for file in $(find . -name "*.org"); do
-        #     if [ $(grep -e "#+OPTIONS.*split:t" -c $file) -eq 1 ]; then
-        #         pkgtools__msg_notice "Split file $file"
-        #         cat $file | sed 's/\\/\\\\/g' | \
-        #             awk -v current=$file '
-        #                  BEGIN{j=-1}
-        #                  {
-	# 		     if ($1 == "*") {
-	# 			     j++;
-	# 			     heading[j]=$0;
-	# 			 } else {
-	# 			     text[j]=text[j]"\n"$0
-	# 			 }
-	# 		 }
-        #                  END{
-	# 		     for (i in heading) {
-        #                              current_filename=current
-        #                              sub(".org", "_"i".split.org", current_filename);
-        #                              print heading[i] > current_filename;
-	# 			     print text[i]   >> current_filename;
-	# 			 }
-	# 		 }'
-        #     fi
-        # done
+        for file in $(find . -name "*.org"); do
+            if [ $(grep -e "#+OPTIONS.*split:t" -c $file) -eq 1 ]; then
+                pkgtools__msg_notice "Split file $file"
+                cat $file | awk -v current=$file '
+                         BEGIN{j=-1}
+                         {
+			     if ($1 == "*") {
+				     j++;
+				     heading[j]=substr($0,3);
+                                     print heading[j]
+				 } else {
+				     text[j]=text[j]"\n"substr($0,1);
+				 }
+			 }
+                         END{
+			     for (i in heading) {
+                                     current_filename=current;
+                                     sub(".org", "_"i".split.org", current_filename);
+                                     print "#+TITLE:", heading[i] > current_filename;
+                                     print "#+OPTIONS: toc:nil"  >> current_filename;
+				     print text[i] >> current_filename;
+				 }
+			 }'
+                mv $file $file.noexport
+            fi
+        done
         for file in $(find . -name "*.org"); do
             \cp $file $file.save
             sed -i -e "s/#+BEGIN_SRC latex/#+BEGIN_SRC latex :results drawer :exports results/g" $file
@@ -246,9 +248,9 @@ function op::post_process()
                 -e 's@cmark@\(\\unicode{x2713}\\)@g' \
                 -e 's@xmark@\(\\unicode{x2717}\\)@g' \
                 $file
-            # if [[ "$file" = *".split."* ]]; then
-            #     mv $file ${file/.split/}
-            # fi
+            if [[ "$file" = *".split."* ]]; then
+                mv $file ${file/.split/}
+            fi
         done
         pkgtools__msg_notice "Exporting pdf figures"
         mkdir -p doc/html/figures
@@ -264,9 +266,12 @@ function op::post_process()
                 \mv $file.save $file
                 sed -i -e "s/#+BEGIN_SRC latex :results drawer :exports results/#+BEGIN_SRC latex/g" $file
             fi
-            # if [[ "$file" = *".split"* ]]; then
-            #     rm -f $file
-            # fi
+            if [[ "$file" = *".split"* ]]; then
+                \rm -f $file
+            fi
+        done
+        for file in $(find . -name "*.org.noexport"); do
+            \mv $file ${file/.noexport/}
         done
 
         if ${generate_floating_footnote}; then
