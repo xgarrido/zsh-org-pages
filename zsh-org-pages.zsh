@@ -135,10 +135,15 @@ function op::prepare_process()
                          BEGIN{j=-1}
                          {
 			     if ($1 == "*") {
-				     j++
-				     heading[j]=substr($0,3)
+                                     if (match($0, "COMMENT")) comment=1
+                                     else {
+                                          comment=0
+				          j++
+				          heading[j]=substr($0,3)
+                                     }
 				 } else {
-				     text[j]=text[j]"\n"substr($0,1)
+                                     if (comment == 0)
+				          text[j]=text[j]"\n"substr($0,1)
 				 }
 			 }
                          END{
