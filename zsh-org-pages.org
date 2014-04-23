@@ -80,7 +80,7 @@ We also globally define the current directory
         TeX: {
             extensions: [\"cancel.js\"],
             Macros: {
-                vv: [\"{\\\\vec #1}\",1],
+                vv: [\"{\\\\vec{#1}}\",1],
                 Upsigma: \"{\\\\Sigma}\",
                 Updelta: \"{\\\\Delta}\",
                 varoiint: \"{\\\\iint}\",
