@@ -11,7 +11,7 @@ _org-pages () {
     '--html[export to html]'                                                        \
     '--no-floating-footnote[place footnotes at the bottom of the page (only html)]' \
     '--keep-tmp-files[keep temporary files]'                                        \
-  '--color=[set color scheme (only html)]:colors:->colors'                          \
+    '--color=[set color scheme (only html)]:colors:->colors'                        \
     '*: :->args'                                                                    \
     && ret=0
   case $state in
