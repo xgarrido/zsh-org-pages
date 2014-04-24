@@ -22,6 +22,7 @@ function org-pages ()
     local recursive=false
     local keep_tmp_files=false
     local generate_floating_footnote=true
+    local color_scheme="green"
     while [ -n "$1" ]; do
         local token="$1"
         if [ "${token[0,1]}" = "-" ]; then
@@ -311,12 +312,32 @@ function op::post_process()
             done
         fi
 
+        pkgtools__msg_debug "Using ${color_scheme} colors"
         case ${color_scheme} in
             blue)
-                pkgtools__msg_debug "Using blue colors"
                 sed -i -e 's/#67ad00/#3399cc/' doc/html/css/styles.css
                 sed -i -e 's/#7fd600/#006699/' doc/html/css/styles.css
                 sed -i -e 's/#67ad00/#69B7F0/' doc/html/css/org-pygments.css
+                ;;
+            yellow)
+                sed -i -e 's/#67ad00/#D5BC23/' doc/html/css/styles.css
+                sed -i -e 's/#7fd600/#C4A900/' doc/html/css/styles.css
+                ;;
+            orange)
+                sed -i -e 's/#67ad00/#FF9927/' doc/html/css/styles.css
+                sed -i -e 's/#7fd600/#D56D23/' doc/html/css/styles.css
+                ;;
+            red)
+                sed -i -e 's/#67ad00/#FF2D27/' doc/html/css/styles.css
+                sed -i -e 's/#7fd600/#FF4B46/' doc/html/css/styles.css
+                ;;
+            magenta)
+                sed -i -e 's/#67ad00/#E82473/' doc/html/css/styles.css
+                sed -i -e 's/#7fd600/#AB0045/' doc/html/css/styles.css
+                ;;
+            violet)
+                sed -i -e 's/#67ad00/#B81FC8/' doc/html/css/styles.css
+                sed -i -e 's/#7fd600/#740087/' doc/html/css/styles.css
                 ;;
             *)
                 ;;

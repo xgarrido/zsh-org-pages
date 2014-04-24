@@ -16,7 +16,7 @@ _org-pages () {
     && ret=0
   case $state in
     (colors)
-      local colors; colors=(blue green)
+      local colors; colors=(blue green yellow orange red magenta violet)
       _describe -t colors 'Color scheme' colors && ret=0
       ;;
     (args)
