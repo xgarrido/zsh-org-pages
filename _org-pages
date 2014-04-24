@@ -1,0 +1,40 @@
+#compdef org-pages
+
+_org-pages () {
+  _arguments                                                                        \
+    {-h,--help}'[produce help message]'                                             \
+    {-d,--debug}'[produce debug logging]'                                           \
+    {-v,--verbose}'[produce verbose logging]'                                       \
+    {-D,--devel}'[produce devel logging]'                                           \
+    '--recursive[export recursively inside directories]'                            \
+    '--pdf[export to pdf (through LaTeX)]'                                          \
+    '--html[export to html]'                                                        \
+    '--no-floating-footnote[place footnotes at the bottom of the page (only html)]' \
+    '--keep-tmp-files[keep temporary files]'                                        \
+  '--color=[set color scheme (only html)]:colors:->colors'                          \
+    '*: :->args'                                                                    \
+    && ret=0
+  case $state in
+    (colors)
+      local _op_colors; _op_color=(blue green)
+      _describe -t colors 'Color scheme' _op_colors && ret=0
+      ;;
+    (args)
+      local commands; commands=(
+        'clean:clean the current directory'
+        'generate:generate a local version of the files'
+        'publish:publish files to internet'
+      )
+      _describe -t commands 'command' commands && ret=0
+      ;;
+  esac
+}
+
+_org-pages
+
+# Local Variables:
+# mode: Shell-Script
+# sh-indentation: 2
+# indent-tabs-mode: nil
+# sh-basic-offset: 2
+# End:
