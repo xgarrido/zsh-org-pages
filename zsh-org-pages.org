@@ -720,7 +720,7 @@ We also globally define the current directory
   <<vc-status()>>
 #+END_SRC
 
-*** Notes
+*** Deault class style
 :PROPERTIES:
 :MKDIRP:   yes
 :TANGLE:   (concat this-directory "doc/pdf/default-class.sty")
