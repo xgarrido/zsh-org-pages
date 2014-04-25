@@ -723,12 +723,12 @@ We also globally define the current directory
 *** Deault class style
 :PROPERTIES:
 :MKDIRP:   yes
-:TANGLE:   (concat this-directory "doc/pdf/default-class.sty")
+:TANGLE:   (concat this-directory "doc/pdf/default-class-style.sty")
 :END:
 **** Basics
 #+BEGIN_SRC latex
   \NeedsTeXFormat{LaTeX2e}
-  \ProvidesPackage{default-class}[2014/10/25 v0.01 Bundling a default LaTeX class for org-pages]
+  \ProvidesPackage{default-class-style}[2014/10/25 v0.01 Bundling a default LaTeX class for org-pages]
 #+END_SRC
 **** Package requirements
 ***** =hyperref= package
@@ -736,9 +736,9 @@ We also globally define the current directory
   \hypersetup{
     xetex,
     colorlinks=true,
-    urlcolor=blue,
-    filecolor=blue,
-    linkcolor=blue,
+    urlcolor=default,
+    filecolor=default,
+    linkcolor=default,
     plainpages=false,
     pdfpagelabels,
     bookmarksnumbered,
@@ -756,11 +756,12 @@ We also globally define the current directory
 #+END_SRC
 **** Colors
 #+BEGIN_SRC latex
-  \definecolor{red}{RGB}{221,42,43}
-  \definecolor{green}{RGB}{105,182,40}
-  \definecolor{blue}{RGB}{0,51,153}
-  \definecolor{orange}{RGB}{192,128,64}
+  \definecolor{red}{HTML}{DD2A2B}
+  \definecolor{green}{HTML}{69B628}
+  \definecolor{blue}{HTML}{003399}
+  \definecolor{orange}{HTML}{C08040}
   \definecolor{gray}{gray}{0.7}
+  \colorlet{default}{blue}
 #+END_SRC
 **** Minted lexer
 #+BEGIN_SRC latex
@@ -776,7 +777,7 @@ We also globally define the current directory
 #+BEGIN_SRC latex
   \newcommand{\HRule}{\rule{\linewidth}{1mm}}
   \renewcommand*{\maketitle}{%
-    {\color{blue}
+    {\color{default}
     \pagestyle{empty}
     \vspace*{\stretch{2}}
     \begin{flushright}
@@ -816,7 +817,7 @@ We also globally define the current directory
 ***** Change section colors
 #+BEGIN_SRC latex
   \RequirePackage{titlesec}
-  \titleformat*{\section}{\usekomafont{sectioning}\usekomafont{section}\color{blue}}
+  \titleformat*{\section}{\usekomafont{sectioning}\usekomafont{section}\color{default}}
 #+END_SRC
 ***** SN@ilWare logo
 #+BEGIN_SRC latex
@@ -877,7 +878,7 @@ Only include one default package and remove all the crapppy stuff included by
                '("default-class"
                  "\\documentclass{scrartcl}
                   [PACKAGES]
-                  \\usepackage{supernemo-note-style}
+                  \\usepackage{default-class-style}
                   \\usepackage{vc-style}
                   [NO-DEFAULT-PACKAGES]"
                  ("\\section{%s}" . "\\section*{%s}")
