@@ -60,9 +60,19 @@ We also globally define the current directory
 
 #+BEGIN_SRC emacs-lisp :noweb yes
   (setq org-html-scripts (concat org-html-scripts "<script type=\"text/javascript\">
-  <<toc.js>>
-  </script>
-  "))
+    <<toc.js>>
+    <<rlc.js>>
+    </script>
+    "))
+#+END_SRC
+*** Random link color                                               :notused:
+#+NAME: rlc.js
+#+BEGIN_SRC js :results output :tangle no
+  function randomLinkColor() {
+      var colors = ['#ff0000', '#00ff00', '#0000ff'];
+      var random_color = colors[Math.floor(Math.random() * colors.length)];
+      document.getElementById('title').style.color = random_color;
+  }
 #+END_SRC
 ** Mathjax configuration
 #+BEGIN_SRC emacs-lisp :noweb yes
@@ -174,7 +184,7 @@ We also globally define the current directory
     (when (eq backend 'html)
       (replace-regexp-in-string "Table of Contents" ""
       (replace-regexp-in-string "Footnotes:" ""
-      (replace-regexp-in-string "<body>" "<body onload=\"displayTOC()\"><div id=\"toc\"></div>" contents)
+      (replace-regexp-in-string "<body>" "<body onload=\"displayTOC();\"><div id=\"toc\"></div>" contents)
       ))))
   (add-to-list 'org-export-filter-final-output-functions 'html::remove-toc-footnote)
 #+END_SRC
