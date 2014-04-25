@@ -81,7 +81,9 @@ function org-pages ()
     pkgtools__msg_devel "append_list_of_options_arg=${append_list_of_options_arg}"
 
     if ${clean}; then
-        find . -name doc -exec rm -rf {} \;
+        if [ -d doc ]; then
+            rm -rf doc
+        fi
         __pkgtools__at_function_exit
         return 0
     fi
