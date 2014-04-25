@@ -720,6 +720,112 @@ We also globally define the current directory
   <<vc-status()>>
 #+END_SRC
 
+*** Notes
+:PROPERTIES:
+:MKDIRP:   yes
+:TANGLE:   (concat this-directory "doc/pdf/default-class.sty")
+:END:
+**** Basics
+#+BEGIN_SRC latex
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{default-class}[2014/10/25 v0.01 Bundling a default LaTeX class for org-pages]
+#+END_SRC
+**** Package requirements
+***** =hyperref= package
+#+BEGIN_SRC latex
+  \hypersetup{
+    xetex,
+    colorlinks=true,
+    urlcolor=blue,
+    filecolor=blue,
+    linkcolor=blue,
+    plainpages=false,
+    pdfpagelabels,
+    bookmarksnumbered,
+    pagebackref
+  }
+#+END_SRC
+**** Fonts
+#+BEGIN_SRC latex
+  \setmonofont[Scale=0.9]{Inconsolata}
+  \setsansfont[Mapping=tex-text]{Myriad Pro}
+  \setromanfont[Mapping=tex-text, Numbers=OldStyle]{Minion Pro}
+  \RequirePackage[eulergreek,EULERGREEK]{sansmath}
+  \RequirePackage{upgreek}
+  \sansmath
+#+END_SRC
+**** Colors
+#+BEGIN_SRC latex
+  \definecolor{red}{RGB}{221,42,43}
+  \definecolor{green}{RGB}{105,182,40}
+  \definecolor{blue}{RGB}{0,51,153}
+  \definecolor{orange}{RGB}{192,128,64}
+  \definecolor{gray}{gray}{0.7}
+#+END_SRC
+**** Minted lexer
+#+BEGIN_SRC latex
+  \usemintedstyle{snemo}
+#+END_SRC
+**** Layout
+***** Geometry
+#+BEGIN_SRC latex
+  \RequirePackage{a4wide}
+  \linespread{1.02}
+#+END_SRC
+***** Cover page
+#+BEGIN_SRC latex
+  \newcommand{\HRule}{\rule{\linewidth}{1mm}}
+  \renewcommand*{\maketitle}{%
+    {\color{blue}
+    \pagestyle{empty}
+    \vspace*{\stretch{2}}
+    \begin{flushright}
+      \HRule
+      \\[9mm]
+        {
+          \bf\sffamily \Huge \@title
+        }
+        \\[5mm]
+        \HRule
+        \\[9mm]
+    \end{flushright}}
+  }
+#+END_SRC
+***** Footnote
+#+BEGIN_SRC latex
+  \RequirePackage{fancyhdr}
+  \renewcommand{\footnoterule}{%
+    \vskip-\footruleskip\vskip-\footrulewidth%
+    \vspace{10pt}\hrule width\columnwidth height0pt \vspace{5pt} \color{gray}}
+  \renewcommand{\thefootnote}{\alph{footnote}}
+  \interfootnotelinepenalty=10000
+#+END_SRC
+***** Caption
+#+BEGIN_SRC latex
+  \RequirePackage[margin=20pt,labelfont=bf,font=footnotesize,labelsep=endash]{caption}
+#+END_SRC
+**** Appearance tweaks
+***** Remove TOC dots
+#+BEGIN_SRC latex
+  \renewcommand\@dotsep{10000}
+#+END_SRC
+***** Change TOC name
+#+BEGIN_SRC latex
+\renewcommand{\contentsname}{}
+#+END_SRC
+***** Change section colors
+#+BEGIN_SRC latex
+  \RequirePackage{titlesec}
+  \titleformat*{\section}{\usekomafont{sectioning}\usekomafont{section}\color{blue}}
+#+END_SRC
+***** SN@ilWare logo
+#+BEGIN_SRC latex
+  \RequirePackage{xspace}
+  \def\Snailware{\mbox{$\overline{\text{SN@il}}$%
+      \hspace{.05em}\protect\raisebox{.2ex}%
+             {$\protect\underline{\text{Ware}}$}}\xspace}
+#+END_SRC
+
 ** =org= to LaTeX stuff
 *** Use smart quote when exporting
 #+BEGIN_SRC emacs-lisp
@@ -761,7 +867,8 @@ Only include one default package and remove all the crapppy stuff included by
   (add-to-list 'org-latex-packages-alist '("" "org-preamble"))
 #+END_SRC
 
-*** Template
+*** Templates
+**** Default
 #+BEGIN_SRC emacs-lisp
   (unless (boundp 'org-latex-classes)
     (setq org-latex-classes nil))
@@ -778,6 +885,10 @@ Only include one default package and remove all the crapppy stuff included by
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+#+END_SRC
+**** Teaching template
+To be used, we would have to install [[https://github.com/xgarrido/latex-templates]]
+#+BEGIN_SRC emacs-lisp
   (add-to-list 'org-latex-classes
                '("teaching-class"
                  "\\documentclass{scrartcl}
@@ -790,7 +901,6 @@ Only include one default package and remove all the crapppy stuff included by
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-
 #+END_SRC
 *** =minted= setup
 
