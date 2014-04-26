@@ -73,43 +73,52 @@ We also globally define the current directory
     <<mathjax.js>>
     </script>
     <script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>
-    ")
+    <div id=\"spinner\">
+      <div id=\"bounce1\"></div>
+      <div id=\"bounce2\"></div>
+      <div id=\"bounce3\"></div>
+      <small>Loading MathJax...</small>
+    </div>")
 #+END_SRC
 *** Javascript code for Mathjax
 #+NAME: mathjax.js
 #+BEGIN_SRC js :results output :tangle no
-    MathJax.Hub.Config({
-        TeX: {
-            extensions: [\"cancel.js\"],
-            Macros: {
-                vv: [\"{\\\\vec{#1}}\",1],
-                Upsigma: \"{\\\\Sigma}\",
-                Updelta: \"{\\\\Delta}\",
-                varoiint: \"{\\\\iint}\",
-                varoint: \"{\\\\int}\",
-                grad: \"{\\\\vec{\\\\nabla}}\",
-                div: \"{\\\\vec{\\\\nabla}.}\",
-                rot: \"{\\\\vec{\\\\nabla}\\\\times\\\\,}\",
-                ket: [\"{|#1 \\\\rangle}\",1],
-                bra: [\"{\\\\langle#1|}\",1],
-                psh: [\"{\\\\langle#1|#2 \\\\rangle}\",2],
-                bm: [\"{\\\\boldsymbol #1}\",1]
-            }
-        }
-    });
-    MathJax.Hub.Register.StartupHook(\"TeX Jax Ready\",function () {
-        var TEX = MathJax.InputJax.TeX;
-        TEX.Definitions.macros.unit = \"jaxunit\";
-        TEX.Parse.Augment({
-            jaxunit: function (name) {
-                var n = this.GetBrackets(name),
-                unit = this.GetArgument(name)
-                if (n == null) {n = \"\"}
-                var tex = n + '\\\\,\\\\text{'+unit+'}';
-                this.string = tex + this.string.slice(this.i); this.i = 0;
-            }
-        });
-    });
+  MathJax.Hub.Config({
+      TeX: {
+          messageStyle: \"none\",
+          extensions: [\"cancel.js\"],
+          Macros: {
+              vv: [\"{\\\\vec{#1}}\",1],
+              Upsigma: \"{\\\\Sigma}\",
+              Updelta: \"{\\\\Delta}\",
+              varoiint: \"{\\\\iint}\",
+              varoint: \"{\\\\int}\",
+              grad: \"{\\\\vec{\\\\nabla}}\",
+              div: \"{\\\\vec{\\\\nabla}.}\",
+              rot: \"{\\\\vec{\\\\nabla}\\\\times\\\\,}\",
+              ket: [\"{|#1 \\\\rangle}\",1],
+              bra: [\"{\\\\langle#1|}\",1],
+              psh: [\"{\\\\langle#1|#2 \\\\rangle}\",2],
+              bm: [\"{\\\\boldsymbol #1}\",1]
+          }
+      }
+  });
+  MathJax.Hub.Register.StartupHook(\"TeX Jax Ready\",function () {
+      var TEX = MathJax.InputJax.TeX;
+      TEX.Definitions.macros.unit = \"jaxunit\";
+      TEX.Parse.Augment({
+          jaxunit: function (name) {
+              var n = this.GetBrackets(name),
+              unit = this.GetArgument(name)
+              if (n == null) {n = \"\"}
+              var tex = n + '\\\\,\\\\text{'+unit+'}';
+              this.string = tex + this.string.slice(this.i); this.i = 0;
+          }
+      });
+  });
+  MathJax.Hub.Queue(function () {
+      document.getElementById("spinner").style.display = "none";
+  });
 #+END_SRC
 ** Project definition
 #+BEGIN_SRC emacs-lisp :noweb yes
@@ -403,6 +412,56 @@ We also globally define the current directory
       color: #67ad00;
   }
 #+END_SRC
+***** Spinners
+When MathJax is loading, we replace the default messages of MathJax by some
+spinners on the bottom-left side of the page
+#+BEGIN_SRC css
+  #spinner {
+      position: fixed;
+      bottom: 10px;
+      left: 20px;
+      color: #67ad00;
+  }
+
+  #spinner > div {
+      width: 8px;
+      height: 8px;
+      background-color: #67ad00;
+      border-radius: 100%;
+      display: inline-block;
+      -webkit-animation: bouncedelay 1.4s infinite ease-in-out;
+      animation: bouncedelay 1.4s infinite ease-in-out;
+      /* Prevent first frame from flickering when animation starts */
+      -webkit-animation-fill-mode: both;
+      animation-fill-mode: both;
+  }
+
+  #spinner #bounce1 {
+      -webkit-animation-delay: -0.32s;
+      animation-delay: -0.32s;
+  }
+
+  #spinner #bounce2 {
+      -webkit-animation-delay: -0.16s;
+      animation-delay: -0.16s;
+  }
+
+  @-webkit-keyframes bouncedelay {
+      0%, 80%, 100% { -webkit-transform: scale(0.0) }
+      40% { -webkit-transform: scale(1.0) }
+  }
+
+  @keyframes bouncedelay {
+      0%, 80%, 100% {
+          transform: scale(0.0);
+          -webkit-transform: scale(0.0);
+      } 40% {
+          transform: scale(1.0);
+          -webkit-transform: scale(1.0);
+      }
+  }
+#+END_SRC
+
 ***** Misc. (bold, =hr= style)
 #+BEGIN_SRC css
   #content {
