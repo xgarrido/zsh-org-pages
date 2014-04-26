@@ -386,9 +386,9 @@ We also globally define the current directory
   }
 
   #toc .button {
-      padding: 3px;
+      padding-right: 5px;
       position: fixed;
-      right: 20px;
+      right: inherit;
       cursor: pointer;
       font-size: 20px;
   }
@@ -400,18 +400,46 @@ We also globally define the current directory
   }
 
   #toc:hover div {
-      width: auto;
+      width: 250px;
       height: auto;
-      padding-right: 1em;
+      padding-right: 1.5em;
       background: #FFFFFF;
-      /* border:1px solid #E5E5E5; */
-      opacity: .85;
+      /*opacity: .85;*/
+      box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+      border-radius:4px;
+      overflow: hidden;
   }
 
   #toc ul {
       color: #67ad00;
   }
 #+END_SRC
+
+Adding a small triangle on top to match the position of triggered icon
+#+BEGIN_SRC css
+  #toc:hover:before {
+      content: "";
+      position:absolute;
+      top:19px;
+      right:10px;
+      width:0;height:0;
+      border-color: transparent transparent rgba(0,0,0,0.03) transparent;
+      border-width:8px;
+      border-style:solid;
+  }
+
+  #toc:hover:after {
+      content: "";
+      position:absolute;
+      top:20px;
+      right:10px;
+      width:0;height:0;
+      border-color: transparent transparent #ffffff transparent;
+      border-width:8px;
+      border-style:solid;
+  }
+#+END_SRC
+
 ***** Spinners
 When MathJax is loading, we replace the default messages of MathJax by some
 spinners on the bottom-left side of the page
