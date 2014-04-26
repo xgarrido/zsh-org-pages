@@ -128,9 +128,9 @@ We also globally define the current directory
      :section-numbers 3
      :with-toc        2
      :time-stamp-file nil
-     :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\">
-                   <link rel=\"stylesheet\" href=\"css/org-pygments.css\">
-                   <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\">"
+     :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\"/>
+                   <link rel=\"stylesheet\" href=\"css/org-pygments.css\"/>
+                   <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\"/>"
      :html-preamble ""
      :html-postamble "__cvs_version__"))
   (add-to-list
@@ -144,9 +144,9 @@ We also globally define the current directory
      :section-numbers 3
      :with-toc        2
      :time-stamp-file nil
-     :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\">
-                   <link rel=\"stylesheet\" href=\"css/org-pygments.css\">
-                   <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\">"
+     :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\"/>
+                   <link rel=\"stylesheet\" href=\"css/org-pygments.css\"/>
+                   <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\"/>"
      :html-preamble ""
      :html-postamble "__cvs_version__"))
   #+END_SRC
