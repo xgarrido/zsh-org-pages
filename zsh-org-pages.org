@@ -420,13 +420,12 @@ spinners on the bottom-left side of the page
       position: fixed;
       bottom: 10px;
       left: 20px;
-      color: #67ad00;
   }
 
   #spinner > div {
       width: 8px;
       height: 8px;
-      background-color: #67ad00;
+      background-color: #555555;
       border-radius: 100%;
       display: inline-block;
       -webkit-animation: bouncedelay 1.4s infinite ease-in-out;
