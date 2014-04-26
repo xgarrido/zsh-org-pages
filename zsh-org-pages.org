@@ -84,8 +84,8 @@ We also globally define the current directory
 #+NAME: mathjax.js
 #+BEGIN_SRC js :results output :tangle no
   MathJax.Hub.Config({
+      messageStyle: \"none\",
       TeX: {
-          messageStyle: \"none\",
           extensions: [\"cancel.js\"],
           Macros: {
               vv: [\"{\\\\vec{#1}}\",1],
@@ -117,7 +117,7 @@ We also globally define the current directory
       });
   });
   MathJax.Hub.Queue(function () {
-      document.getElementById("spinner").style.display = "none";
+      document.getElementById(\"spinner\").style.display = \"none\";
   });
 #+END_SRC
 ** Project definition
