@@ -267,6 +267,7 @@ function op::post_process()
                 $file
 
             pkgtools__msg_debug "Changing postamble CVS version"
+            local cvs_version
             if [ -d .git ]; then
                 cvs_version=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'commit <a href=\"url/commit/%H\">%h</a> - %ad' \
                     | sed "s#url#"$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')"#")
@@ -279,6 +280,7 @@ function op::post_process()
                 cvs_version="File under svn version control - ${cvs_version}"
             fi
             sed -i -e 's@__cvs_version__@'${cvs_version}'@' $file
+            unset cvs_version
 
             pkgtools__msg_debug "Activating random colors"
             if [ ${color_scheme} = "random" ]; then
