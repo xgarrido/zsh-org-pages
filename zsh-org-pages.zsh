@@ -263,8 +263,15 @@ function op::post_process()
                 -e 's@xmark@\(\\unicode{x2717}\\)@g' \
                 $file
             if [ -d .git ]; then
-                cvs_version=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'File under git version control - commit <a href=\"url/commit/%H\">%h</a> - %ad' \
+                cvs_version=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'commit <a href=\"url/commit/%H\">%h</a> - %ad' \
                     | sed "s#url#"$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')"#")
+            fi
+            if  [[ "${cvs_version}" = *"github"* ]]; then
+                cvs_version="File under <i class=\"fa fa-github\"></i> version control - ${cvs_version}"
+            elif [[ "${cvs_version}" = *"git"* ]]; then
+                cvs_version="File under git version control - ${cvs_version}"
+            elif [[ "${cvs_version}" = *"svn"* ]]; then
+                cvs_version="File under svn version control - ${cvs_version}"
             fi
             sed -i -e 's@__cvs_version__@'${cvs_version}'@' $file
 
