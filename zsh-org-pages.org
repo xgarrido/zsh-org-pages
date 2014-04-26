@@ -259,12 +259,11 @@ We also globally define the current directory
 #+BEGIN_SRC css
   a {
       color: #67ad00;
-      font-weight:400;
       text-decoration:none;
   }
 
   a:hover {
-      color: #7fd600;
+      opacity:0.75;
   }
 
   a small {
@@ -275,7 +274,7 @@ We also globally define the current directory
   }
 
   a:hover small {
-      color:#777777;
+      opacity:0.75;
   }
 #+END_SRC
 
