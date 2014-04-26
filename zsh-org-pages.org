@@ -31,17 +31,6 @@ We also globally define the current directory
 #+BEGIN_SRC emacs-lisp
   (setq org-html-checkbox-type "unicode")
 #+END_SRC
-** Building html postamble
-#+NAME: html-postamble
-#+BEGIN_SRC sh :results output :tangle no
-  (
-      cd $OGP_EXPORT_DIR
-      if [ -d .git ]; then
-          LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'File under git version control - commit <a href=\"url/commit/%H\">%h</a> - %ad' \
-              | sed "s#url#"$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')"#"
-      fi
-  )
-#+END_SRC
 ** Embedded Javascript code
 *** TOC popup
 #+NAME: toc.js
