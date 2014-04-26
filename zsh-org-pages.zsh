@@ -246,14 +246,17 @@ function op::post_process()
 {
     __pkgtools__at_function_enter op::post_process
     if ${generate_html}; then
-        pkgtools__msg_notice "Change directory hierarchy for css files"
+        pkgtools__msg_notice "Tweak html files..."
         for file in $(find doc/html -name "*.html"); do
+            pkgtools__msg_debug "Changing css directory depth"
             count="${file//[^\/]}"
             rel_path=
             for ((i=2;i<${#count};i++));do
                 rel_path+="../"
             done
             sed -i -e 's@href="css/@href="'${rel_path}'css/@g' $file
+
+            pkgtools__msg_debug "Changing some unicode symbol"
             sed -i \
                 -e 's@ding{192}@\(\\unicode{x2460}\\)@g' \
                 -e 's@ding{193}@\(\\unicode{x2461}\\)@g' \
@@ -262,6 +265,8 @@ function op::post_process()
                 -e 's@cmark@\(\\unicode{x2713}\\)@g' \
                 -e 's@xmark@\(\\unicode{x2717}\\)@g' \
                 $file
+
+            pkgtools__msg_debug "Changing postamble CVS version"
             if [ -d .git ]; then
                 cvs_version=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'commit <a href=\"url/commit/%H\">%h</a> - %ad' \
                     | sed "s#url#"$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')"#")
@@ -275,6 +280,12 @@ function op::post_process()
             fi
             sed -i -e 's@__cvs_version__@'${cvs_version}'@' $file
 
+            pkgtools__msg_debug "Activating random colors"
+            if [ ${color_scheme} = "random" ]; then
+                sed -i -e 's@//elem.style.color@elem.style.color@' $file
+            fi
+
+            pkgtools__msg_debug "Remove 'split' & 'toc' keywords"
             if [[ "$file" = *".split."* ]]; then
                 \mv $file ${file/.split/}
             elif [[ "$file" = *"toc."* ]];then
@@ -289,7 +300,8 @@ function op::post_process()
         done
         find . -regex ".*\.\(jpg\|jpeg\|png\|gif\|svg\)" \
             -path "*figures*" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
-        pkgtools__msg_debug "Parsing org files..."
+
+        pkgtools__msg_debug "Parsing back org files..."
         for file in $(find . -name "*.org"); do
             if [ -f $file.save ]; then
                 \mv $file.save $file
