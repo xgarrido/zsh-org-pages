@@ -267,7 +267,7 @@ function op::post_process()
                     | sed "s#url#"$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')"#")
             fi
             if  [[ "${cvs_version}" = *"github"* ]]; then
-                cvs_version="File under <i class=\"fa fa-github\"></i> version control - ${cvs_version}"
+                cvs_version="File under <i class=\"fa fa-github-alt\"></i> version control - ${cvs_version}"
             elif [[ "${cvs_version}" = *"git"* ]]; then
                 cvs_version="File under git version control - ${cvs_version}"
             elif [[ "${cvs_version}" = *"svn"* ]]; then
