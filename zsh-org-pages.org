@@ -397,6 +397,7 @@ We also globally define the current directory
       height: 0;
       width: 0;
       margin-top: 35px;
+      font-size: 11px;
   }
 
   #toc:hover div {
