@@ -22,6 +22,7 @@ function org-pages ()
     local recursive=false
     local keep_tmp_files=false
     local generate_floating_footnote=true
+    local convert_images=true
     local color_scheme="green"
     while [ -n "$1" ]; do
         local token="$1"
@@ -45,6 +46,8 @@ function org-pages ()
                 generate_pdf=false
             elif [ "${opt}" = "--no-floating-footnote" ]; then
                 generate_floating_footnote=false
+            elif [ "${opt}" = "--no-image-conversion" ]; then
+                convert_images=false
             elif [ "${opt}" = "--keep-tmp-files" ]; then
                 keep_tmp_files=true
             elif [[ ${opt} == --color* ]]; then
@@ -294,15 +297,16 @@ function op::post_process()
                 \rm  -f $file
             fi
         done
-        pkgtools__msg_notice "Exporting pdf figures"
-        mkdir -p doc/html/figures
-        for img in $(find . -name "*.pdf" -path "*figures*" -not -path "*doc*"); do
-            pkgtools__msg_debug "Converting ${img}..."
-            convert -density 100 $img doc/html/figures/$(basename ${img/.pdf/.png})
-        done
-        find . -regex ".*\.\(jpg\|jpeg\|png\|gif\|svg\)" \
-            -path "*figures*" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
-
+        if ${convert_images}; then
+            pkgtools__msg_notice "Exporting pdf images"
+            mkdir -p doc/html/figures
+            for img in $(find . -name "*.pdf" -path "*figures*" -not -path "*doc*"); do
+                pkgtools__msg_debug "Converting ${img}..."
+                convert -density 100 $img doc/html/figures/$(basename ${img/.pdf/.png})
+            done
+            find . -regex ".*\.\(jpg\|jpeg\|png\|gif\|svg\)" \
+                -path "*figures*" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
+        fi
         pkgtools__msg_debug "Parsing back org files..."
         for file in $(find . -name "*.org"); do
             if [ -f $file.save ]; then
@@ -345,28 +349,22 @@ function op::post_process()
         case ${color_scheme} in
             blue)
                 sed -i -e 's/#67ad00/#3399cc/' doc/html/css/styles.css
-                sed -i -e 's/#7fd600/#006699/' doc/html/css/styles.css
                 sed -i -e 's/#67ad00/#69B7F0/' doc/html/css/org-pygments.css
                 ;;
             yellow)
                 sed -i -e 's/#67ad00/#D5BC23/' doc/html/css/styles.css
-                sed -i -e 's/#7fd600/#C4A900/' doc/html/css/styles.css
                 ;;
             orange)
                 sed -i -e 's/#67ad00/#FF9927/' doc/html/css/styles.css
-                sed -i -e 's/#7fd600/#D56D23/' doc/html/css/styles.css
                 ;;
             red)
                 sed -i -e 's/#67ad00/#FF2D27/' doc/html/css/styles.css
-                sed -i -e 's/#7fd600/#FF4B46/' doc/html/css/styles.css
                 ;;
             magenta)
-                sed -i -e 's/#67ad00/#E82473/' doc/html/css/styles.css
-                sed -i -e 's/#7fd600/#AB0045/' doc/html/css/styles.css
+                sed -i -e 's/#67ad00/#AB0045/' doc/html/css/styles.css
                 ;;
             violet)
                 sed -i -e 's/#67ad00/#B81FC8/' doc/html/css/styles.css
-                sed -i -e 's/#7fd600/#740087/' doc/html/css/styles.css
                 ;;
             *)
                 ;;

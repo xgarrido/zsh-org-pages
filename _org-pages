@@ -10,6 +10,7 @@ _org-pages () {
     '--pdf[export to pdf (through LaTeX)]'                                          \
     '--html[export to html]'                                                        \
     '--no-floating-footnote[place footnotes at the bottom of the page (only html)]' \
+    '--no-image-conversion[do not convert images from pdf to png (only html)]'      \
     '--keep-tmp-files[keep temporary files]'                                        \
     '--color=[set color scheme (only html)]:colors:->colors'                        \
     '*: :->args'                                                                    \
