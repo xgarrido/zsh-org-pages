@@ -982,14 +982,14 @@ environment into figure
   (defun org-publish-html ()
     (progn
       (org-publish-project "html-documentation" 'force)
-      (copy-file (expand-file-name "README.html" (expand-file-name "html" doc-directory))
-                 (expand-file-name "index.html" (expand-file-name "html" doc-directory)) t)
+      (rename-file (expand-file-name "README.html" (expand-file-name "html" doc-directory))
+                   (expand-file-name "index.html" (expand-file-name "html" doc-directory)) t)
       ))
   (defun org-publish-html-recursive ()
     (progn
       (org-publish-project "html-documentation-recursive" 'force)
-      (copy-file (expand-file-name "README.html" (expand-file-name "html" doc-directory))
-                 (expand-file-name "index.html" (expand-file-name "html" doc-directory)) t)
+      (rename-file (expand-file-name "README.html" (expand-file-name "html" doc-directory))
+                   (expand-file-name "index.html" (expand-file-name "html" doc-directory)) t)
       ))
 #+END_SRC
 
