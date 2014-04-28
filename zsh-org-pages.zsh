@@ -111,6 +111,7 @@ function org-pages ()
     if ${publish}; then
         pkgtools__msg_notice "Publishing to the web"
 	find doc -name *.*~ -exec rm -f {} \;
+        find -type d -empty -path "*doc*" -exec rm -rf {} \;
 	(cd doc/html && tar czvf /tmp/org-publish.tar.gz .)
         rm -rf doc
         current_branch_name=$(git branch | grep '*' | awk '{print $2}')
