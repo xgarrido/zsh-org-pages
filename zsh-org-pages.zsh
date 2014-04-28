@@ -300,7 +300,7 @@ function op::post_process()
                 sed -i -e 's@//elem.style.color@elem.style.color@' $file
             fi
 
-            pkgtools__msg_debug "Remove 'split' & 'toc' keywords"
+            pkgtools__msg_debug "Remove 'split' & 'toc' keywords (if any)"
             if [[ "$file" = *".split."* ]]; then
                 \mv $file ${file/.split/}
             elif [[ "$file" = *"toc."* ]];then
