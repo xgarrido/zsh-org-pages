@@ -22,6 +22,7 @@ function org-pages ()
     local recursive=false
     local keep_tmp_files=false
     local generate_floating_footnote=true
+    local generate_home_link=false
     local convert_images=true
     local color_scheme="green"
     while [ -n "$1" ]; do
@@ -46,6 +47,8 @@ function org-pages ()
                 generate_pdf=false
             elif [ "${opt}" = "--no-floating-footnote" ]; then
                 generate_floating_footnote=false
+            elif [ "${opt}" = "--generate-home-link" ]; then
+                generate_home_link=true
             elif [ "${opt}" = "--no-image-conversion" ]; then
                 convert_images=false
             elif [ "${opt}" = "--keep-tmp-files" ]; then
@@ -268,6 +271,13 @@ function op::post_process()
                 -e 's@cmark@\(\\unicode{x2713}\\)@g' \
                 -e 's@xmark@\(\\unicode{x2717}\\)@g' \
                 $file
+
+            pkgtools__msg_debug "Changing preamble home link"
+            if ${generate_home_link}; then
+                sed -i -e 's@__home_link__@<a href="'${rel_path}'index.html"<i class=\"fa fa-home\"></i></a>@g' $file
+            else
+                sed -i -e 's@__home_link__@@g' $file
+            fi
 
             pkgtools__msg_debug "Changing postamble CVS version"
             local cvs_version
