@@ -275,7 +275,10 @@ function op::post_process()
                 $file
 
             pkgtools__msg_debug "Changing preamble home link"
-            if [ ${generate_home_link} -a $(basename $file) != "index.html" ]; then
+            if ${generate_home_link}; then
+                if [ $(basename $file) = "index.html" ]; then
+                    sed -i -e 's@__home_link__@@g' $file
+                fi
                 sed -i -e 's@__home_link__@<a href="'${rel_path}'index.html"<i class=\"fa fa-home\"></i></a>@g' $file
             else
                 sed -i -e 's@__home_link__@@g' $file
