@@ -10,6 +10,7 @@ _org-pages () {
     '--pdf[export to pdf (through LaTeX)]'                                          \
     '--html[export to html]'                                                        \
     '--generate-home-link[generate a link to the parent index file (only html)]'    \
+    '--generate-github-link[generate a link to the github repository (only html)]'  \
     '--no-floating-footnote[place footnotes at the bottom of the page (only html)]' \
     '--no-image-conversion[do not convert images from pdf to png (only html)]'      \
     '--keep-tmp-files[keep temporary files]'                                        \

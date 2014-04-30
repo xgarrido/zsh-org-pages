@@ -23,6 +23,7 @@ function org-pages ()
     local keep_tmp_files=false
     local generate_floating_footnote=true
     local generate_home_link=false
+    local generate_github_link=false
     local convert_images=true
     local color_scheme="green"
     while [ -n "$1" ]; do
@@ -49,6 +50,8 @@ function org-pages ()
                 generate_floating_footnote=false
             elif [ "${opt}" = "--generate-home-link" ]; then
                 generate_home_link=true
+            elif [ "${opt}" = "--generate-github-link" ]; then
+                generate_github_link=true
             elif [ "${opt}" = "--no-image-conversion" ]; then
                 convert_images=false
             elif [ "${opt}" = "--keep-tmp-files" ]; then
@@ -279,16 +282,18 @@ function op::post_process()
                 if [ $(basename $file) = "index.html" ]; then
                     sed -i -e 's@__home_link__@@g' $file
                 fi
-                sed -i -e 's@__home_link__@<a href="'${rel_path}'index.html"<i class=\"fa fa-home\"></i></a>@g' $file
+                sed -i -e 's@__home_link__@<a href="'${rel_path}'index.html"><i class=\"fa fa-home\"></i></a><br/>@g' $file
             else
                 sed -i -e 's@__home_link__@@g' $file
             fi
 
             pkgtools__msg_debug "Changing postamble CVS version"
             local cvs_version
+            local cvs_path
             if [ -d .git ]; then
+                cvs_path=$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')
                 cvs_version=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'commit <a href=\"url/commit/%H\">%h</a> - %ad' \
-                    | sed "s#url#"$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')"#")
+                    | sed "s#url#"${cvs_path}"#")
             fi
             if  [[ "${cvs_version}" = *"github"* ]]; then
                 cvs_version="File under <i class=\"fa fa-github-alt\"></i> version control - ${cvs_version}"
@@ -298,6 +303,14 @@ function op::post_process()
                 cvs_version="File under svn version control - ${cvs_version}"
             fi
             sed -i -e 's@__cvs_version__@'${cvs_version}'@' $file
+
+            pkgtools__msg_debug "Changing preamble github link"
+            if ${generate_github_link}; then
+                sed -i -e 's@__github_link__@<a href="'${cvs_path}'"><i class=\"fa fa-github\"></i></a><br/>@g' $file
+            else
+                sed -i -e 's@__github_link__@@g' $file
+            fi
+            unset cvs_path
             unset cvs_version
 
             pkgtools__msg_debug "Activating random colors"
