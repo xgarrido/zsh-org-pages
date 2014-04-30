@@ -49,8 +49,8 @@ We also globally define the current directory
 
 #+BEGIN_SRC emacs-lisp :noweb yes
   (setq org-html-scripts (concat org-html-scripts "<script type=\"text/javascript\">
-    <<toc.js>>
     <<rlc.js>>
+    <<toc.js>>
     </script>
     "))
 #+END_SRC
