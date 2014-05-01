@@ -179,6 +179,10 @@ function op::prepare_process()
             fi
         done
         for file in $(find . -name "*.org"); do
+            if [ -L $file ]; then
+                pkgtools__msg_debug "$file is a symbolic link"
+                continue
+            fi
             \cp $file $file.save
             sed -i -e "s/#+BEGIN_SRC latex/#+BEGIN_SRC latex :results drawer :exports results/g" $file
         done
