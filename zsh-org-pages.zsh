@@ -291,7 +291,6 @@ function op::post_process()
                 sed -i -e 's@__home_link__@@g' $file
             fi
 
-            pkgtools__msg_debug "Changing postamble CVS version"
             local cvs_version
             local cvs_path
             if [ -d .git ]; then
@@ -299,6 +298,13 @@ function op::post_process()
                 cvs_version=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'commit <a href=\"url/commit/%H\">%h</a> - %ad' \
                     | sed "s#url#"${cvs_path}"#")
             fi
+            pkgtools__msg_debug "Changing preamble github link"
+            if ${generate_github_link}; then
+                sed -i -e 's@__github_link__@<a href="'${cvs_path}'"><i class=\"fa fa-github\"></i></a><br/>@g' $file
+            else
+                sed -i -e 's@__github_link__@@g' $file
+            fi
+            pkgtools__msg_debug "Changing postamble CVS version"
             if  [[ "${cvs_version}" = *"github"* ]]; then
                 cvs_version="File under <i class=\"fa fa-github-alt\"></i> version control - ${cvs_version}"
             elif [[ "${cvs_version}" = *"git"* ]]; then
@@ -308,12 +314,6 @@ function op::post_process()
             fi
             sed -i -e 's@__cvs_version__@'${cvs_version}'@' $file
 
-            pkgtools__msg_debug "Changing preamble github link"
-            if ${generate_github_link}; then
-                sed -i -e 's@__github_link__@<a href="'${cvs_path}'"><i class=\"fa fa-github\"></i></a><br/>@g' $file
-            else
-                sed -i -e 's@__github_link__@@g' $file
-            fi
             unset cvs_path
             unset cvs_version
 
@@ -329,6 +329,7 @@ function op::post_process()
                 \rm  -f $file
             fi
         done
+
         if ${convert_images}; then
             pkgtools__msg_notice "Exporting pdf images"
             mkdir -p doc/html/figures
