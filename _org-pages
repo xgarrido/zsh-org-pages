@@ -14,12 +14,12 @@ _org-pages () {
     '--no-floating-footnote[place footnotes at the bottom of the page (only html)]' \
     '--no-image-conversion[do not convert images from pdf to png (only html)]'      \
     '--keep-tmp-files[keep temporary files]'                                        \
-    '--color=[set color scheme (only html)]:colors:->colors'                        \
+    '--color=[set color scheme]:colors:->colors'                                    \
     '*: :->args'                                                                    \
     && ret=0
   case $state in
     (colors)
-      local colors; colors=(blue green yellow orange red turquoise violet random)
+      local colors; colors=(blue darkblue green yellow orange red turquoise violet random)
       _describe -t colors 'Color scheme' colors && ret=0
       ;;
     (args)

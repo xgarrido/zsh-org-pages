@@ -12,6 +12,7 @@ typeset -gA __ogp_color_map
 __ogp_color_map=(
     green     \#67ad00
     blue      \#3399cc
+    darkblue  \#003399
     yellow    \#f1c40f
     orange    \#e67e22
     red       \#e74c3c
@@ -37,7 +38,7 @@ function org-pages ()
     local generate_home_link=false
     local generate_github_link=false
     local convert_images=true
-    local color_scheme="green"
+    local color_scheme="default"
     while [ -n "$1" ]; do
         local token="$1"
         if [ "${token[0,1]}" = "-" ]; then
@@ -200,6 +201,20 @@ function op::prepare_process()
         if ${generate_html}; then
             \cp $file $file.save
             sed -i -e "s/#+BEGIN_SRC latex/#+BEGIN_SRC latex :results drawer :exports results/g" $file
+        fi
+        if ${generate_pdf}; then
+            if [ ${color_scheme} != "default" ]; then
+                \cp $file $file.save
+                if [ ${color_scheme[0,1]} = "#" ]; then
+                    if [ ${#color_scheme} -eq 7 ]; then
+                        sed -i -e '1i#+LATEX_HEADER_EXTRA: \\definecolor{default}{HTML}{'${color_scheme:1:7}'}' $file
+                    else
+                        pkgtools__msg_error "The HEX code is not allowed !"
+                    fi
+                elif [ ${__ogp_color_map[${color_scheme}]+_} ];then
+                    sed -i -e '1i#+LATEX_HEADER_EXTRA: \\definecolor{default}{HTML}{'${__ogp_color_map[${color_scheme}]:1:7}'}' $file
+                fi
+            fi
         fi
         if [ $(grep -e "#+OPTIONS.*split:t" -c $file) -eq 1 ]; then
             __split_file $file
@@ -366,20 +381,6 @@ function op::post_process()
             find . -regex ".*\.\(jpg\|jpeg\|png\|gif\|svg\)" \
                 -path "*figures*" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
         fi
-        pkgtools__msg_debug "Parsing back org files..."
-        for file in $(find . -name "*.org"); do
-            if [[ "$file" = *".split"* ]]; then
-                \rm -f $file
-            elif [[ "$file" = *"toc."* ]];then
-                \rm  -f $file
-            fi
-        done
-        for file in $(find . -name "*.org.noexport"); do
-            \mv $file ${file/.noexport/}
-        done
-        for file in $(find . -name "*.org.save"); do
-            \mv $file ${file/.save/}
-        done
 
         if ${generate_floating_footnote}; then
             pkgtools__msg_notice "Generate floating footnotes"
@@ -413,6 +414,21 @@ function op::post_process()
             sed -i -e 's/#67ad00/'${__ogp_color_map[${color_scheme}]}'/' doc/html/css/styles.css
         fi
     fi
+
+    pkgtools__msg_debug "Getting back to original files..."
+    for file in $(find . -name "*.org"); do
+        if [[ "$file" = *".split"* ]]; then
+            \rm -f $file
+        elif [[ "$file" = *"toc."* ]];then
+            \rm  -f $file
+        fi
+    done
+    for file in $(find . -name "*.org.noexport"); do
+        \mv $file ${file/.noexport/}
+    done
+    for file in $(find . -name "*.org.save"); do
+        \mv $file ${file/.save/}
+    done
 
     if ! ${keep_tmp_files}; then
         pkgtools__msg_debug "Remove useless files"
