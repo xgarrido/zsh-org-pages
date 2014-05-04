@@ -8,6 +8,16 @@
 # Status: not intended to be distributed yet
 
 typeset -g __ogp_path=$(dirname $0)
+typeset -gA __ogp_color_map
+__ogp_color_map=(
+    green   \#67ad00
+    blue    \#3399cc
+    yellow  \#D5BC23
+    orange  \#FF9927
+    red     \#FF2D27
+    magenta \#AB0045
+    violet  \#B81FC8
+)
 
 function org-pages ()
 {
@@ -380,37 +390,15 @@ function op::post_process()
             done
         fi
 
-        pkgtools__msg_debug "Using ${color_scheme} colors"
-        case ${color_scheme} in
-            blue)
-                sed -i -e 's/#67ad00/#3399cc/' doc/html/css/styles.css
-                sed -i -e 's/#67ad00/#69B7F0/' doc/html/css/org-pygments.css
-                ;;
-            yellow)
-                sed -i -e 's/#67ad00/#D5BC23/' doc/html/css/styles.css
-                ;;
-            orange)
-                sed -i -e 's/#67ad00/#FF9927/' doc/html/css/styles.css
-                ;;
-            red)
-                sed -i -e 's/#67ad00/#FF2D27/' doc/html/css/styles.css
-                ;;
-            magenta)
-                sed -i -e 's/#67ad00/#AB0045/' doc/html/css/styles.css
-                ;;
-            violet)
-                sed -i -e 's/#67ad00/#B81FC8/' doc/html/css/styles.css
-                ;;
-            \#*)
-                if [ ${#color_scheme} -eq 7 ]; then
-                    sed -i -e 's/#67ad00/'${color_scheme}'/' doc/html/css/styles.css
-                else
-                    pkgtools__msg_error "The HEX code is not allowed !"
-                fi
-                ;;
-            *)
-                ;;
-        esac
+        if [ ${color_scheme[0,1]} = "#" ]; then
+            if [ ${#color_scheme} -eq 7 ]; then
+                sed -i -e 's/#67ad00/'${color_scheme}'/' doc/html/css/styles.css
+            else
+                pkgtools__msg_error "The HEX code is not allowed !"
+            fi
+        elif [ ${__ogp_color_map[${color_scheme}]+_} ];then
+            sed -i -e 's/#67ad00/'${__ogp_color_map[${color_scheme}]}'/' doc/html/css/styles.css
+        fi
     fi
 
     if ! ${keep_tmp_files}; then
