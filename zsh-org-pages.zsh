@@ -401,6 +401,13 @@ function op::post_process()
             violet)
                 sed -i -e 's/#67ad00/#B81FC8/' doc/html/css/styles.css
                 ;;
+            \#*)
+                if [ ${#color_scheme} -eq 7 ]; then
+                    sed -i -e 's/#67ad00/'${color_scheme}'/' doc/html/css/styles.css
+                else
+                    pkgtools__msg_error "The HEX code is not allowed !"
+                fi
+                ;;
             *)
                 ;;
         esac
