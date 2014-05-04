@@ -10,13 +10,13 @@
 typeset -g __ogp_path=$(dirname $0)
 typeset -gA __ogp_color_map
 __ogp_color_map=(
-    green   \#67AD00
-    blue    \#3399CC
-    yellow  \#D5BC23
-    orange  \#FF9927
-    red     \#FF2D27
-    magenta \#AB0045
-    violet  \#B81FC8
+    green     \#67ad00
+    blue      \#3399cc
+    yellow    \#f1c40f
+    orange    \#e67e22
+    red       \#e74c3c
+    turquoise \#1abc9c
+    violet    \#8e44ad
 )
 
 function org-pages ()
@@ -151,26 +151,25 @@ function org-pages ()
 function op::prepare_process()
 {
     __pkgtools__at_function_enter op::prepare_process
-    if ${generate_html}; then
-        pkgtools__msg_debug "Parsing org files..."
-        for file in $(find . -name "*.org"); do
-            if [ $(grep -e "#+OPTIONS.*split:t" -c $file) -eq 1 ]; then
-                pkgtools__msg_notice "Split file $file"
-                cat $file | awk -v current=$file '
+
+    __split_file()
+    {
+        pkgtools__msg_notice "Split file $1"
+        cat $1 | awk -v current=$1 '
                          BEGIN{j=-1}
                          {
-			     if ($1 == "*") {
+        		     if ($1 == "*") {
                                      if (match($0, "COMMENT")) comment=1
                                      else {
                                           comment=0
-				          j++
-				          heading[j]=substr($0,3)
+        			          j++
+        			          heading[j]=substr($0,3)
                                      }
-				 } else {
+        			 } else {
                                      if (comment == 0)
-				          text[j]=text[j]"\n"substr($0,1)
-				 }
-			 }
+        			          text[j]=text[j]"\n"substr($0,1)
+        			 }
+        		 }
                          END{
                              print "#+HTML: <div id=\"text-table-of-contents\">" > "toc.org"
                              for (i in heading) {
@@ -183,22 +182,34 @@ function op::prepare_process()
                                      print "#+HTML: <div style=\"display:none;\">" >> current_filename
                                      print "#+INCLUDE: toc.org"  >> current_filename
                                      print "#+HTML: </div>" >> current_filename
-				     print text[i] >> current_filename
-				 }
+        			     print text[i] >> current_filename
+        			 }
                              print "#+HTML: </div>" >> "toc.org"
-			 }'
-                mv $file $file.noexport
-            fi
-        done
-        for file in $(find . -name "*.org"); do
-            if [ -L $file ]; then
-                pkgtools__msg_debug "$file is a symbolic link"
-                continue
-            fi
+        		 }'
+        mv $1 $1.noexport
+    }
+
+    pkgtools__msg_debug "Parsing org files..."
+    local org_files
+    org_files=$(find . -name "*.org")
+    for file in ${=org_files}; do
+        if [ -L $file ]; then
+            pkgtools__msg_debug "$file is a symbolic link"
+            continue
+        fi
+        if ${generate_html}; then
             \cp $file $file.save
             sed -i -e "s/#+BEGIN_SRC latex/#+BEGIN_SRC latex :results drawer :exports results/g" $file
-        done
-    fi
+        fi
+        if [ $(grep -e "#+OPTIONS.*split:t" -c $file) -eq 1 ]; then
+            __split_file $file
+        elif [ $(grep -e "#+OPTIONS.*split:html" -c $file) -eq 1 ]; then
+            if ${generate_html}; then __split_file $file;fi
+        elif [ $(grep -e "#+OPTIONS.*split:pdf" -c $file) -eq 1 ]; then
+            if ${generate_pdf}; then __split_file $file;fi
+        fi
+    done
+    unset org_files
     __pkgtools__at_function_exit
     return 0
 }
@@ -357,10 +368,6 @@ function op::post_process()
         fi
         pkgtools__msg_debug "Parsing back org files..."
         for file in $(find . -name "*.org"); do
-            if [ -f $file.save ]; then
-                \mv $file.save $file
-                sed -i -e "s/#+BEGIN_SRC latex :results drawer :exports results/#+BEGIN_SRC latex/g" $file
-            fi
             if [[ "$file" = *".split"* ]]; then
                 \rm -f $file
             elif [[ "$file" = *"toc."* ]];then
@@ -369,6 +376,9 @@ function op::post_process()
         done
         for file in $(find . -name "*.org.noexport"); do
             \mv $file ${file/.noexport/}
+        done
+        for file in $(find . -name "*.org.save"); do
+            \mv $file ${file/.save/}
         done
 
         if ${generate_floating_footnote}; then
@@ -381,10 +391,10 @@ function op::post_process()
                 sed -i -e '/<div class=\"footdef\"/,/<\/div>/d' $file
                 IFS=$'\n'
                 i=1
-                pkgtools__msg_debug "footnote content=${content}"
+                pkgtools__msg_devel "footnote content=${content}"
                 for f in ${=content}
                 do
-                    pkgtools__msg_debug "footnote #$i=$f"
+                    pkgtools__msg_devel "footnote #$i=$f"
                     awk -v fn=$f '/<sup><a id="fnr.'$i'"/{a++;}/<\/p>/&&a{$0=fn;a=0;}1' $file > $file.$i
                     mv $file.$i $file
                     let i=i+1
