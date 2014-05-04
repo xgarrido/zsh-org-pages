@@ -52,7 +52,7 @@ We also globally define the current directory
 #+NAME: rlc.js
 #+BEGIN_SRC js :results output :tangle no
   function randomLinkColor() {
-      var colors = ['#67ad00', '#D5BC23', '#FF9927', '#FF2D27', '#AB0045', '#B81FC8'];
+      var colors = [__colors__];
       var random_color = colors[Math.floor(Math.random() * colors.length)];
       var elements = document.querySelectorAll('a');
       [].slice.call(elements).forEach(function(elem) {

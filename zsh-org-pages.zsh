@@ -10,8 +10,8 @@
 typeset -g __ogp_path=$(dirname $0)
 typeset -gA __ogp_color_map
 __ogp_color_map=(
-    green   \#67ad00
-    blue    \#3399cc
+    green   \#67AD00
+    blue    \#3399CC
     yellow  \#D5BC23
     orange  \#FF9927
     red     \#FF2D27
@@ -325,14 +325,17 @@ function op::post_process()
                 cvs_version="File under svn version control - ${cvs_version}"
             fi
             sed -i -e 's@__cvs_version__@'${cvs_version}'@' $file
-
             unset cvs_path
             unset cvs_version
 
-            pkgtools__msg_debug "Activating random colors"
+            local colors
+            for col in ${__ogp_color_map[@]};do colors+="'$col',";done
+            sed -i -e 's@__colors__@'${colors%?}'@' $file
             if [ ${color_scheme} = "random" ]; then
+                pkgtools__msg_debug "Activating random colors"
                 sed -i -e 's@//elem.style.color@elem.style.color@' $file
             fi
+            unset colors
 
             pkgtools__msg_debug "Remove 'split' & 'toc' keywords (if any)"
             if [[ "$file" = *".split."* ]]; then
