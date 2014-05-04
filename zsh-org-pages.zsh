@@ -7,6 +7,8 @@
 # Requirements: pkgtools
 # Status: not intended to be distributed yet
 
+typeset -g __ogp_path=$(dirname $0)
+
 function org-pages ()
 {
     __pkgtools__default_values
@@ -196,7 +198,7 @@ function op::process()
     __pkgtools__at_function_enter op::process
     export OGP_EXPORT_DIR=$PWD
 
-    local ogp_path="${ADOTDIR}/repos/https-COLON--SLASH--SLASH-github.com-SLASH-xgarrido-SLASH-zsh-org-pages.git"
+    local ogp_path=${__ogp_path}
     local emacs_cmd=""
     local emacs_base_cmd="emacs --batch --no-init-file "
     emacs_base_cmd+="--eval \"(require 'org)\" "
