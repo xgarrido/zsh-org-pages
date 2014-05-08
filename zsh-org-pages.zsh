@@ -256,9 +256,8 @@ function op::process()
         done
     else
         if [ ! -f README.org ]; then
-            pkgtools__msg_error "Missing README.org file !"
-            __pkgtools__at_function_exit
-            return 1
+            pkgtools__msg_warning "Missing README.org file ! Create a tmp one"
+            touch README.org
         fi
         emacs_cmd+=${emacs_base_cmd}
         if ${generate_html}; then
@@ -430,6 +429,7 @@ function op::post_process()
         \mv $file ${file/.save/}
     done
 
+    pkgtools__msg_debug "Remove logfiles"
     if ! ${keep_tmp_files}; then
         pkgtools__msg_debug "Remove useless files"
         find . -regex ".*\.\(pyg\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|tex\)" \
@@ -437,6 +437,11 @@ function op::post_process()
         find . -name "*~" -exec rm -rf {} \;
         #find . -name "*latex.d*" -exec rm -rf {} \;
         rm -rf ./latex.d
+    fi
+
+    pkgtools__msg_debug "Remove tmp README file"
+    if [ ! -s README.org ]; then
+        rm -f README.org
     fi
     __pkgtools__at_function_exit
     return 0
