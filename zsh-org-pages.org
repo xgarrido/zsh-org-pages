@@ -693,6 +693,144 @@ Nothing for the time being...
 #+END_SRC
 
 * PDF export
+** =org= to LaTeX stuff
+*** Use smart quote when exporting
+#+BEGIN_SRC emacs-lisp
+  (setq org-export-with-smart-quotes nil)
+#+END_SRC
+*** Place table caption below table
+#+BEGIN_SRC emacs-lisp
+  (setq org-latex-table-caption-above nil)
+#+END_SRC
+*** Code blocks
+This activates a number of widely used languages, you are encouraged to activate
+more languages using the customize interface for the =org-babel-load-languages=
+variable, or with an elisp form like the one below.  The customize interface of
+=org-babel-load-languages= contains an up to date list of the currently
+supported languages.
+#+BEGIN_SRC emacs-lisp
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (latex . t)))
+#+END_SRC
+
+You are encouraged to add the following to your personal configuration
+although it is not added by default as a security precaution.
+#+BEGIN_SRC emacs-lisp
+  (setq org-confirm-babel-evaluate nil)
+#+END_SRC
+
+*** Keep LaTeX logfiles
+#+BEGIN_SRC emacs-lisp
+  (setq org-latex-remove-logfiles nil)
+#+END_SRC
+
+*** Default list of LaTeX packages
+Only include one default package and remove all the crapppy stuff included by
+=org= \rightarrow =latex= translation.
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'org-latex-packages-alist '("" "org-preamble"))
+#+END_SRC
+
+*** Templates
+**** Default
+#+BEGIN_SRC emacs-lisp
+  (unless (boundp 'org-latex-classes)
+    (setq org-latex-classes nil))
+
+  (add-to-list 'org-latex-classes
+               '("default-class"
+                 "\\documentclass{scrartcl}
+                  [PACKAGES]
+                  \\usepackage{default-class-style}
+                  \\usepackage{vc-style}
+                  [NO-DEFAULT-PACKAGES]"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+#+END_SRC
+**** Teaching template
+To be used, we would have to install [[https://github.com/xgarrido/latex-templates]]
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'org-latex-classes
+               '("teaching-class"
+                 "\\documentclass{scrartcl}
+                  [PACKAGES]
+                  \\usepackage[oldschool]{teaching-classes-style}
+                  \\usepackage{vc-style}
+                  [NO-DEFAULT-PACKAGES]"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+#+END_SRC
+*** =minted= setup
+
+Code fragments are syntax highlighted using [[https://code.google.com/p/minted/][minted]] LaTeX package
+#+BEGIN_SRC emacs-lisp
+  (setq org-latex-listings 'minted)
+  (setq org-latex-minted-options
+        '(("fontsize" "\\footnotesize")
+          ("mathescape" "")
+          ("xrightmargin" "0.5cm")
+          ("xleftmargin"  "0.5cm")
+          ))
+#+END_SRC
+*** Set LaTeX command
+#+BEGIN_SRC emacs-lisp
+  (setq org-latex-pdf-process '("latexmk -xelatex -shell-escape %f"))
+#+END_SRC
+
+*** Markup filter
+**** Ignore headline
+Add a new tag =ignoreheading= to skip headline tagged as such.
+#+BEGIN_SRC emacs-lisp
+  (defun latex::ignore-headline (contents backend info)
+    (when (and (org-export-derived-backend-p backend 'latex)
+               (string-match "\\`.*ignoreheading.*\n"
+                             (downcase contents)))
+      (replace-match "" nil nil contents)))
+  (add-to-list 'org-export-filter-headline-functions 'latex::ignore-headline)
+#+END_SRC
+**** Tagging headline tags
+#+BEGIN_SRC emacs-lisp
+  (defun latex::tagging-headline (contents backend info)
+    (when (org-export-derived-backend-p backend 'latex)
+      (replace-regexp-in-string "\\\\textsc+" "\\\\mytag" contents)
+      (replace-regexp-in-string ":\\(.*\\):" "\\\\hfill{}\\\\mytag{\\1}" contents)))
+  (add-to-list 'org-export-filter-headline-functions 'latex::tagging-headline)
+#+END_SRC
+**** SN@ilWare filter
+#+BEGIN_SRC emacs-lisp
+  (defun latex::snailware-keyword-filter (contents backend info)
+    (when (eq backend 'latex)
+      (replace-regexp-in-string "SN@ilware" "\\\\Snailware" contents)))
+  (add-to-list 'org-export-filter-final-output-functions 'latex::snailware-keyword-filter)
+#+END_SRC
+**** Change =table= into =figure= env
+When graphics are placed into table cells then change the default table
+environment into figure
+#+BEGIN_SRC emacs-lisp
+  (defun latex::multicolumn-figure (contents backend info)
+    (when (and (org-export-derived-backend-p backend 'latex)
+               (string-match "table" contents)
+               (string-match "includegraphics" contents))
+      (replace-regexp-in-string "table" "figure" contents)))
+  (add-to-list 'org-export-filter-table-functions 'latex::multicolumn-figure)
+#+END_SRC
+
+**** Change =.org= extension to =.pdf=
+#+BEGIN_SRC emacs-lisp
+  (defun latex::filter-link (contents backend info)
+    (when (org-export-derived-backend-p backend 'latex)
+      (replace-regexp-in-string "\\\\.org" ".pdf" contents)))
+  (add-to-list 'org-export-filter-link-functions 'latex::filter-link)
+#+END_SRC
 ** LaTeX style file
 *** VC status
 :PROPERTIES:
@@ -723,7 +861,7 @@ Nothing for the time being...
   <<vc-status()>>
 #+END_SRC
 
-*** Deault class style
+*** Default class style
 :PROPERTIES:
 :MKDIRP:   yes
 :TANGLE:   (concat this-directory "doc/pdf/default-class-style.sty")
@@ -820,7 +958,7 @@ Nothing for the time being...
 ***** Change section colors
 #+BEGIN_SRC latex
   \RequirePackage{titlesec}
-  \titleformat*{\section}{\usekomafont{sectioning}\usekomafont{section}\color{default}}
+  \titleformat*{\section}{\setcounter{footnote}{0}\usekomafont{sectioning}\usekomafont{section}\color{default}}
 #+END_SRC
 ***** SN@ilWare logo
 #+BEGIN_SRC latex
@@ -829,126 +967,11 @@ Nothing for the time being...
       \hspace{.05em}\protect\raisebox{.2ex}%
              {$\protect\underline{\text{Ware}}$}}\xspace}
 #+END_SRC
-
-** =org= to LaTeX stuff
-*** Use smart quote when exporting
-#+BEGIN_SRC emacs-lisp
-  (setq org-export-with-smart-quotes nil)
-#+END_SRC
-*** Place table caption below table
-#+BEGIN_SRC emacs-lisp
-  (setq org-latex-table-caption-above nil)
-#+END_SRC
-*** Code blocks
-This activates a number of widely used languages, you are encouraged to activate
-more languages using the customize interface for the =org-babel-load-languages=
-variable, or with an elisp form like the one below.  The customize interface of
-=org-babel-load-languages= contains an up to date list of the currently
-supported languages.
-#+BEGIN_SRC emacs-lisp
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (latex . t)))
-#+END_SRC
-
-You are encouraged to add the following to your personal configuration
-although it is not added by default as a security precaution.
-#+BEGIN_SRC emacs-lisp
-  (setq org-confirm-babel-evaluate nil)
-#+END_SRC
-
-*** Keep LaTeX logfiles
-#+BEGIN_SRC emacs-lisp
-  (setq org-latex-remove-logfiles nil)
-#+END_SRC
-
-*** Default list of LaTeX packages
-Only include one default package and remove all the crapppy stuff included by
-=org= \rightarrow =latex= translation.
-
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'org-latex-packages-alist '("" "org-preamble"))
-#+END_SRC
-
-*** Templates
-**** Default
-#+BEGIN_SRC emacs-lisp
-  (unless (boundp 'org-latex-classes)
-    (setq org-latex-classes nil))
-
-  (add-to-list 'org-latex-classes
-               '("default-class"
-                 "\\documentclass{scrartcl}
-                  [PACKAGES]
-                  \\usepackage{default-class-style}
-                  \\usepackage{vc-style}
-                  [NO-DEFAULT-PACKAGES]"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-#+END_SRC
-**** Teaching template
-To be used, we would have to install [[https://github.com/xgarrido/latex-templates]]
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'org-latex-classes
-               '("teaching-class"
-                 "\\documentclass{scrartcl}
-                  [PACKAGES]
-                  \\usepackage[oldschool]{teaching-classes-style}
-                  \\usepackage{vc-style}
-                  [NO-DEFAULT-PACKAGES]"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-#+END_SRC
-*** =minted= setup
-
-Code fragments are syntax highlighted using [[https://code.google.com/p/minted/][minted]] LaTeX package
-#+BEGIN_SRC emacs-lisp
-  (setq org-latex-listings 'minted)
-  (setq org-latex-minted-options
-        '(("fontsize" "\\footnotesize")
-          ("mathescape" "")
-          ("xrightmargin" "0.5cm")
-          ("xleftmargin"  "0.5cm")
-          ))
-#+END_SRC
-*** Set LaTeX command
-#+BEGIN_SRC emacs-lisp
-  (setq org-latex-pdf-process '("latexmk -xelatex -shell-escape %f"))
-#+END_SRC
-
-*** Markup filter
-**** SN@ilWare filter
-#+BEGIN_SRC emacs-lisp
-  (defun latex::snailware-keyword-filter (contents backend info)
-    (when (eq backend 'latex)
-      (replace-regexp-in-string "SN@ilware" "\\\\Snailware" contents)))
-  (add-to-list 'org-export-filter-final-output-functions 'latex::snailware-keyword-filter)
-#+END_SRC
-**** Change =table= into =figure= env
-When graphics are placed into table cells then change the default table
-environment into figure
-#+BEGIN_SRC emacs-lisp
-  (defun latex::multicolumn-figure (contents backend info)
-    (when (and (org-export-derived-backend-p backend 'latex)
-               (string-match "table" contents)
-               (string-match "includegraphics" contents))
-      (replace-regexp-in-string "table" "figure" contents)))
-  (add-to-list 'org-export-filter-table-functions 'latex::multicolumn-figure)
-#+END_SRC
-
-**** Change =.org= extension to =.pdf=
-#+BEGIN_SRC emacs-lisp
-  (defun latex::filter-link (contents backend info)
-    (when (org-export-derived-backend-p backend 'latex)
-      (replace-regexp-in-string "\\\\.org" ".pdf" contents)))
-  (add-to-list 'org-export-filter-link-functions 'latex::filter-link)
+**** New commands
+***** Tag
+#+BEGIN_SRC latex
+  \RequirePackage{relsize}
+  \newrobustcmd{\mytag}[1]{\tikz[overlay]\node[fill=default,inner sep=2pt, anchor=text, rectangle, rounded corners=1mm] {\textcolor{white}{\smaller[2]{#1}}};\phantom{#1}}
 #+END_SRC
 ** Project definition
 #+BEGIN_SRC emacs-lisp
