@@ -798,6 +798,8 @@ Add a new tag =ignoreheading= to skip headline tagged as such.
   (add-to-list 'org-export-filter-headline-functions 'latex::ignore-headline)
 #+END_SRC
 **** Tagging headline tags
+Flag tags with a rounded rectangle filled with default color (used for example
+for date/time reference)
 #+BEGIN_SRC emacs-lisp
   (defun latex::tagging-headline (contents backend info)
     (when (org-export-derived-backend-p backend 'latex)
@@ -831,6 +833,14 @@ environment into figure
       (replace-regexp-in-string "\\\\.org" ".pdf" contents)))
   (add-to-list 'org-export-filter-link-functions 'latex::filter-link)
 #+END_SRC
+**** Change verbatim text
+#+BEGIN_SRC emacs-lisp
+  (defun latex::verbatim (contents backend info)
+    (when (org-export-derived-backend-p backend 'latex)
+      (replace-regexp-in-string "\\\\texttt" "\\\\myverb" contents)))
+  ;;(add-to-list 'org-export-filter-verbatim-functions 'latex::verbatim)
+#+END_SRC
+
 ** LaTeX style file
 *** VC status
 :PROPERTIES:
@@ -973,6 +983,11 @@ environment into figure
   \RequirePackage{relsize}
   \newrobustcmd{\mytag}[1]{\tikz[overlay]\node[fill=default,inner sep=2pt, anchor=text, rectangle, rounded corners=1mm] {\textcolor{white}{\smaller[2]{#1}}};\phantom{#1}}
 #+END_SRC
+***** Verbatim
+#+BEGIN_SRC latex
+  \newrobustcmd{\myverb}[1]{\tikz[overlay]\node[draw=gray,inner sep=2pt, anchor=text, rectangle, rounded corners=1mm, gray!50!black] {\smaller[0]{#1}};\phantom{#1}}
+#+END_SRC
+
 ** Project definition
 #+BEGIN_SRC emacs-lisp
   (add-to-list
