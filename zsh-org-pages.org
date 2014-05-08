@@ -985,7 +985,7 @@ environment into figure
 #+END_SRC
 ***** Verbatim
 #+BEGIN_SRC latex
-  \newrobustcmd{\myverb}[1]{\tikz[overlay]\node[draw=gray,inner sep=2pt, anchor=text, rectangle, rounded corners=1mm, gray!50!black] {\smaller[0]{#1}};\phantom{#1}}
+  \newrobustcmd{\myverb}[1]{\tikz[overlay]\node[draw=gray,inner sep=2pt, anchor=text, rectangle, rounded corners=1mm, gray!80!black] {\smaller[0.75]{\texttt{#1}}};\phantom{#1}}
 #+END_SRC
 
 ** Project definition
