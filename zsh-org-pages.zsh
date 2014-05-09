@@ -103,6 +103,7 @@ function org-pages ()
     pkgtools__msg_devel "append_list_of_options_arg=${append_list_of_options_arg}"
 
     if ${clean}; then
+        pkgtools__msg_notice "Cleaning directory"
         if [ -d doc ]; then
             rm -rf doc
         fi
@@ -223,6 +224,7 @@ function op::prepare_process()
         elif [ $(grep -e "#+OPTIONS.*split:pdf" -c $file) -eq 1 ]; then
             if ${generate_pdf}; then __split_file $file;fi
         fi
+        touch toc.org
     done
     unset org_files
     __pkgtools__at_function_exit
@@ -432,10 +434,10 @@ function op::post_process()
     pkgtools__msg_debug "Remove logfiles"
     if ! ${keep_tmp_files}; then
         pkgtools__msg_debug "Remove useless files"
-        find . -regex ".*\.\(pyg\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|tex\)" \
-            -not -path '*doc*' -not -path '*figures*' -exec rm -f {} \;
-        find . -name "*~" -exec rm -rf {} \;
+        # find . -regex ".*\.\(pyg\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|tex\)" \
+        #     -not -path '*doc*' -not -path '*figures*' -exec rm -f {} \;
         #find . -name "*latex.d*" -exec rm -rf {} \;
+        find . -name "*~" -exec rm -rf {} \;
         rm -rf ./latex.d
         for file in $(find . -name "*.org"); do
             for ffile in $(\ls -1 ${file/org/}*); do
