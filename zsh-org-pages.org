@@ -188,7 +188,7 @@ for date/time reference)
 #+BEGIN_SRC emacs-lisp
   (defun html::tagging-headline (contents backend info)
     (when (eq backend 'html)
-      (replace-regexp-in-string ":\\(.*\\):" "<span class=\"tag\">\\1</span>" contents)))
+      (replace-regexp-in-string "^*.*:\\(.*\\):" "<span class=\"tag\">\\1</span>" contents)))
   (add-to-list 'org-export-filter-headline-functions 'html::tagging-headline)
 #+END_SRC
 *** Remove toc and footnotes name
@@ -835,7 +835,7 @@ for date/time reference)
   (defun latex::tagging-headline (contents backend info)
     (when (org-export-derived-backend-p backend 'latex)
       (replace-regexp-in-string "\\\\textsc+" "\\\\mytag"
-      (replace-regexp-in-string ":\\(.*\\):" "\\\\hfill{}\\\\mytag{\\1}" contents))))
+      (replace-regexp-in-string "^*.*:\\(.*\\):" "\\\\hfill{}\\\\mytag{\\1}" contents))))
   (add-to-list 'org-export-filter-headline-functions 'latex::tagging-headline)
 #+END_SRC
 **** SN@ilWare filter
