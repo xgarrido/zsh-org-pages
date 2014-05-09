@@ -182,16 +182,6 @@ We also globally define the current directory
       (replace-regexp-in-string "hsides" "void" contents)))
   (add-to-list 'org-export-filter-final-output-functions 'html::void-table-frame)
 #+END_SRC
-*** Remove toc and footnotes name
-#+BEGIN_SRC emacs-lisp
-  (defun html::remove-toc-footnote (contents backend info)
-    (when (eq backend 'html)
-      (replace-regexp-in-string "Table of Contents" ""
-      (replace-regexp-in-string "Footnotes:" ""
-      (replace-regexp-in-string "<body>" "<body onload=\"randomLinkColor();displayTOC();\"><div id=\"toc\"></div>" contents)
-      ))))
-  (add-to-list 'org-export-filter-final-output-functions 'html::remove-toc-footnote)
-#+END_SRC
 *** Tagging headline tags
 Flag tags with a rounded rectangle filled with default color (used for example
 for date/time reference)
@@ -200,6 +190,17 @@ for date/time reference)
     (when (eq backend 'html)
       (replace-regexp-in-string ":\\(.*\\):" "<span class=\"tag\">\\1</span>" contents)))
   (add-to-list 'org-export-filter-headline-functions 'html::tagging-headline)
+#+END_SRC
+*** Remove toc and footnotes name
+#+BEGIN_SRC emacs-lisp
+  (defun html::remove-toc-footnote-name (contents backend info)
+    (when (eq backend 'html)
+      (replace-regexp-in-string ":\\(.*\\):</a>\n" "<span class=\"tag\" style=\"font-size:0.8em;\">\\1</span>"
+      (replace-regexp-in-string "Table of Contents" ""
+      (replace-regexp-in-string "Footnotes:" ""
+      (replace-regexp-in-string "<body>" "<body onload=\"randomLinkColor();displayTOC();\"><div id=\"toc\"></div>" contents)
+      )))))
+  (add-to-list 'org-export-filter-final-output-functions 'html::remove-toc-footnote-name)
 #+END_SRC
 *** Hook
 **** Change image extension
@@ -406,6 +407,10 @@ for date/time reference)
 #+BEGIN_SRC css
   #table-of-contents {
       margin-bottom: 40px;
+  }
+
+  #table-of-contents .tag:hover {
+      opacity:0.75;
   }
 
   #toc {
