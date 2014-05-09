@@ -437,12 +437,20 @@ function op::post_process()
         find . -name "*~" -exec rm -rf {} \;
         #find . -name "*latex.d*" -exec rm -rf {} \;
         rm -rf ./latex.d
+        for file in $(find . -name "*.org"); do
+            for ffile in $(\ls -1 ${file/org/}*); do
+                if [ ${ffile:e} != "org" ]; then
+                    rm $ffile
+                fi
+            done
+        done
     fi
 
     pkgtools__msg_debug "Remove tmp README file"
     if [ ! -s README.org ]; then
         rm -f README.org
     fi
+
     __pkgtools__at_function_exit
     return 0
 }
