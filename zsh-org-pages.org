@@ -923,6 +923,188 @@ environment into figure
   <<vc-status()>>
 #+END_SRC
 
+*** =org= preamble
+:PROPERTIES:
+:MKDIRP: yes
+:TANGLE:  (concat this-directory "doc/pdf/org-preamble.sty")
+:END:
+**** Basics
+#+BEGIN_SRC latex
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{org-preamble}[2013/03/03 v0.01 Bundling of Preamble items for Org to LaTeX export]
+#+END_SRC
+
+**** Packages requirements
+***** AMS packages
+#+BEGIN_SRC latex
+  \RequirePackage{amsmath,amssymb}
+#+END_SRC
+***** Listings package
+[[https://code.google.com/p/minted/][minted]] is a package that facilitates expressive syntax highlighting in LaTeX
+using the powerful Pygments library. The package also provides options to
+customize the highlighted source code output using =fancyvrb=.
+#+BEGIN_SRC latex
+  \RequirePackage[cache]{minted}
+#+END_SRC
+
+***** Unicode typesettings aka XeTeX
+#+BEGIN_SRC latex
+  \RequirePackage{ifxetex}
+  \ifxetex
+  \RequirePackage{fontspec}
+  \RequirePackage{xunicode}
+  %%\else
+  \fi
+#+END_SRC
+
+***** hyperref package
+#+BEGIN_SRC latex
+  \RequirePackage{hyperref}
+#+END_SRC
+***** [[http://www.ctan.org/pkg/pifont][pifont]] package
+#+BEGIN_SRC latex
+  \RequirePackage{pifont}
+#+END_SRC
+***** graphics package
+#+BEGIN_SRC latex
+  \RequirePackage{wrapfig}
+  \RequirePackage{graphicx}
+  \graphicspath{
+    {./plot/}
+    {./figures/}
+  }
+#+END_SRC
+***** comment package
+#+BEGIN_SRC latex
+  \RequirePackage{comment}
+#+END_SRC
+***** [[http://www.texample.net/tikz/][tikz]] package
+#+BEGIN_SRC latex
+  \RequirePackage{tikz}
+  \usetikzlibrary{positioning,arrows,decorations,backgrounds,patterns,matrix,shapes,fit,calc,shadows,plotmarks,spy}
+#+END_SRC
+
+We use the external library from =tikz= to cache i.e. produce a =pdf= file of
+each =tikzpicture=. =tikz/external= looks if the pdf exist and if not, export it.
+#+BEGIN_SRC latex
+  %%\tikzset{
+  %%  external/system call={%
+  %%    xelatex -shell-escape
+  %%    -halt-on-error -interaction=batchmode
+  %%    -jobname "\image" "\texsource"}}
+  %%\tikzexternalize[prefix=latex.d/]
+  \input "|mkdir -p latex.d"
+  \input "|mkdir -p /tmp/latex.d"
+#+END_SRC
+***** pgfplot package
+#+BEGIN_SRC latex
+  \RequirePackage{pgfplots}
+#+END_SRC
+***** rotating package
+This since to be needed if =sidewaystable= are used
+#+BEGIN_SRC latex
+  \RequirePackage{rotating}
+#+END_SRC
+
+***** Bold math package
+#+BEGIN_SRC latex
+  \RequirePackage{bm}
+#+END_SRC
+***** =multirow=
+#+BEGIN_SRC latex
+  \RequirePackage{multirow}
+#+END_SRC
+***** units package
+#+BEGIN_SRC latex
+  \RequirePackage{units}
+#+END_SRC
+***** xspace package
+#+BEGIN_SRC latex
+  \RequirePackage{xspace}
+#+END_SRC
+
+***** array package
+#+BEGIN_SRC latex
+  \RequirePackage{array}
+  \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+  \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+  \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+#+END_SRC
+
+***** underline package
+#+BEGIN_SRC latex
+  \RequirePackage[normalem]{ulem}
+#+END_SRC
+***** cancel package
+This package allows to cancel a number in LaTeX math mode
+#+BEGIN_SRC latex
+  \RequirePackage{cancel}
+#+END_SRC
+
+**** Email handling
+#+BEGIN_SRC latex
+  \let\@email\@empty
+  \@ifundefined{email}{%
+    \newcommand\email[1]{\gdef\@email{#1}}}{}
+#+END_SRC
+**** Generic new environment
+***** Remark
+#+BEGIN_SRC latex
+  \newenvironment{remark}
+                 {\begin{quote}\ding{47}\itshape\small}
+                 {\end{quote}}
+#+END_SRC
+***** Prompt
+#+BEGIN_SRC latex
+  \newenvironment{prompt}
+                 {\begin{quote}\color{blue!75}\tt\$\;}
+                 {\end{quote}}
+#+END_SRC
+***** Bibliography
+#+BEGIN_SRC latex
+  \renewenvironment{bibliography}{%
+    \small
+    \@mkboth{\MakeUppercase\bibname}{\MakeUppercase\bibname}%
+    \list{\@biblabel{\@arabic\c@enumiv}}%
+         {\settowidth\labelwidth{\@biblabel{9}}%
+           \leftmargin\labelwidth
+           \advance\leftmargin\labelsep
+           \@openbib@code
+           \usecounter{enumiv}%
+           \let\p@enumiv\@empty
+           \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+         \sloppy
+         \clubpenalty4000
+         \@clubpenalty \clubpenalty
+         \widowpenalty4000%
+         \sfcode`\.\@m}{%
+    \def\@noitemerr
+        {\@latex@warning{Empty `thebibliography' environment}}%
+        \endlist}
+#+END_SRC
+
+**** New commands
+***** Clearing odd pages
+#+BEGIN_SRC latex
+  \RequirePackage{changepage}
+  \newcommand\clearemptydoublepage{%
+    \checkoddpage
+    \ifthenelse{\boolean{oddpage}}%
+               {\null\clearpage\thispagestyle{empty} \null \clearpage}%
+               {\null\clearpage}%
+  }
+  %%\newcommand{\clearemptydoublepage}{\newpage{\cleardoubleemptypage\thispagestyle{empty}}
+#+END_SRC
+***** Tag
+#+BEGIN_SRC latex
+  \RequirePackage{relsize}
+  \newrobustcmd{\mytag}[1]{\tikz[overlay]\node[fill=default,inner sep=2pt, anchor=text, rectangle, rounded corners=1mm] {\textcolor{white}{\smaller[2]{#1}}};\phantom{#1}}
+#+END_SRC
+***** Verbatim
+#+BEGIN_SRC latex
+  \newrobustcmd{\myverb}[1]{\tikz[overlay]\node[draw=gray,inner sep=2pt, anchor=text, rectangle, rounded corners=1mm, gray!80!black] {\smaller[0.75]{\texttt{#1}}};\phantom{#1}}
+#+END_SRC
+
 *** Default class style
 :PROPERTIES:
 :MKDIRP:   yes
@@ -1028,16 +1210,6 @@ environment into figure
   \def\Snailware{\mbox{$\overline{\text{SN@il}}$%
       \hspace{.05em}\protect\raisebox{.2ex}%
              {$\protect\underline{\text{Ware}}$}}\xspace}
-#+END_SRC
-**** New commands
-***** Tag
-#+BEGIN_SRC latex
-  \RequirePackage{relsize}
-  \newrobustcmd{\mytag}[1]{\tikz[overlay]\node[fill=default,inner sep=2pt, anchor=text, rectangle, rounded corners=1mm] {\textcolor{white}{\smaller[2]{#1}}};\phantom{#1}}
-#+END_SRC
-***** Verbatim
-#+BEGIN_SRC latex
-  \newrobustcmd{\myverb}[1]{\tikz[overlay]\node[draw=gray,inner sep=2pt, anchor=text, rectangle, rounded corners=1mm, gray!80!black] {\smaller[0.75]{\texttt{#1}}};\phantom{#1}}
 #+END_SRC
 
 ** Project definition
