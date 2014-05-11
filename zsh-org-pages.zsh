@@ -312,6 +312,7 @@ function op::post_process()
                 rel_path+="../"
             done
             sed -i -e 's@href="css/@href="'${rel_path}'css/@g' $file
+            sed -i -e 's@img src="@img src="'${rel_path}'/@g' $file
 
             pkgtools__msg_debug "Changing some unicode symbol"
             sed -i \
