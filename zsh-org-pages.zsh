@@ -319,6 +319,7 @@ function op::post_process()
                 -e 's@ding{193}@\(\\unicode{x2461}\\)@g' \
                 -e 's@ding{194}@\(\\unicode{x2462}\\)@g' \
                 -e 's@ding{195}@\(\\unicode{x2463}\\)@g' \
+                -e 's@ding{42}@\(\\unicode{x261B}\\)@g'  \
                 -e 's@cmark@\(\\unicode{x2713}\\)@g' \
                 -e 's@xmark@\(\\unicode{x2717}\\)@g' \
                 $file
