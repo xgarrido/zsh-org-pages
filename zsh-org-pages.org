@@ -343,21 +343,21 @@ for date/time reference)
   }
 
   .tag {
-    display:inline-block;
-    white-space:no-wrap;
-    background:#67ad00;
-    color:#ffffff;
-    float: right;
-    font-size:.6em;
-    line-height:1.5em;
-    border:1px solid #e5e5e5;
-    -webkit-border-radius:0.4em;
-    -moz-border-radius:0.4em;
-    -ms-border-radius:0.4em;
-    -o-border-radius:0.4em;
-    border-radius:0.4em;
-    padding:0 .3em;
-    margin:-1px 0
+       display:inline-block;
+       white-space:no-wrap;
+       background:#67ad00;
+       color:#ffffff;
+       float: right;
+       font-size:.6em;
+       line-height:1.5em;
+       border:1px solid #e5e5e5;
+       -webkit-border-radius:0.4em;
+       -moz-border-radius:0.4em;
+       -ms-border-radius:0.4em;
+       -o-border-radius:0.4em;
+       border-radius:0.4em;
+       padding:0 .3em;
+       margin:-1px 0
   }
 
   table {
@@ -401,6 +401,19 @@ for date/time reference)
 
   .figure-number {
       font-weight:700;
+  }
+#+END_SRC
+***** Colored box (inherited from =beamer=)
+#+BEGIN_SRC css
+  .cbox {
+      color:#67ad00;
+  }
+
+  .cbox p:before {
+      font-family: FontAwesome;
+      content: "\f02b ";
+      display: inline-block;
+      padding-right: 3px;
   }
 #+END_SRC
 ***** TOC
