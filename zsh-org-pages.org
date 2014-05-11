@@ -568,6 +568,14 @@ spinners on the bottom-left side of the page
       margin:0 0 20px;
   }
 
+  .center {
+      text-align:center;
+  }
+
+  .underline {
+      font-weight: bold;
+  }
+
   .footpara {
       display: inline;
   }
