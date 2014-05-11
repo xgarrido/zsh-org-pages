@@ -107,6 +107,9 @@ function org-pages ()
         if [ -d doc ]; then
             rm -rf doc
         fi
+        if [ -f toc.pdf ]; then
+            rm -f toc.*
+        fi
         __pkgtools__at_function_exit
         return 0
     fi
