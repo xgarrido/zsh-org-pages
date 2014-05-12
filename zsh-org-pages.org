@@ -138,7 +138,7 @@ We also globally define the current directory
      :base-extension "org"
      :publishing-directory ,(expand-file-name "html" doc-directory)
      :publishing-function org-html-publish-to-html
-     ;;:exclude ""
+     :exclude "toc.org"
      :recursive nil
      :section-numbers 3
      :with-toc        2
@@ -155,6 +155,7 @@ We also globally define the current directory
      :base-extension "org"
      :publishing-directory ,(expand-file-name "html" doc-directory)
      :publishing-function org-html-publish-to-html
+     :exclude "toc.org"
      :recursive t
      :section-numbers 3
      :with-toc        2
@@ -1221,7 +1222,7 @@ This package allows to cancel a number in LaTeX math mode
      :base-extension "org"
      :publishing-directory ,(expand-file-name "pdf" doc-directory)
      :publishing-function org-latex-publish-to-pdf
-     ;;:exclude ""
+     :exclude "toc.org"
      :recursive nil
      :section-numbers 2
      :with-toc        t
@@ -1235,7 +1236,7 @@ This package allows to cancel a number in LaTeX math mode
      :base-extension "org"
      :publishing-directory ,(expand-file-name "pdf" doc-directory)
      :publishing-function org-latex-publish-to-pdf
-     ;;:exclude ""
+     :exclude "toc.org"
      :recursive t
      :section-numbers 2
      :with-toc        t
