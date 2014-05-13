@@ -751,6 +751,10 @@ Nothing for the time being...
 #+BEGIN_SRC emacs-lisp
   (setq org-export-with-smart-quotes nil)
 #+END_SRC
+*** Use sans-serif font for TOC
+#+BEGIN_SRC emacs-lisp
+  (setq org-latex-toc-command "{\\sffamily\\tableofcontents}\n\n")
+#+END_SRC
 *** Place table caption below table
 #+BEGIN_SRC emacs-lisp
   (setq org-latex-table-caption-above nil)
