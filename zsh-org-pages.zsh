@@ -402,7 +402,8 @@ function op::post_process()
                 for f in ${=content}
                 do
                     pkgtools__msg_devel "footnote #$i=$f"
-                    space=$(echo ${#f}/4 | bc)
+                    # space=$(echo ${#f}/4 | bc)
+                    space=0
                     f+="<p style=\"height:"${space}"px\"></p>\n</p>"
                     awk -v fn=$f '/<sup><a id="fnr.'$i'"/{a++;}/^<\/p>/&&a{$0=fn;a=0;}1' $file > $file.$i
                     mv $file.$i $file
