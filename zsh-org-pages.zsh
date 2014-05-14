@@ -402,14 +402,17 @@ function op::post_process()
                 for f in ${=content}
                 do
                     pkgtools__msg_devel "footnote #$i=$f"
-                    # space=$(echo ${#f}/4 | bc)
-                    space=0
-                    f+="<p style=\"height:"${space}"px\"></p>\n</p>"
-                    awk -v fn=$f '/<sup><a id="fnr.'$i'"/{a++;}/^<\/p>/&&a{$0=fn;a=0;}1' $file > $file.$i
+                    fn=${f:0:-6}
+                    fn+="<br/>__div_or_space__\n</p>"
+                    awk -v fn=$fn '/<sup><a id="fnr.'$i'"/{a++;}/^<\/p>/&&a{$0=fn;a=0;}1' $file > $file.$i
                     mv $file.$i $file
                     let i=i+1
                 done
                 unset IFS
+                sed -i -e '/__div_or_space__/{n;s@<div class=\"footdef\">@@;s@__div_or_space__@</div>@;}' $file
+                tac $file | sed -e '/<sup>/{n;s@__div_or_space__@@;}' | tac > $file.tac
+                mv $file.tac $file
+                sed -i -e 's@__div_or_space__@</div>@g' $file
             done
         fi
 
