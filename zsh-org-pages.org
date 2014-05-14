@@ -145,8 +145,8 @@ We also globally define the current directory
      :time-stamp-file nil
      :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\" />
                  <link rel=\"stylesheet\" href=\"css/org-pygments.css\" />
-                 <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\" />"
-     :html-preamble "__home_link__ __github_link__"
+                 <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css\" />"
+     :html-preamble "__home_link__ __github_link__ __org_link__"
      :html-postamble "__cvs_version__"))
   (add-to-list
    'org-publish-project-alist
@@ -162,8 +162,8 @@ We also globally define the current directory
      :time-stamp-file nil
      :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\" />
                  <link rel=\"stylesheet\" href=\"css/org-pygments.css\" />
-                 <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\" />"
-     :html-preamble "__home_link__ __github_link__"
+                 <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css\" />"
+     :html-preamble "__home_link__ __github_link__ __org_link__"
      :html-postamble "__cvs_version__"))
   #+END_SRC
 ** Markup filtering

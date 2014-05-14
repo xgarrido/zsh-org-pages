@@ -37,6 +37,7 @@ function org-pages ()
     local generate_floating_footnote=true
     local generate_home_link=false
     local generate_github_link=false
+    local generate_org_link=false
     local convert_images=true
     local color_scheme="default"
     while [ -n "$1" ]; do
@@ -65,6 +66,8 @@ function org-pages ()
                 generate_home_link=true
             elif [ "${opt}" = "--generate-github-link" ]; then
                 generate_github_link=true
+            elif [ "${opt}" = "--generate-org-link" ]; then
+                generate_org_link=true
             elif [ "${opt}" = "--no-image-conversion" ]; then
                 convert_images=false
             elif [ "${opt}" = "--keep-tmp-files" ]; then
@@ -337,10 +340,12 @@ function op::post_process()
 
             local cvs_version
             local cvs_path
+            local cvs_branch
             if [ -d .git ]; then
                 cvs_path=$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')
                 cvs_version=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'commit <a href=\"url/commit/%H\">%h</a> - %ad' \
                     | sed "s#url#"${cvs_path}"#")
+                cvs_branch=$(git branch | grep '*' | awk '{print $2}')
             fi
             pkgtools__msg_debug "Changing preamble github link"
             if ${generate_github_link}; then
@@ -352,13 +357,25 @@ function op::post_process()
             if  [[ "${cvs_version}" = *"github"* ]]; then
                 cvs_version="File under <i class=\"fa fa-github-alt\"></i> version control - ${cvs_version}"
             elif [[ "${cvs_version}" = *"git"* ]]; then
-                cvs_version="File under git version control - ${cvs_version}"
+                cvs_version="File under <i class=\"fa fa-git\"></i> version control - ${cvs_version}"
             elif [[ "${cvs_version}" = *"svn"* ]]; then
                 cvs_version="File under svn version control - ${cvs_version}"
             fi
             sed -i -e 's@__cvs_version__@'${cvs_version}'@' $file
+
+            pkgtools__msg_debug "Changing org link"
+            if ${generate_org_link}; then
+                filename=$(basename $file)
+                if [ $filename = "index.html" ]; then
+                    sed -i -e 's@__org_link__@<a href="'${cvs_path/github/raw.githubusercontent}'/'${cvs_branch}'/README.org"><i class=\"fa fa-file-text-o\"></i></a><br/>@g' $file
+                fi
+                sed -i -e 's@__org_link__@<a href="'${cvs_path/github/raw.githubusercontent}'/'${cvs_branch}'/'${filename/.html/.org}'"><i class=\"fa fa-file-text-o\"></i></a><br/>@g' $file
+            else
+                sed -i -e 's@__org_link__@@g' $file
+            fi
             unset cvs_path
             unset cvs_version
+            unset cvs_branch
 
             local colors
             for col in ${__ogp_color_map[@]};do colors+="'$col',";done
