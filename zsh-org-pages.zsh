@@ -343,9 +343,15 @@ function op::post_process()
             local cvs_branch
             if [ -d .git ]; then
                 cvs_path=$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')
-                cvs_version=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'commit <a href=\"url/commit/%H\">%h</a> - %ad' \
-                    | sed "s#url#"${cvs_path}"#")
-                cvs_branch=$(git branch | grep '*' | awk '{print $2}')
+                if [ "${cvs_path}" = "" ]; then
+                    cvs_path=$(git svn info | grep URL: | awk '{print $2}')
+                    cvs_version="revision <a href=\""${cvs_path}"\">"$(git svn info | grep Revision: | awk '{print $2}')"</a> - "$(git svn info | grep Date: | awk '{print $4}')
+                else
+                    cvs_version=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'commit <a href=\"url/commit/%H\">%h</a> - %ad' \
+                        | sed "s#url#"${cvs_path}"#")
+                    cvs_branch=$(git branch | grep '*' | awk '{print $2}')
+                fi
+
             fi
             pkgtools__msg_debug "Changing preamble github link"
             if ${generate_github_link}; then
@@ -358,8 +364,8 @@ function op::post_process()
                 cvs_version="File under <i class=\"fa fa-github-alt\"></i> version control - ${cvs_version}"
             elif [[ "${cvs_version}" = *"git"* ]]; then
                 cvs_version="File under <i class=\"fa fa-git\"></i> version control - ${cvs_version}"
-            elif [[ "${cvs_version}" = *"svn"* ]]; then
-                cvs_version="File under svn version control - ${cvs_version}"
+            elif [[ "${cvs_version}" = *"revision"* ]]; then
+                cvs_version="File under <code>svn</code> version control - ${cvs_version}"
             fi
             sed -i -e 's@__cvs_version__@'${cvs_version}'@' $file
 
