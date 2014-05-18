@@ -417,6 +417,15 @@ for date/time reference)
       padding-right: 3px;
   }
 #+END_SRC
+***** Question environment (inherited from =latex=)
+#+BEGIN_SRC css
+  .question {
+      border-left:2px solid #67ad00;
+      margin:0;
+      padding:0 0 0 20px;
+      /*font-style:italic;*/
+  }
+#+END_SRC
 ***** TOC
 #+BEGIN_SRC css
   #table-of-contents {
