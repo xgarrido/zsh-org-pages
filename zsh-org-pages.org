@@ -790,42 +790,6 @@ Only include one default package and remove all the crapppy stuff included by
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'org-latex-packages-alist '("" "org-preamble"))
 #+END_SRC
-
-*** Templates
-**** Default
-#+BEGIN_SRC emacs-lisp
-  (unless (boundp 'org-latex-classes)
-    (setq org-latex-classes nil))
-
-  (add-to-list 'org-latex-classes
-               '("default-class"
-                 "\\documentclass{scrartcl}
-                  [PACKAGES]
-                  \\usepackage{default-class-style}
-                  \\usepackage{vc-style}
-                  [NO-DEFAULT-PACKAGES]"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-#+END_SRC
-**** Teaching template
-To be used, we would have to install [[https://github.com/xgarrido/latex-templates]]
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'org-latex-classes
-               '("teaching-class"
-                 "\\documentclass{scrartcl}
-                  [PACKAGES]
-                  \\usepackage[oldschool]{teaching-classes-style}
-                  \\usepackage{vc-style}
-                  [NO-DEFAULT-PACKAGES]"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-#+END_SRC
 *** =minted= setup
 
 Code fragments are syntax highlighted using [[https://code.google.com/p/minted/][minted]] LaTeX package
@@ -897,8 +861,63 @@ environment into figure
       (replace-regexp-in-string "\\\\texttt" "\\\\myverb" contents)))
   ;;(add-to-list 'org-export-filter-verbatim-functions 'latex::verbatim)
 #+END_SRC
+**** Add email
+#+BEGIN_SRC emacs-lisp
+  (defun latex::add-email (options backend)
+    "Insert EMAIL as \email{EMAIL} in the latex backend when EMAIL is present."
+    (when (and (org-export-derived-backend-p backend 'latex)
+               (plist-get options :with-email))
+      (plist-put options :latex-header
+                 (mapconcat 'identity
+                            (remove nil
+                                    (list
+                                     (plist-get options :latex-header)
+                                     (format "\\email{%s}" (plist-get options :email))))
+                            "\n"))
+      ;; don't insert email in \thanks{.}
+      (plist-put options :with-email nil))
+    options)
 
-** LaTeX style file
+  (add-to-list 'org-export-filter-options-functions 'latex::add-email)
+#+END_SRC
+
+*** Templates
+**** Default
+#+BEGIN_SRC emacs-lisp
+  (unless (boundp 'org-latex-classes)
+    (setq org-latex-classes nil))
+
+  (add-to-list 'org-latex-classes
+               '("default-class"
+                 "\\documentclass{scrartcl}
+                  [PACKAGES]
+                  \\usepackage{default-class-style}
+                  \\usepackage{vc-style}
+                  [NO-DEFAULT-PACKAGES]"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+#+END_SRC
+**** Teaching template
+To be used, we would have to install [[https://github.com/xgarrido/latex-templates]]
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'org-latex-classes
+               '("teaching-class"
+                 "\\documentclass{scrartcl}
+                  [PACKAGES]
+                  \\usepackage[oldschool]{teaching-classes-style}
+                  \\usepackage{vc-style}
+                  [NO-DEFAULT-PACKAGES]"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+#+END_SRC
+
+** LaTeX style files
 *** VC status
 :PROPERTIES:
 :MKDIRP:   yes
@@ -1052,6 +1071,10 @@ This package allows to cancel a number in LaTeX math mode
 \newcommand*{\faicon}[1]{{\FA\csname faicon@#1\endcsname}}
 \expandafter\def\csname faicon@github-alt\endcsname{\symbol{"F113}}\def\faGithubAlt{{\FA\csname faicon@github-alt\endcsname}\xspace}
 #+END_SRC
+***** =relsize=
+#+BEGIN_SRC latex
+  \RequirePackage{relsize}
+#+END_SRC
 **** Email handling
 #+BEGIN_SRC latex
   \let\@email\@empty
@@ -1108,7 +1131,6 @@ This package allows to cancel a number in LaTeX math mode
 #+END_SRC
 ***** Tag
 #+BEGIN_SRC latex
-  \RequirePackage{relsize}
   \newrobustcmd{\mytag}[1]{\tikz[overlay]\node[fill=default,inner sep=2pt, anchor=text, rectangle, rounded corners=1mm] {\textcolor{white}{\smaller[2]{#1}}};\phantom{#1}}
 #+END_SRC
 ***** Verbatim
