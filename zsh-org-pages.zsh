@@ -247,6 +247,7 @@ function op::process()
     local emacs_base_cmd="emacs --batch --no-init-file "
     emacs_base_cmd+="--eval \"(require 'org)\" "
     emacs_base_cmd+="--eval \"(org-babel-do-load-languages 'org-babel-load-languages '((sh . t)))\" "
+    emacs_base_cmd+="--eval \"(setq org-babel-use-quick-and-dirty-noweb-expansion t)\" "
     emacs_base_cmd+="--eval \"(setq org-confirm-babel-evaluate nil)\" "
     emacs_base_cmd+="--eval \"(setq c-standard-font-lock-fontify-region-function 'font-lock-default-fontify-region)\" "
     emacs_base_cmd+="--eval '(let ((this-directory \""$PWD"/\")) "
