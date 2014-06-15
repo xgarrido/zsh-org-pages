@@ -393,6 +393,28 @@ function op::post_process()
             fi
             unset colors
 
+            pkgtools__msg_debug "Generate bibliography"
+            typeset -A array
+            i=1
+            for f in $(cat $file | awk -F'[<>]' -v taga="cite" -v tagb="/cite" '{i=1; while (i<=NF) { if ($(i)==taga && $(i+2)==tagb) { print $(i+1) }; i++} }' | tr ',' ' ')
+            do
+                if [ ${array[$f]+_} ]; then
+                    pkgtools__msg_debug "$f entry already found"
+                else
+                    array[$f]=$i
+                fi
+                let i++
+            done
+            sed -i -e 's@(<cite>@[<cite>@g' -e 's@</cite>)@</cite>]@g' $file
+            for k in ${(@k)array}
+            do
+                ref=${array[$k]}
+                sed -i -e 's@\\bibitem{'$k'}@<a id="ref.'$ref'" href="#refr.'$ref'">'$ref'</a>@g' $file
+                sed -i -e 's@'$k'@<a id="refr.'$ref'" href="#ref.'$ref'">'$ref'</a>@g' $file
+                pkgtools__msg_debug "$k --- $ref"
+            done
+            unset array
+
             pkgtools__msg_debug "Remove 'split' & 'toc' keywords (if any)"
             if [[ "$file" = *".split."* ]]; then
                 \mv $file ${file/.split/}

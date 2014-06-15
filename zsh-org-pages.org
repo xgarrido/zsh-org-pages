@@ -221,7 +221,6 @@ for date/time reference)
       ))
   (add-hook 'org-export-before-parsing-hook 'html::replace-img-ext-hook)
 #+END_SRC
-
 ** CSS stylesheets
 *** Main stylesheets
 :PROPERTIES:
