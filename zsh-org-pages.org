@@ -183,6 +183,13 @@ We also globally define the current directory
       (replace-regexp-in-string "hsides" "void" contents)))
   (add-to-list 'org-export-filter-final-output-functions 'html::void-table-frame)
 #+END_SRC
+*** Remove =latex= tags
+#+BEGIN_SRC emacs-lisp :tangle no
+  (defun html::remove-latex-tags (contents backend info)
+    (when (eq backend 'html)
+      (replace-regexp-in-string "ignoresecnumber\\|ignoreheading" "" contents)))
+  (add-to-list 'org-export-filter-headline-functions 'html::remove-latex-tags)
+#+END_SRC
 *** Tagging headline tags
 Flag tags with a rounded rectangle filled with default color (used for example
 for date/time reference)
@@ -194,14 +201,15 @@ for date/time reference)
 #+END_SRC
 *** Remove toc and footnotes name
 #+BEGIN_SRC emacs-lisp
-  (defun html::remove-toc-footnote-name (contents backend info)
-    (when (eq backend 'html)
-      (replace-regexp-in-string ":\\(.*\\):</a>\n" "<span class=\"tag\" style=\"font-size:0.8em;\">\\1</span></a>"
-      (replace-regexp-in-string "Table of Contents" ""
-      (replace-regexp-in-string "Footnotes:" ""
-      (replace-regexp-in-string "<body>" "<body onload=\"randomLinkColor();displayTOC();\"><div id=\"toc\"></div>" contents)
-      )))))
-  (add-to-list 'org-export-filter-final-output-functions 'html::remove-toc-footnote-name)
+    (defun html::remove-toc-footnote-name (contents backend info)
+      (when (eq backend 'html)
+        (replace-regexp-in-string ":\\(.*\\):</a>\n" "<span class=\"tag\" style=\"font-size:0.8em;\">\\1</span></a>"
+        (replace-regexp-in-string "Table of Contents" ""
+        (replace-regexp-in-string "Footnotes:" ""
+        (replace-regexp-in-string "<body>" "<body onload=\"randomLinkColor();displayTOC();\"><div id=\"toc\"></div>"
+        (replace-regexp-in-string "ignoresecnumber\\|ignoreheading" "" contents)
+        ))))))
+    (add-to-list 'org-export-filter-final-output-functions 'html::remove-toc-footnote-name)
 #+END_SRC
 *** Hook
 **** Change image extension
@@ -300,7 +308,7 @@ for date/time reference)
   }
 #+END_SRC
 
-***** Code, table, image, tag
+***** Code, cite, table, image, tag
 #+BEGIN_SRC css
   p, ul, ol, table, pre, dl {
       /*margin:0 0 20px;*/
@@ -343,6 +351,9 @@ for date/time reference)
       overflow-x: auto;
   }
 
+  cite {
+      font-style: normal;
+  }
   .tag {
        display:inline-block;
        white-space:no-wrap;
