@@ -246,7 +246,7 @@ function op::process()
     local emacs_cmd=""
     local emacs_base_cmd="emacs --batch --no-init-file "
     emacs_base_cmd+="--eval \"(require 'org)\" "
-    emacs_base_cmd+="--eval \"(org-babel-do-load-languages 'org-babel-load-languages '((sh . t)))\" "
+    emacs_base_cmd+="--eval \"(org-babel-do-load-languages 'org-babel-load-languages '((sh . t)(python . t)))\" "
     emacs_base_cmd+="--eval \"(setq org-babel-use-quick-and-dirty-noweb-expansion t)\" "
     emacs_base_cmd+="--eval \"(setq org-confirm-babel-evaluate nil)\" "
     emacs_base_cmd+="--eval \"(setq c-standard-font-lock-fontify-region-function 'font-lock-default-fontify-region)\" "
@@ -345,9 +345,11 @@ function op::post_process()
             if [ -d .git ]; then
                 cvs_path=$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')
                 if [ "${cvs_path}" = "" ]; then
+                    pkgtools__msg_debug "Using git svn info"
                     cvs_path=$(git svn info | grep URL: | awk '{print $2}')
                     cvs_version="revision <a href=\""${cvs_path}"\">"$(git svn info | grep Revision: | awk '{print $2}')"</a> - "$(git svn info | grep Date: | awk '{print $4}')
                 else
+                    pkgtools__msg_debug "Using git info"
                     cvs_version=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'commit <a href=\"url/commit/%H\">%h</a> - %ad' \
                         | sed "s#url#"${cvs_path}"#")
                     cvs_branch=$(git branch | grep '*' | awk '{print $2}')
