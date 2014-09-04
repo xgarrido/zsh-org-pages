@@ -1157,6 +1157,11 @@ This package allows to cancel a number in LaTeX math mode
 #+BEGIN_SRC latex
   \RequirePackage{relsize}
 #+END_SRC
+***** =fixltx2e= package
+Following this [[http://tex.stackexchange.com/questions/74114/dont-work-with-toc][discussion]], the use of =\(\)= sithin section is not /robust/.
+#+BEGIN_SRC latex
+  \RequirePackage{fixltx2e}
+#+END_SRC
 **** Email handling
 #+BEGIN_SRC latex
   \let\@email\@empty
