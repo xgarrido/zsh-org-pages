@@ -764,7 +764,7 @@ Nothing for the time being...
   }
 #+END_SRC
 
-* PDF export
+* LaTeX/PDF export
 ** =org= to LaTeX stuff
 *** Use smart quote when exporting
 #+BEGIN_SRC emacs-lisp
@@ -1080,7 +1080,7 @@ customize the highlighted source code output using =fancyvrb=.
     {./figures/}
   }
 #+END_SRC
-***** comment package
+***** =comment= package
 #+BEGIN_SRC latex
   \RequirePackage{comment}
 #+END_SRC
@@ -1102,11 +1102,11 @@ each =tikzpicture=. =tikz/external= looks if the pdf exist and if not, export it
   \input "|mkdir -p latex.d"
   \input "|mkdir -p /tmp/latex.d"
 #+END_SRC
-***** pgfplot package
+***** =pgfplot= package
 #+BEGIN_SRC latex
   \RequirePackage{pgfplots}
 #+END_SRC
-***** rotating package
+***** =rotating= package
 This since to be needed if =sidewaystable= are used
 #+BEGIN_SRC latex
   \RequirePackage{rotating}
@@ -1120,16 +1120,16 @@ This since to be needed if =sidewaystable= are used
 #+BEGIN_SRC latex
   \RequirePackage{multirow}
 #+END_SRC
-***** units package
+***** =units= package
 #+BEGIN_SRC latex
   \RequirePackage{units}
 #+END_SRC
-***** xspace package
+***** =xspace= package
 #+BEGIN_SRC latex
   \RequirePackage{xspace}
 #+END_SRC
 
-***** array package
+***** =array= package
 #+BEGIN_SRC latex
   \RequirePackage{array}
   \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
@@ -1137,11 +1137,11 @@ This since to be needed if =sidewaystable= are used
   \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 #+END_SRC
 
-***** underline package
+***** =underline= package
 #+BEGIN_SRC latex
   \RequirePackage[normalem]{ulem}
 #+END_SRC
-***** cancel package
+***** =cancel= package
 This package allows to cancel a number in LaTeX math mode
 #+BEGIN_SRC latex
   \RequirePackage{cancel}
@@ -1149,17 +1149,19 @@ This package allows to cancel a number in LaTeX math mode
 
 ***** Font Awesome
 #+BEGIN_SRC latex
+\ifxetex
 \newfontfamily{\FA}{FontAwesome}
 \newcommand*{\faicon}[1]{{\FA\csname faicon@#1\endcsname}}
 \expandafter\def\csname faicon@github-alt\endcsname{\symbol{"F113}}\def\faGithubAlt{{\FA\csname faicon@github-alt\endcsname}\xspace}
+\fi
 #+END_SRC
-***** =relsize=
+***** =relsize= package
 #+BEGIN_SRC latex
   \RequirePackage{relsize}
 #+END_SRC
-***** =fixltx2e= package
-Following this [[http://tex.stackexchange.com/questions/74114/dont-work-with-toc][discussion]], the use of =\(\)= sithin section is not /robust/.
-#+BEGIN_SRC latex
+***** COMMENT =fixltx2e= package
+Following this [[http://tex.stackexchange.com/questions/74114/dont-work-with-toc][discussion]], the use of =\(\)= within section is not /robust/.
+#+BEGIN_SRC latex :tangle no
   \RequirePackage{fixltx2e}
 #+END_SRC
 **** Email handling
