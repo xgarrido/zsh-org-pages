@@ -1159,11 +1159,14 @@ This package allows to cancel a number in LaTeX math mode
 #+BEGIN_SRC latex
   \RequirePackage{relsize}
 #+END_SRC
-***** COMMENT =fixltx2e= package
-Following this [[http://tex.stackexchange.com/questions/74114/dont-work-with-toc][discussion]], the use of =\(\)= within section is not /robust/.
-#+BEGIN_SRC latex :tangle no
-  \RequirePackage{fixltx2e}
+***** Make =\(= and =\)= robust
+Following [[http://tex.stackexchange.com/questions/113564/error-using-environment-inside-section-argument][this]] discussion, make =\(= and =\)= command robust.
+#+BEGIN_SRC latex
+  \RequirePackage{etoolbox}
+  \robustify\(
+  \robustify\)
 #+END_SRC
+
 **** Email handling
 #+BEGIN_SRC latex
   \let\@email\@empty
