@@ -284,6 +284,14 @@ for date/time reference)
   }
 #+END_SRC
 
+Headline with custom id =hidden= are going to be hidden. In this way, I can use
+headline trees but hide their content in the resulting html.
+#+BEGIN_SRC css
+  #hidden {
+      display: none;
+  }
+#+END_SRC
+
 ***** Link
 #+BEGIN_SRC css
   a {
