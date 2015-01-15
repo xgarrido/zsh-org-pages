@@ -219,7 +219,7 @@ for date/time reference)
       (while (re-search-forward "[.]pdf" nil t)
         (replace-match  ".png"))
       ))
-  (add-hook 'org-export-before-parsing-hook 'html::replace-img-ext-hook)
+  ;; (add-hook 'org-export-before-parsing-hook 'html::replace-img-ext-hook)
 #+END_SRC
 ** CSS stylesheets
 *** Main stylesheets

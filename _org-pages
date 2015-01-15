@@ -15,6 +15,7 @@ _org-pages () {
     '--no-floating-footnote[place footnotes at the bottom of the page (only html)]' \
     '--no-image-conversion[do not convert images from pdf to png (only html)]'      \
     '--keep-tmp-files[keep temporary files]'                                        \
+    '--do-not-replace-pdf-ext[keep pdf file extension (only html)]'                 \
     '--color=[set color scheme]:colors:->colors'                                    \
     '*: :->args'                                                                    \
     && ret=0

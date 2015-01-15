@@ -39,6 +39,7 @@ function org-pages ()
     local generate_github_link=false
     local generate_org_link=false
     local convert_images=true
+    local replace_pdf_ext=true
     local color_scheme="default"
     while [ -n "$1" ]; do
         local token="$1"
@@ -72,6 +73,8 @@ function org-pages ()
                 convert_images=false
             elif [ "${opt}" = "--keep-tmp-files" ]; then
                 keep_tmp_files=true
+            elif [ "${opt}" = "--do-not-replace-pdf-ext" ]; then
+                replace_pdf_ext=false
             elif [[ ${opt} == --color* ]]; then
                 color_scheme=$(echo ${opt} | sed 's/--color.*=//')
             else
@@ -317,6 +320,9 @@ function op::post_process()
             done
             sed -i -e 's@href="css/@href="'${rel_path}'css/@g' $file
             sed -i -e 's@img src="@img src="'${rel_path}'@g' $file
+            if ${replace_pdf_ext}; then
+                sed -i -e 's@\.pdf@\.png@g' $file
+            fi
 
             pkgtools__msg_debug "Changing some unicode symbol"
             sed -i \
