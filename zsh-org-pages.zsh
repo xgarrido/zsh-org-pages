@@ -436,7 +436,8 @@ function op::post_process()
             mkdir -p doc/html/figures
             for img in $(find . -name "*.pdf" -path "*figures*" -not -path "*doc*"); do
                 pkgtools__msg_debug "Converting ${img}..."
-                convert -density 100 $img doc/html/figures/$(basename ${img/.pdf/.png})
+                png=doc/html/figures/$(basename ${img/.pdf/.png})
+                [[ ! -a $png || $img -nt $png ]] && convert -density 100 $img $png
             done
             find . -regex ".*\.\(jpg\|jpeg\|png\|gif\|svg\)" \
                 -path "*figures*" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
