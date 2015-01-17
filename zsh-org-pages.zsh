@@ -211,6 +211,9 @@ function op::prepare_process()
         if ${generate_html}; then
             \cp $file $file.save
             sed -i -e "s/#+BEGIN_SRC latex/#+BEGIN_SRC latex :results drawer :exports results/g" $file
+            if ${replace_pdf_ext}; then
+                sed -i -e 's@\.pdf@\.png@g' $file
+            fi
         fi
         if ${generate_pdf}; then
             if [ ${color_scheme} != "default" ]; then
@@ -320,9 +323,6 @@ function op::post_process()
             done
             sed -i -e 's@href="css/@href="'${rel_path}'css/@g' $file
             sed -i -e 's@img src="@img src="'${rel_path}'@g' $file
-            if ${replace_pdf_ext}; then
-                sed -i -e 's@\.pdf@\.png@g' $file
-            fi
 
             pkgtools__msg_debug "Changing some unicode symbol"
             sed -i \
