@@ -931,6 +931,16 @@ environment into figure
   (add-to-list 'org-export-filter-options-functions 'latex::add-email)
 #+END_SRC
 
+**** Lowercase =\begin/\end= environment
+#+BEGIN_SRC emacs-lisp
+  (defun latex::downcase-env-filter (contents backend info)
+    (when (org-export-derived-backend-p backend 'latex)
+      (replace-regexp-in-string "[begin\|end]{.*}"
+                              (lambda (str) (downcase str))
+                              contents nil t)))
+  (add-to-list 'org-export-filter-final-output-functions 'latex::downcase-env-filter)
+#+END_SRC
+
 *** Templates
 **** Default
 #+BEGIN_SRC emacs-lisp
