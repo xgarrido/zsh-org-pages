@@ -1210,7 +1210,7 @@ Following [[http://tex.stackexchange.com/questions/113564/error-using-environmen
 ***** Remark
 #+BEGIN_SRC latex
   \newenvironment{remark}
-                 {\begin{quote}\ding{47}\itshape\small}
+                 {\begin{quote}\color{gray}\ding{47}\itshape\small}
                  {\end{quote}}
 #+END_SRC
 ***** Prompt
