@@ -1049,8 +1049,17 @@ To be used, we would have to install [[https://github.com/xgarrido/latex-templat
 #+END_SRC
 
 #+BEGIN_SRC latex :noweb yes
+  \RequirePackage{ifthen}
+  \newboolean{@novc} %
+  \setboolean{@novc}{false} %
+  \DeclareOption{novc}{
+    \setboolean{@novc}{true}
+  }
+  \ProcessOptions
+  \ifthenelse{\boolean{@novc}}{}{
   \RequirePackage{prelim2e}
   <<vc-status()>>
+  }
 #+END_SRC
 
 *** =org= preamble
