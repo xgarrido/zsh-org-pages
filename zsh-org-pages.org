@@ -866,18 +866,6 @@ for date/time reference)
   (add-to-list 'org-export-filter-headline-functions 'latex::tagging-headline)
 #+END_SRC
 
-**** Ignore section number
-Add a new tag =ignoresecnumber= to remove section number from headline.
-#+BEGIN_SRC emacs-lisp
-  (defun latex::ignore-section-number (contents backend info)
-    (when (and (org-export-derived-backend-p backend 'latex)
-               (string-match "\\`.*ignoresecnumber.*\n"
-                             (downcase contents)))
-      (replace-regexp-in-string
-       "\\`\\\\[A-Za-z0-9]+" "\\\\section\*"
-       (replace-regexp-in-string "\\\\textsc{ignoresecnumber}" "" contents))))
-    (add-to-list 'org-export-filter-headline-functions 'latex::ignore-section-number)
-#+END_SRC
 **** SN@ilWare filter
 #+BEGIN_SRC emacs-lisp
   (defun latex::snailware-keyword-filter (contents backend info)
