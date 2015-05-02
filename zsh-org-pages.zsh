@@ -210,7 +210,6 @@ function op::prepare_process()
         fi
         if ${generate_html}; then
             \cp $file $file.save
-            sed -i -e "s/#+BEGIN_SRC latex/#+BEGIN_SRC latex :results drawer :exports results/g" $file
             if ${replace_pdf_ext}; then
                 sed -i -e 's@\.pdf@\.png@g' $file
             fi
