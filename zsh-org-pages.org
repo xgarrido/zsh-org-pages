@@ -31,6 +31,11 @@ We also globally define the current directory
 #+BEGIN_SRC emacs-lisp
   (setq org-html-checkbox-type "unicode")
 #+END_SRC
+** Ensure \LaTeX code are not interpreted
+#+BEGIN_SRC emacs-lisp
+  (defvar org-babel-default-header-args:latex
+    '((:results . "drawer") (:exports . "results")))
+#+END_SRC
 ** Embedded Javascript code
 *** TOC popup
 #+NAME: toc.js
