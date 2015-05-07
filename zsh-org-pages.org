@@ -789,7 +789,7 @@ Nothing for the time being...
 #+END_SRC
 *** Place table caption below table
 #+BEGIN_SRC emacs-lisp
-  (setq org-latex-table-caption-above nil)
+  (setq org-latex-caption-above nil)
 #+END_SRC
 *** Code blocks
 This activates a number of widely used languages, you are encouraged to activate
@@ -886,7 +886,7 @@ environment into figure
     (when (and (org-export-derived-backend-p backend 'latex)
                (string-match "table" contents)
                (string-match "includegraphics" contents))
-      (replace-regexp-in-string "table" "figure" contents)))
+      (replace-regexp-in-string "{table}" "{figure}" contents)))
   (add-to-list 'org-export-filter-table-functions 'latex::multicolumn-figure)
 #+END_SRC
 
@@ -931,13 +931,17 @@ environment into figure
       (replace-regexp-in-string "\\\\begin{CBOX}"     "\\\\begin{cbox}"
       (replace-regexp-in-string "\\\\begin{QUESTION}" "\\\\begin{question}"
       (replace-regexp-in-string "\\\\begin{REMARK}"   "\\\\begin{remark}"
-                              contents)))))
+      (replace-regexp-in-string "\\\\begin{ABSTRACT}" "\\\\begin{abstract}"
+      (replace-regexp-in-string "\\\\begin{BIBLIOGRAPHY}" "\\\\begin{bibliography}"
+                              contents)))))))
   (defun latex::downcase-end-filter (contents backend info)
     (when (org-export-derived-backend-p backend 'latex)
       (replace-regexp-in-string "\\\\end{CBOX}"     "\\\\end{cbox}"
       (replace-regexp-in-string "\\\\end{QUESTION}" "\\\\end{question}"
       (replace-regexp-in-string "\\\\end{REMARK}"   "\\\\end{remark}"
-                              contents)))))
+      (replace-regexp-in-string "\\\\end{ABSTRACT}" "\\\\end{abstract}"
+      (replace-regexp-in-string "\\\\end{BIBLIOGRAPHY}" "\\\\end{bibliography}"
+                              contents)))))))
 
   (add-to-list 'org-export-filter-final-output-functions 'latex::downcase-begin-filter)
   (add-to-list 'org-export-filter-final-output-functions 'latex::downcase-end-filter)
