@@ -1205,6 +1205,11 @@ Following [[http://tex.stackexchange.com/questions/113564/error-using-environmen
   \robustify\)
 #+END_SRC
 
+***** =float= package
+Prevent "Too many unprocessed floats" error
+#+BEGIN_SRC latex
+  \RequirePackage{float}
+#+END_SRC
 **** Email handling
 #+BEGIN_SRC latex
   \let\@email\@empty
