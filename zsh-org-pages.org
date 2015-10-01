@@ -1232,24 +1232,24 @@ Prevent "Too many unprocessed floats" error
 ***** Bibliography
 #+BEGIN_SRC latex
   \renewenvironment{bibliography}{%
-    \small
-    \@mkboth{\MakeUppercase\bibname}{\MakeUppercase\bibname}%
-    \list{\@biblabel{\@arabic\c@enumiv}}%
-         {\settowidth\labelwidth{\@biblabel{9}}%
-           \leftmargin\labelwidth
-           \advance\leftmargin\labelsep
-           \@openbib@code
-           \usecounter{enumiv}%
-           \let\p@enumiv\@empty
-           \renewcommand\theenumiv{\@arabic\c@enumiv}}%
-         \sloppy
-         \clubpenalty4000
-         \@clubpenalty \clubpenalty
-         \widowpenalty4000%
-         \sfcode`\.\@m}{%
-    \def\@noitemerr
-        {\@latex@warning{Empty `thebibliography' environment}}%
-        \endlist}
+   \small
+   \@mkboth{\MakeUppercase\bibname}{\MakeUppercase\bibname}%
+   \list{\@biblabel{\@arabic\c@enumiv}}%
+        {\settowidth\labelwidth{\@biblabel{9}}%
+          \leftmargin\labelwidth
+          \advance\leftmargin\labelsep
+          \@openbib@code
+          \usecounter{enumiv}%
+          \let\p@enumiv\@empty
+          \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+        \sloppy
+        \clubpenalty4000
+        \@clubpenalty \clubpenalty
+        \widowpenalty4000%
+        \sfcode`\.\@m}{%
+   \def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+       \endlist}
 #+END_SRC
 
 **** New commands
