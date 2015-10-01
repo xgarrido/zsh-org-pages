@@ -143,7 +143,7 @@ We also globally define the current directory
      :base-extension "org"
      :publishing-directory ,(expand-file-name "html" doc-directory)
      :publishing-function org-html-publish-to-html
-     :exclude "toc.org"
+     :exclude "toc.org\\|macro"
      :recursive nil
      :section-numbers 3
      :with-toc        2
@@ -160,7 +160,7 @@ We also globally define the current directory
      :base-extension "org"
      :publishing-directory ,(expand-file-name "html" doc-directory)
      :publishing-function org-html-publish-to-html
-     :exclude "toc.org"
+     :exclude "toc.org\\|macro"
      :recursive t
      :section-numbers 3
      :with-toc        2
