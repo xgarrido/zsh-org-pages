@@ -439,7 +439,7 @@ function op::post_process()
                 [[ ! -a $png || $img -nt $png ]] && convert -density 100 $img $png
             done
             find . -regex ".*\.\(jpg\|jpeg\|png\|gif\|svg\)" \
-                -path "*figures*" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
+                -path "*figures*" -o -path "*plot*" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
         fi
 
         if ${generate_floating_footnote}; then
