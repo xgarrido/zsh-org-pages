@@ -321,7 +321,9 @@ function op::post_process()
                 rel_path+="../"
             done
             sed -i -e 's@href="css/@href="'${rel_path}'css/@g' $file
-            sed -i -e 's@img src="@img src="'${rel_path}'@g' $file
+            if ! ${recursive}; then
+                sed -i -e 's@img src="@img src="'${rel_path}'@g' $file
+            fi
 
             pkgtools__msg_debug "Changing some unicode symbol"
             sed -i \
@@ -430,17 +432,36 @@ function op::post_process()
             fi
         done
 
-        if ${convert_images}; then
-            pkgtools__msg_notice "Exporting pdf images"
-            mkdir -p doc/html/figures
-            for img in $(find . -name "*.pdf" -path "*figures*" -not -path "*doc*"); do
-                pkgtools__msg_debug "Converting ${img}..."
-                png=doc/html/figures/$(basename ${img/.pdf/.png})
-                [[ ! -a $png || $img -nt $png ]] && convert -density 100 $img $png
+        pkgtools__msg_notice "Grabbing images"
+        for dir in $(ls -d -1 */ | grep -v -e "doc"); do
+            files=$(find ./${dir} -name "*.org.save")
+            [ -z "${files}" ] && continue
+            for file in ${=files}; do
+                imgs=$(sed -n '/\[\[.*\(\.jpg\|\.jpeg\|\.png\|\.gif\|\.svg\|.pdf\)\]\]/p' $file | \
+                              sed 's/\(\[\[\|\]\]\)//g' | awk -F: '{print $2}')
+                for img in ${=imgs}; do
+                    dir=$(dirname $file)
+                    img=$dir/$img
+                    img_dir=$(dirname $img)
+                    if [ -f $img ]; then
+                        mkdir -p doc/html/${img_dir}
+                        extension=${img##*.}
+                        if [[ $extension == "pdf" ]]; then
+                            if ${convert_images}; then
+                                png=doc/html/${img/.pdf/.png}
+                                if [[ ! -a $png || $img -nt $png ]]; then
+                                    pkgtools__msg_debug "Convert $img to $png"
+                                    convert -density 100 $img $png
+                                fi
+                            fi
+                        else
+                            pkgtools__msg_debug "Copying $img to doc/html/${img_dir}..."
+                            \cp $img doc/html/${img_dir}
+                        fi
+                    fi
+                done
             done
-            find . -regex ".*\.\(jpg\|jpeg\|png\|gif\|svg\)" \
-                -path "*figures*" -o -path "*plot*" -not -path "*doc*" -exec cp {} doc/html/figures/. \;
-        fi
+        done
 
         if ${generate_floating_footnote}; then
             pkgtools__msg_notice "Generate floating footnotes"
