@@ -438,7 +438,7 @@ function op::post_process()
             [ -z "${files}" ] && continue
             for file in ${=files}; do
                 imgs=$(sed -n '/\[\[.*\(\.jpg\|\.jpeg\|\.png\|\.gif\|\.svg\|.pdf\)\]\]/p' $file | \
-                              sed 's/\(\[\[\|\]\]\)//g' | awk -F: '{print $2}')
+                              sed -e 's/\(\[\[\|\]\]\)//g' -e 's/|/\n/g' -e 's/file://g')
                 for img in ${=imgs}; do
                     dir=$(dirname $file)
                     img=$dir/$img
