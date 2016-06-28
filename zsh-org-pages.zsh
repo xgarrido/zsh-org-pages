@@ -431,6 +431,46 @@ function op::post_process()
             else
                 sed -i -e 's@__org_link__@@g' $file
             fi
+
+            pkgtools__msg_debug "Changing multirow syntax to rowspan"
+            sed -i -e 's/\(<td class.*\)>\(\\multirow{\)\(.*\)}{.*}{\(.*\)}/\1 rowspan="\3">\4/' $file
+            sed -i -e 's/\(.*rowspan.*\)\$\(.*\)\$/\1\\(\2\\)/' $file
+            cat $file | awk '{
+                          if ($0 ~ /<\/table>/) {
+                               trcnt = 0
+                               has_rowspan = 0
+                           }
+
+                           if ($0 ~ /<tr>/) {
+                               trcnt++
+                               tdcnt = 0
+                           }
+
+                           if ($0 ~ /<td/) {
+                               tdcnt++
+                           }
+
+                           if ($0 ~ /rowspan/) {
+                               has_rowspan = 1
+                               tdposition = tdcnt
+                               trposition = trcnt
+                               j = index($0, "rowspan")+9
+                               nbr=substr($0, j, index($0, ">")-j-1)-1
+                           }
+
+                           if ($0 ~ /xa0/ && has_rowspan) {
+                               if (trcnt-trposition <= nbr && tdcnt == tdposition) {
+                                   dont_print = 1
+                               }
+                           } else {
+                               dont_print = 0
+                           }
+
+                           if (! dont_print) print $0
+                           }' > $file.tmp
+            mv $file.tmp $file
+            sed -i -e 's/.*UNNUMBERED.*//' $file
+
             unset cvs_path
             unset cvs_version
             unset cvs_branch
