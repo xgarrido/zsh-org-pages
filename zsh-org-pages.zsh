@@ -336,6 +336,23 @@ function op::process()
 function op::post_process()
 {
     __pkgtools__at_function_enter op::post_process
+
+    pkgtools__msg_debug "Getting back to original files..."
+
+    for file in $(find . -name "*.org.noexport"); do
+        \mv $file ${file/.noexport/}
+    done
+    for file in $(find . -name "*.org.save"); do
+        \mv $file ${file/.save/}
+    done
+    for file in $(find . -name "*.org"); do
+        if [[ "$file" = *".split"* ]]; then
+            \rm -f $file
+        elif [[ "$file" = *"toc."* ]];then
+            \rm  -f $file
+        fi
+    done
+
     if ${generate_html}; then
         pkgtools__msg_notice "Tweak html files..."
         for file in $(find doc/html -name "*.html"); do
@@ -458,9 +475,8 @@ function op::post_process()
         done
 
         pkgtools__msg_notice "Grabbing images"
-        for dir in $(ls -d -1 */ | grep -v -e "doc"); do
-            files=$(find ./${dir} -name "*.org.save")
-            [ -z "${files}" ] && continue
+        files=$(find . -name "*.org")
+        if [[ ! -z "${files}" ]]; then
             for file in ${=files}; do
                 imgs=$(sed -n '/\[\[.*\(\.jpg\|\.jpeg\|\.png\|\.gif\|\.svg\|.pdf\)\]\]/p' $file | \
                               sed -e 's/\(\[\[\|\]\]\)//g' -e 's/|/\n/g' -e 's/file://g')
@@ -486,7 +502,7 @@ function op::post_process()
                     fi
                 done
             done
-        done
+        fi
 
         if ${generate_floating_footnote}; then
             pkgtools__msg_notice "Generate floating footnotes"
@@ -526,21 +542,6 @@ function op::post_process()
             sed -i -e 's/#67ad00/'${__ogp_color_map[${color_scheme}]}'/' doc/html/css/styles.css
         fi
     fi
-
-    pkgtools__msg_debug "Getting back to original files..."
-    for file in $(find . -name "*.org"); do
-        if [[ "$file" = *".split"* ]]; then
-            \rm -f $file
-        elif [[ "$file" = *"toc."* ]];then
-            \rm  -f $file
-        fi
-    done
-    for file in $(find . -name "*.org.noexport"); do
-        \mv $file ${file/.noexport/}
-    done
-    for file in $(find . -name "*.org.save"); do
-        \mv $file ${file/.save/}
-    done
 
     pkgtools__msg_debug "Remove logfiles"
     if ! ${keep_tmp_files}; then
