@@ -112,8 +112,10 @@ We also globally define the current directory
       }
   });
   MathJax.Hub.Register.StartupHook(\"TeX Jax Ready\",function () {
-      var TEX = MathJax.InputJax.TeX;
+      var TEX = MathJax.InputJax.TeX,
+          MML = MathJax.ElementJax.mml;
       TEX.Definitions.macros.unit = \"jaxunit\";
+      TEX.Definitions.macros.nicefrac = \"jaxfrac\";
       TEX.Parse.Augment({
           jaxunit: function (name) {
               var n = this.GetBrackets(name),
@@ -121,6 +123,11 @@ We also globally define the current directory
               if (n == null) {n = \"\"}
               var tex = n + '\\\\,\\\\text{'+unit+'}';
               this.string = tex + this.string.slice(this.i); this.i = 0;
+          },
+          jaxfrac: function (name) {
+              var num = this.ParseArg(name),
+                  den = this.ParseArg(name);
+              this.Push(MML.mfrac(num,den).With({bevelled: true}));
           }
       });
   });
