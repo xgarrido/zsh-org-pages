@@ -41,56 +41,61 @@ function org-pages ()
     local convert_images=true
     local replace_pdf_ext=true
     local color_scheme="default"
+    local template="default"
+    local tmp_dir=/tmp/org-pages.d
     while [ -n "$1" ]; do
         local token="$1"
-        if [ "${token[0,1]}" = "-" ]; then
+        if [[ "${token[0,1]}" == "-" ]]; then
             local opt=${token}
-            if [ "${opt}" = "-h" -o "${opt}" = "--help" ]; then
+            if [[ ${opt} == "-h" || ${opt} == "--help" ]]; then
                 return 0
-            elif [ "${opt}" = "-d" -o "${opt}" = "--debug" ]; then
+            elif [[ ${opt} == "-d" || ${opt} == "--debug" ]]; then
                 pkgtools__msg_using_debug
-            elif [ "${opt}" = "-D" -o "${opt}" = "--devel" ]; then
+            elif [[ ${opt} == "-D" || ${opt} == "--devel" ]]; then
                 pkgtools__msg_using_devel
-            elif [ "${opt}" = "-v" -o "${opt}" = "--verbose" ]; then
+            elif [[ ${opt} == "-v" || ${opt} == "--verbose" ]]; then
                 pkgtools__msg_using_verbose
-            elif [ "${opt}" = "--recursive" ]; then
+            elif [[ ${opt} == "--recursive" ]]; then
                 recursive=true
-            elif [ "${opt}" = "--pdf" ]; then
+            elif [[ ${opt} == "--pdf" ]]; then
                 generate_pdf=true
                 generate_html=false
-            elif [ "${opt}" = "--html" ]; then
+            elif [[ ${opt} == "--html" ]]; then
                 generate_html=true
                 generate_pdf=false
-            elif [ "${opt}" = "--no-floating-footnote" ]; then
+            elif [[ ${opt} == "--no-floating-footnote" ]]; then
                 generate_floating_footnote=false
-            elif [ "${opt}" = "--generate-home-link" ]; then
+            elif [[ ${opt} == "--generate-home-link" ]]; then
                 generate_home_link=true
-            elif [ "${opt}" = "--generate-github-link" ]; then
+            elif [[ ${opt} == "--generate-github-link" ]]; then
                 generate_github_link=true
-            elif [ "${opt}" = "--generate-org-link" ]; then
+            elif [[ ${opt} == "--generate-org-link" ]]; then
                 generate_org_link=true
-            elif [ "${opt}" = "--no-image-conversion" ]; then
+            elif [[ ${opt} == "--no-image-conversion" ]]; then
                 convert_images=false
-            elif [ "${opt}" = "--keep-tmp-files" ]; then
+            elif [[ ${opt} == "--keep-tmp-files" ]]; then
                 keep_tmp_files=true
-            elif [ "${opt}" = "--do-not-replace-pdf-ext" ]; then
+            elif [[ ${opt} == "--do-not-replace-pdf-ext" ]]; then
                 replace_pdf_ext=false
             elif [[ ${opt} == --color* ]]; then
                 color_scheme=$(echo ${opt} | sed 's/--color.*=//')
+            elif [[ ${opt} == "--template" ]]; then
+                shift 1
+                template=$1
             else
                 append_list_of_options_arg+="${opt} "
             fi
         else
-            if [ "${token}" = "clean" ]; then
+            if [[ ${token} == "clean" ]]; then
                 clean=true
-            elif [ "${token}" = "generate" ]; then
+            elif [[ ${token} == "generate" ]]; then
                 generate=true
-            elif [ "${token}" = "publish" ]; then
+            elif [[ ${token} == "publish" ]]; then
                 publish=true
                 generate=true
                 generate_html=true
                 generate_pdf=false
-            elif [ "x${token}" != "x" ]; then
+            elif [[ "x${token}" != "x" ]]; then
                 append_list_of_cmd_arg+="${token} "
             fi
         fi
