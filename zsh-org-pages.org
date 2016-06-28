@@ -170,6 +170,32 @@ We also globally define the current directory
                  <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css\" />"
      :html-preamble "__home_link__ __github_link__ __org_link__"
      :html-postamble "__cvs_version__"))
+  (add-to-list
+   'org-publish-project-alist
+   `("html-documentation-twbs"
+     :base-directory ,this-directory
+     :base-extension "org"
+     :publishing-directory ,(expand-file-name "html" doc-directory)
+     :publishing-function org-twbs-publish-to-html
+     :exclude "toc.org\\|macro"
+     :recursive nil
+     :section-numbers 3
+     :with-toc        2
+     :time-stamp-file nil
+     :html-postamble "__cvs_version__"))
+  (add-to-list
+   'org-publish-project-alist
+   `("html-documentation-twbs-recursive"
+     :base-directory ,this-directory
+     :base-extension "org"
+     :publishing-directory ,(expand-file-name "html" doc-directory)
+     :publishing-function org-twbs-publish-to-html
+     :exclude "toc.org\\|macro"
+     :recursive t
+     :section-numbers 3
+     :with-toc        2
+     :time-stamp-file nil
+     :html-postamble "__cvs_version__"))
   #+END_SRC
 ** Markup filtering
 *** SN@ilWare keyword                                               :notused:
@@ -442,11 +468,12 @@ headline trees but hide their content in the resulting html.
 #+END_SRC
 ***** Question environment (inherited from =latex=)
 #+BEGIN_SRC css
-  .question {
+  .question, .QUESTION {
       border-left:2px solid #67ad00;
       margin:0;
       padding:0 0 0 20px;
-      /*font-style:italic;*/
+      font-style:italic;
+      color: #67ad00;
   }
 #+END_SRC
 ***** TOC
@@ -1381,6 +1408,7 @@ Prevent "Too many unprocessed floats" error
 #+END_SRC
 
 ** Project definition
+
 #+BEGIN_SRC emacs-lisp
   (add-to-list
    'org-publish-project-alist
@@ -1414,17 +1442,28 @@ Prevent "Too many unprocessed floats" error
 
 * Exporter functions
 #+BEGIN_SRC emacs-lisp
+  (defun cp-readme-to-index ()
+    (rename-file (expand-file-name "README.html" (expand-file-name "html" doc-directory))
+                 (expand-file-name "index.html" (expand-file-name "html" doc-directory)) t))
   (defun org-publish-html ()
     (progn
       (org-publish-project "html-documentation" 'force)
-      (rename-file (expand-file-name "README.html" (expand-file-name "html" doc-directory))
-                   (expand-file-name "index.html" (expand-file-name "html" doc-directory)) t)
+      (cp-readme-to-index)
       ))
   (defun org-publish-html-recursive ()
     (progn
       (org-publish-project "html-documentation-recursive" 'force)
-      (rename-file (expand-file-name "README.html" (expand-file-name "html" doc-directory))
-                   (expand-file-name "index.html" (expand-file-name "html" doc-directory)) t)
+      (cp-readme-to-index)
+      ))
+  (defun org-publish-html-twbs ()
+    (progn
+      (org-publish-project "html-documentation-twbs" 'force)
+      (cp-readme-to-index)
+      ))
+  (defun org-publish-html-twbs-recursive ()
+    (progn
+      (org-publish-project "html-documentation-twbs-recursive" 'force)
+      (cp-readme-to-index)
       ))
 #+END_SRC
 
