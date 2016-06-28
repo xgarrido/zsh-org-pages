@@ -168,6 +168,14 @@ function op::prepare_process()
 {
     __pkgtools__at_function_enter op::prepare_process
 
+    if [[ $template == "twbs" ]]; then
+        (
+            mkdir -p ${tmp_dir}
+            cd ${tmp_dir}
+            wget https://raw.githubusercontent.com/marsmining/ox-twbs/master/ox-twbs.el
+        )
+    fi
+
     __split_file()
     {
         pkgtools__msg_notice "Split file $1"
@@ -264,6 +272,10 @@ function op::process()
     emacs_base_cmd+="(org-babel-tangle-file \""${ogp_path}"/zsh-org-pages.org\") "
     emacs_base_cmd+="(org-babel-load-file \""${ogp_path}"/zsh-org-pages.org\"))' "
 
+    if [[ $template == "twbs" ]]; then
+        emacs_base_cmd+="--load ${tmp_dir}/ox-twbs.el --eval \"(require 'ox-twbs)\" "
+    fi
+
     if [ "${append_list_of_cmd_arg}" != "" ]; then
         for file in ${append_list_of_cmd_arg}
         do
@@ -282,9 +294,17 @@ function op::process()
         if ${generate_html}; then
             pkgtools__msg_notice "Exporting pages to html..."
             if ${recursive}; then
-                emacs_cmd+="--funcall org-publish-html-recursive "
+                if [[ $template == "twbs" ]]; then
+                    emacs_cmd+="--funcall org-publish-html-twbs-recursive "
+                else
+                    emacs_cmd+="--funcall org-publish-html-recursive "
+                fi
             else
-                emacs_cmd+="--funcall org-publish-html "
+                if [[ $template == "twbs" ]]; then
+                    emacs_cmd+="--funcall org-publish-html-twbs "
+                else
+                    emacs_cmd+="--funcall org-publish-html "
+                fi
             fi
         elif ${generate_pdf}; then
             pkgtools__msg_notice "Exporting pages to pdf (through latex)..."
