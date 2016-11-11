@@ -262,8 +262,7 @@ for date/time reference)
 ** CSS stylesheets
 *** Main stylesheets
 :PROPERTIES:
-:MKDIRP: yes
-:TANGLE: (concat this-directory "doc/html/css/styles.css")
+:HEADER-ARGS: :mkdirp yes :tangle (concat this-directory "doc/html/css/styles.css")
 :END:
 **** Google fonts
 #+BEGIN_SRC css
@@ -779,8 +778,7 @@ Nothing for the time being...
 
 *** Org source code styles
 :PROPERTIES:
-:MKDIRP: yes
-:TANGLE: (concat this-directory "doc/html/css/org-pygments.css")
+:HEADER-ARGS: :mkdirp yes :tangle (concat this-directory "doc/html/css/org-pygments.css")
 :END:
 
 #+BEGIN_SRC css
@@ -1065,8 +1063,7 @@ To be used, we would have to install [[https://github.com/xgarrido/latex-templat
 ** LaTeX style files
 *** VC status
 :PROPERTIES:
-:MKDIRP:   yes
-:TANGLE:   (concat this-directory "doc/pdf/vc-style.sty")
+:HEADER-ARGS: :mkdirp yes :tangle (concat this-directory "doc/pdf/vc-style.sty")
 :END:
 
 #+NAME: vc-status
@@ -1103,8 +1100,7 @@ To be used, we would have to install [[https://github.com/xgarrido/latex-templat
 
 *** =org= preamble
 :PROPERTIES:
-:MKDIRP: yes
-:TANGLE:  (concat this-directory "doc/pdf/org-preamble.sty")
+:HEADER-ARGS: :mkdirp yes :tangle (concat this-directory "doc/pdf/org-preamble.sty")
 :END:
 **** Basics
 #+BEGIN_SRC latex
@@ -1309,8 +1305,7 @@ Prevent "Too many unprocessed floats" error
 
 *** Default class style
 :PROPERTIES:
-:MKDIRP:   yes
-:TANGLE:   (concat this-directory "doc/pdf/default-class-style.sty")
+:HEADER-ARGS: :mkdirp yes :tangle (concat this-directory "doc/pdf/default-class-style.sty")
 :END:
 **** Basics
 #+BEGIN_SRC latex
@@ -1371,7 +1366,7 @@ Prevent "Too many unprocessed floats" error
       \HRule
       \\[9mm]
         {
-          \bf\sffamily \Huge \@title
+          \bfseries\sffamily \Huge \@title
         }
         \\[5mm]
         \HRule
