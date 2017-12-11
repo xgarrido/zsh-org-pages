@@ -22,8 +22,8 @@ __ogp_color_map=(
 
 function org-pages ()
 {
-    __pkgtools__default_values
-    __pkgtools__at_function_enter org-pages
+    pkgtools::default_values
+    pkgtools::at_function_enter org-pages
 
     local append_list_of_options_arg
     local append_list_of_cmd_arg
@@ -121,13 +121,13 @@ function org-pages ()
         if [ -f toc.pdf ]; then
             rm -f toc.*
         fi
-        __pkgtools__at_function_exit
+        pkgtools::at_function_exit
         return 0
     fi
 
     if ! ${generate}; then
         pkgtools::msg_error "No output file will be generated !"
-        __pkgtools__at_function_exit
+        pkgtools::at_function_exit
         return 1
     fi
 
@@ -160,13 +160,13 @@ function org-pages ()
     unset recursive
     unset keep_tmp_files
     unset generate_floating_footnote
-    __pkgtools__at_function_exit
+    pkgtools::at_function_exit
     return 0
 }
 
 function op::prepare_process()
 {
-    __pkgtools__at_function_enter op::prepare_process
+    pkgtools::at_function_enter op::prepare_process
 
     if [[ $template == "twbs" ]]; then
         (
@@ -251,13 +251,13 @@ function op::prepare_process()
         touch toc.org
     done
     unset org_files
-    __pkgtools__at_function_exit
+    pkgtools::at_function_exit
     return 0
 }
 
 function op::process()
 {
-    __pkgtools__at_function_enter op::process
+    pkgtools::at_function_enter op::process
     export OGP_EXPORT_DIR=$PWD
 
     local ogp_path=${__ogp_path}
@@ -323,19 +323,19 @@ function op::process()
     fi
     if $(pkgtools::last_command_fails); then
         pkgtools::msg_error "Export has failed !"
-        __pkgtools__at_function_exit
+        pkgtools::at_function_exit
         return 1
     fi
 
     unset emacs_base_cmd emacs_cmd
     unset ogp_path
-    __pkgtools__at_function_exit
+    pkgtools::at_function_exit
     return 0
 }
 
 function op::post_process()
 {
-    __pkgtools__at_function_enter op::post_process
+    pkgtools::at_function_enter op::post_process
 
     pkgtools::msg_debug "Getting back to original files..."
 
@@ -605,6 +605,6 @@ function op::post_process()
         rm -f README.org
     fi
 
-    __pkgtools__at_function_exit
+    pkgtools::at_function_exit
     return 0
 }
