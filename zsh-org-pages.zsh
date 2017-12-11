@@ -50,11 +50,11 @@ function org-pages ()
             if [[ ${opt} == "-h" || ${opt} == "--help" ]]; then
                 return 0
             elif [[ ${opt} == "-d" || ${opt} == "--debug" ]]; then
-                pkgtools__msg_using_debug
+                pkgtools::msg_using_debug
             elif [[ ${opt} == "-D" || ${opt} == "--devel" ]]; then
-                pkgtools__msg_using_devel
+                pkgtools::msg_using_devel
             elif [[ ${opt} == "-v" || ${opt} == "--verbose" ]]; then
-                pkgtools__msg_using_verbose
+                pkgtools::msg_using_verbose
             elif [[ ${opt} == "--recursive" ]]; then
                 recursive=true
             elif [[ ${opt} == "--pdf" ]]; then
@@ -105,16 +105,16 @@ function org-pages ()
     # append_list_of_cmd_arg=$(echo ${append_list_of_cmd_arg} | sed 's/:/:\"/g')
     # append_list_of_options_arg=$(echo ${append_list_of_options_arg} | sed 's/=/=\"/g')
 
-    pkgtools__msg_devel "generate=${generate}"
-    pkgtools__msg_devel " |- pdf=${generate_pdf}"
-    pkgtools__msg_devel " |- html=${generate_html}"
-    pkgtools__msg_devel "publish=${publish}"
-    pkgtools__msg_devel "color scheme=${color_scheme}"
-    pkgtools__msg_devel "append_list_of_cmd_arg=${append_list_of_cmd_arg}"
-    pkgtools__msg_devel "append_list_of_options_arg=${append_list_of_options_arg}"
+    pkgtools::msg_devel "generate=${generate}"
+    pkgtools::msg_devel " |- pdf=${generate_pdf}"
+    pkgtools::msg_devel " |- html=${generate_html}"
+    pkgtools::msg_devel "publish=${publish}"
+    pkgtools::msg_devel "color scheme=${color_scheme}"
+    pkgtools::msg_devel "append_list_of_cmd_arg=${append_list_of_cmd_arg}"
+    pkgtools::msg_devel "append_list_of_options_arg=${append_list_of_options_arg}"
 
     if ${clean}; then
-        pkgtools__msg_notice "Cleaning directory"
+        pkgtools::msg_notice "Cleaning directory"
         if [ -d doc ]; then
             rm -rf doc
         fi
@@ -126,21 +126,21 @@ function org-pages ()
     fi
 
     if ! ${generate}; then
-        pkgtools__msg_error "No output file will be generated !"
+        pkgtools::msg_error "No output file will be generated !"
         __pkgtools__at_function_exit
         return 1
     fi
 
-    pkgtools__msg_notice "Start export process..."
+    pkgtools::msg_notice "Start export process..."
 
     op::prepare_process
     op::process
     op::post_process
 
-    pkgtools__msg_notice "Export successfully done"
+    pkgtools::msg_notice "Export successfully done"
 
     if ${publish}; then
-        pkgtools__msg_notice "Publishing to the web"
+        pkgtools::msg_notice "Publishing to the web"
 	find doc -name *.*~ -exec rm -f {} \;
         find -type d -empty -path "*doc*" -exec rm -rf {} \;
 	(cd doc/html && tar czvf /tmp/org-publish.tar.gz .)
@@ -178,7 +178,7 @@ function op::prepare_process()
 
     __split_file()
     {
-        pkgtools__msg_notice "Split file $1"
+        pkgtools::msg_notice "Split file $1"
         cat $1 | awk -v current=$1 '
                          BEGIN{j=-1}
                          {
@@ -213,12 +213,12 @@ function op::prepare_process()
         mv $1 $1.noexport
     }
 
-    pkgtools__msg_debug "Parsing org files..."
+    pkgtools::msg_debug "Parsing org files..."
     local org_files
     org_files=$(find . -name "*.org")
     for file in ${=org_files}; do
         if [ -L $file ]; then
-            pkgtools__msg_debug "$file is a symbolic link"
+            pkgtools::msg_debug "$file is a symbolic link"
             continue
         fi
         if ${generate_html}; then
@@ -234,7 +234,7 @@ function op::prepare_process()
                     if [ ${#color_scheme} -eq 7 ]; then
                         sed -i -e '1i#+LATEX_HEADER_EXTRA: \\definecolor{default}{HTML}{'${color_scheme:1:7}'}' $file
                     else
-                        pkgtools__msg_error "The HEX code is not allowed !"
+                        pkgtools::msg_error "The HEX code is not allowed !"
                     fi
                 elif [ ${__ogp_color_map[${color_scheme}]+_} ];then
                     sed -i -e '1i#+LATEX_HEADER_EXTRA: \\definecolor{default}{HTML}{'${__ogp_color_map[${color_scheme}]:1:7}'}' $file
@@ -287,12 +287,12 @@ function op::process()
         done
     else
         if [ ! -f README.org ]; then
-            pkgtools__msg_warning "Missing README.org file ! Create a tmp one"
+            pkgtools::msg_warning "Missing README.org file ! Create a tmp one"
             touch README.org
         fi
         emacs_cmd+=${emacs_base_cmd}
         if ${generate_html}; then
-            pkgtools__msg_notice "Exporting pages to html..."
+            pkgtools::msg_notice "Exporting pages to html..."
             if ${recursive}; then
                 if [[ $template == "twbs" ]]; then
                     emacs_cmd+="--funcall org-publish-html-twbs-recursive "
@@ -307,7 +307,7 @@ function op::process()
                 fi
             fi
         elif ${generate_pdf}; then
-            pkgtools__msg_notice "Exporting pages to pdf (through latex)..."
+            pkgtools::msg_notice "Exporting pages to pdf (through latex)..."
             emacs_cmd="TEXINPUTS=\""$PWD"/doc/pdf:\$TEXINPUTS\" "
             emacs_cmd+=${emacs_base_cmd}" "
             emacs_cmd+="--funcall org-publish-pdf "
@@ -315,14 +315,14 @@ function op::process()
         emacs_cmd+="--visit \"README.org\" "
     fi
 
-    pkgtools__msg_debug ${emacs_cmd}
+    pkgtools::msg_debug ${emacs_cmd}
     if [ ${__pkgtools__msg_debug} -eq 1 ]; then
         echo $emacs_cmd | sh
     else
         echo $emacs_cmd | sh > /dev/null 2>&1
     fi
-    if $(pkgtools__last_command_fails); then
-        pkgtools__msg_error "Export has failed !"
+    if $(pkgtools::last_command_fails); then
+        pkgtools::msg_error "Export has failed !"
         __pkgtools__at_function_exit
         return 1
     fi
@@ -337,7 +337,7 @@ function op::post_process()
 {
     __pkgtools__at_function_enter op::post_process
 
-    pkgtools__msg_debug "Getting back to original files..."
+    pkgtools::msg_debug "Getting back to original files..."
 
     for file in $(find . -name "*.org.noexport"); do
         \mv $file ${file/.noexport/}
@@ -354,9 +354,9 @@ function op::post_process()
     done
 
     if ${generate_html}; then
-        pkgtools__msg_notice "Tweak html files..."
+        pkgtools::msg_notice "Tweak html files..."
         for file in $(find doc/html -name "*.html"); do
-            pkgtools__msg_debug "Changing css directory depth"
+            pkgtools::msg_debug "Changing css directory depth"
             count="${file//[^\/]}"
             rel_path=
             for ((i=2;i<${#count};i++));do
@@ -367,7 +367,7 @@ function op::post_process()
                 sed -i -e 's@img src="@img src="'${rel_path}'@g' $file
             fi
 
-            pkgtools__msg_debug "Changing some unicode symbol"
+            pkgtools::msg_debug "Changing some unicode symbol"
             sed -i \
                 -e 's@ding{192}@\(\\unicode{x2460}\\)@g' \
                 -e 's@ding{193}@\(\\unicode{x2461}\\)@g' \
@@ -378,7 +378,7 @@ function op::post_process()
                 -e 's@xmark@\(\\unicode{x2717}\\)@g' \
                 $file
 
-            pkgtools__msg_debug "Changing preamble home link"
+            pkgtools::msg_debug "Changing preamble home link"
             if ${generate_home_link}; then
                 if [ $(basename $file) = "index.html" ]; then
                     sed -i -e 's@__home_link__@@g' $file
@@ -394,24 +394,24 @@ function op::post_process()
             if [ -d .git ]; then
                 cvs_path=$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')
                 if [ "${cvs_path}" = "" ]; then
-                    pkgtools__msg_debug "Using git svn info"
+                    pkgtools::msg_debug "Using git svn info"
                     cvs_path=$(git svn info | grep URL: | awk '{print $2}')
                     cvs_version="revision <a href=\""${cvs_path}"\">"$(git svn info | grep Revision: | awk '{print $2}')"</a> - "$(git svn info | grep Date: | awk '{print $4}')
                 else
-                    pkgtools__msg_debug "Using git info"
+                    pkgtools::msg_debug "Using git info"
                     cvs_version=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:'commit <a href=\"url/commit/%H\">%h</a> - %ad' \
                         | sed "s#url#"${cvs_path}"#")
                     cvs_branch=$(git branch | grep '*' | awk '{print $2}')
                 fi
 
             fi
-            pkgtools__msg_debug "Changing preamble github link"
+            pkgtools::msg_debug "Changing preamble github link"
             if ${generate_github_link}; then
                 sed -i -e 's@__github_link__@<a href="'${cvs_path}'"><i class=\"fa fa-github\"></i></a><br/>@g' $file
             else
                 sed -i -e 's@__github_link__@@g' $file
             fi
-            pkgtools__msg_debug "Changing postamble CVS version"
+            pkgtools::msg_debug "Changing postamble CVS version"
             if  [[ "${cvs_version}" = *"github"* ]]; then
                 cvs_version="File under <i class=\"fa fa-github-alt\"></i> version control - ${cvs_version}"
             elif [[ "${cvs_version}" = *"git"* ]]; then
@@ -421,7 +421,7 @@ function op::post_process()
             fi
             sed -i -e 's@__cvs_version__@'${cvs_version}'@' $file
 
-            pkgtools__msg_debug "Changing org link"
+            pkgtools::msg_debug "Changing org link"
             if ${generate_org_link}; then
                 filename=$(basename $file)
                 if [ $filename = "index.html" ]; then
@@ -432,7 +432,7 @@ function op::post_process()
                 sed -i -e 's@__org_link__@@g' $file
             fi
 
-            pkgtools__msg_debug "Changing multirow syntax to rowspan"
+            pkgtools::msg_debug "Changing multirow syntax to rowspan"
             sed -i -e 's/\(<td class.*\)>\(\\multirow{\)\(.*\)}{.*}{\(.*\)}/\1 rowspan="\3">\4/' $file
             sed -i -e 's/\(.*rowspan.*\)\$\(.*\)\$/\1\\(\2\\)/' $file
             cat $file | awk '{
@@ -479,18 +479,18 @@ function op::post_process()
             for col in ${__ogp_color_map[@]};do colors+="'$col',";done
             sed -i -e 's@__colors__@'${colors%?}'@' $file
             if [ ${color_scheme} = "random" ]; then
-                pkgtools__msg_debug "Activating random colors"
+                pkgtools::msg_debug "Activating random colors"
                 sed -i -e 's@//elem.style.color@elem.style.color@' $file
             fi
             unset colors
 
-            pkgtools__msg_debug "Generate bibliography"
+            pkgtools::msg_debug "Generate bibliography"
             typeset -A array
             i=1
             for f in $(cat $file | awk -F'[<>]' -v taga="cite" -v tagb="/cite" '{i=1; while (i<=NF) { if ($(i)==taga && $(i+2)==tagb) { print $(i+1) }; i++} }' | tr ',' ' ')
             do
                 if [ ${array[$f]+_} ]; then
-                    pkgtools__msg_debug "$f entry already found"
+                    pkgtools::msg_debug "$f entry already found"
                 else
                     array[$f]=$i
                 fi
@@ -502,11 +502,11 @@ function op::post_process()
                 ref=${array[$k]}
                 sed -i -e 's@\\bibitem{'$k'}@<a id="ref.'$ref'" href="#refr.'$ref'">'$ref'</a>@g' $file
                 sed -i -e 's@'$k'@<a id="refr.'$ref'" href="#ref.'$ref'">'$ref'</a>@g' $file
-                pkgtools__msg_debug "$k --- $ref"
+                pkgtools::msg_debug "$k --- $ref"
             done
             unset array
 
-            pkgtools__msg_debug "Remove 'split' & 'toc' keywords (if any)"
+            pkgtools::msg_debug "Remove 'split' & 'toc' keywords (if any)"
             if [[ "$file" = *".split."* ]]; then
                 \mv $file ${file/.split/}
             elif [[ "$file" = *"toc."* ]];then
@@ -514,7 +514,7 @@ function op::post_process()
             fi
         done
 
-        pkgtools__msg_notice "Grabbing images"
+        pkgtools::msg_notice "Grabbing images"
         files=$(find . -name "*.org")
         if [[ ! -z "${files}" ]]; then
             for file in ${=files}; do
@@ -531,12 +531,12 @@ function op::post_process()
                             if ${convert_images}; then
                                 png=doc/html/${img/.pdf/.png}
                                 if [[ ! -a $png || $img -nt $png ]]; then
-                                    pkgtools__msg_debug "Convert $img to $png"
+                                    pkgtools::msg_debug "Convert $img to $png"
                                     convert -density 100 $img $png
                                 fi
                             fi
                         else
-                            pkgtools__msg_debug "Copying $img to doc/html/${img_dir}..."
+                            pkgtools::msg_debug "Copying $img to doc/html/${img_dir}..."
                             \cp $img doc/html/${img_dir}
                         fi
                     fi
@@ -545,8 +545,8 @@ function op::post_process()
         fi
 
         if ${generate_floating_footnote}; then
-            pkgtools__msg_notice "Generate floating footnotes"
-            pkgtools__msg_debug "Adding special CSS code"
+            pkgtools::msg_notice "Generate floating footnotes"
+            pkgtools::msg_debug "Adding special CSS code"
             sed -i -e "\$a.footdef{\nfont-size: 10px;\nright: 0;\nposition: absolute;\nwidth:180px;\n}" doc/html/css/styles.css
             for file in $(find doc/html -name "*.html"); do
                 content=$(sed -n '/<div class=\"footdef\"/,/<\/div>/p' $file | sed 's/\\/\\\\/g' | \
@@ -554,10 +554,10 @@ function op::post_process()
                 sed -i -e '/<div class=\"footdef\"/,/<\/div>/d' $file
                 IFS=$'\n'
                 i=1
-                pkgtools__msg_devel "footnote content=${content}"
+                pkgtools::msg_devel "footnote content=${content}"
                 for f in ${=content}
                 do
-                    pkgtools__msg_devel "footnote #$i=$f"
+                    pkgtools::msg_devel "footnote #$i=$f"
                     fn=${f:0:-6}
                     fn+="<br/>__div_or_space__\n</p>"
                     awk -v fn=$fn '/<sup><a id="fnr.'$i'"/{a++;}/^<\/p>/&&a{$0=fn;a=0;}1' $file > $file.$i
@@ -576,16 +576,16 @@ function op::post_process()
             if [ ${#color_scheme} -eq 7 ]; then
                 sed -i -e 's/#67ad00/'${color_scheme}'/' doc/html/css/styles.css
             else
-                pkgtools__msg_error "The HEX code is not allowed !"
+                pkgtools::msg_error "The HEX code is not allowed !"
             fi
         elif [ ${__ogp_color_map[${color_scheme}]+_} ];then
             sed -i -e 's/#67ad00/'${__ogp_color_map[${color_scheme}]}'/' doc/html/css/styles.css
         fi
     fi
 
-    pkgtools__msg_debug "Remove logfiles"
+    pkgtools::msg_debug "Remove logfiles"
     if ! ${keep_tmp_files}; then
-        pkgtools__msg_debug "Remove useless files"
+        pkgtools::msg_debug "Remove useless files"
         # find . -regex ".*\.\(pyg\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|tex\)" \
         #     -not -path '*doc*' -not -path '*figures*' -exec rm -f {} \;
         #find . -name "*latex.d*" -exec rm -rf {} \;
@@ -600,7 +600,7 @@ function op::post_process()
         done
     fi
 
-    pkgtools__msg_debug "Remove tmp README file"
+    pkgtools::msg_debug "Remove tmp README file"
     if [ ! -s README.org ]; then
         rm -f README.org
     fi
