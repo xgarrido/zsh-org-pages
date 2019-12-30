@@ -1216,14 +1216,6 @@ This package allows to cancel a number in LaTeX math mode
   \RequirePackage{cancel}
 #+END_SRC
 
-***** Font Awesome
-#+BEGIN_SRC latex
-  \ifxetex
-  %% \newfontfamily{\FA}{FontAwesome}
-  %% \newcommand*{\faicon}[1]{{\FA\csname faicon@#1\endcsname}}
-  %% \expandafter\def\csname faicon@github-alt\endcsname{\symbol{"F113}}\def\faGithubAlt{{\FA\csname faicon@github-alt\endcsname}\xspace}
-  \fi
-#+END_SRC
 ***** =relsize= package
 #+BEGIN_SRC latex
   \RequirePackage{relsize}
