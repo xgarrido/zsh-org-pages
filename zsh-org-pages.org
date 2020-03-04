@@ -845,6 +845,7 @@ You are encouraged to add the following to your personal configuration
 although it is not added by default as a security precaution.
 #+BEGIN_SRC emacs-lisp
   (setq org-confirm-babel-evaluate nil)
+  (add-to-list 'org-latex-minted-langs '(jupyter-python "python"))
 #+END_SRC
 
 *** Add =cite= link
@@ -967,18 +968,20 @@ environment into figure
     (when (org-export-derived-backend-p backend 'latex)
       (replace-regexp-in-string "\\\\begin{CBOX}"     "\\\\begin{cbox}"
       (replace-regexp-in-string "\\\\begin{QUESTION}" "\\\\begin{question}"
+      (replace-regexp-in-string "\\\\begin{SNIPPET}"   "\\\\begin{snippet}"
       (replace-regexp-in-string "\\\\begin{REMARK}"   "\\\\begin{remark}"
       (replace-regexp-in-string "\\\\begin{ABSTRACT}" "\\\\begin{abstract}"
       (replace-regexp-in-string "\\\\begin{BIBLIOGRAPHY}" "\\\\begin{bibliography}"
-                              contents)))))))
+                              contents))))))))
   (defun latex::downcase-end-filter (contents backend info)
     (when (org-export-derived-backend-p backend 'latex)
       (replace-regexp-in-string "\\\\end{CBOX}"     "\\\\end{cbox}"
       (replace-regexp-in-string "\\\\end{QUESTION}" "\\\\end{question}"
+      (replace-regexp-in-string "\\\\end{SNIPPET}" "\\\\end{snippet}"
       (replace-regexp-in-string "\\\\end{REMARK}"   "\\\\end{remark}"
       (replace-regexp-in-string "\\\\end{ABSTRACT}" "\\\\end{abstract}"
       (replace-regexp-in-string "\\\\end{BIBLIOGRAPHY}" "\\\\end{bibliography}"
-                              contents)))))))
+                              contents))))))))
 
   (add-to-list 'org-export-filter-final-output-functions 'latex::downcase-begin-filter)
   (add-to-list 'org-export-filter-final-output-functions 'latex::downcase-end-filter)
