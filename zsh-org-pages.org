@@ -97,6 +97,7 @@ We also globally define the current directory
           extensions: [\"cancel.js\"],
           Macros: {
               vv: [\"{\\\\vec{#1}}\",1],
+              d: \"{\\\\text{d}}\",
               Upsigma: \"{\\\\Sigma}\",
               Updelta: \"{\\\\Delta}\",
               varoiint: \"{\\\\iint}\",
