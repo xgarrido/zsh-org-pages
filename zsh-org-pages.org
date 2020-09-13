@@ -2,8 +2,7 @@
 #+AUTHOR: Xavier Garrido
 #+DATE:   2014-02-09
 
-This file is used to publish a =org= documentation to =html= and
-to =pdf= into a =doc/= directory.
+This file is used to publish a =org= documentation to =html= and to =pdf= into a =doc/= directory.
 
 * Project publish functions
 Within the next sections, we will define two publishing projects :

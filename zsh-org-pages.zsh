@@ -269,8 +269,8 @@ function op::process()
     emacs_base_cmd+="--eval \"(setq org-confirm-babel-evaluate nil)\" "
     emacs_base_cmd+="--eval \"(setq c-standard-font-lock-fontify-region-function 'font-lock-default-fontify-region)\" "
     emacs_base_cmd+="--eval '(let ((this-directory \""$PWD"/\")) "
-    emacs_base_cmd+="(org-babel-tangle-file \""${ogp_path}"/zsh-org-pages.org\") "
-    emacs_base_cmd+="(org-babel-load-file \""${ogp_path}"/zsh-org-pages.org\"))' "
+    emacs_base_cmd+="(org-babel-load-file \""${ogp_path}"/zsh-org-pages.org\") "
+    emacs_base_cmd+="(org-babel-tangle-file \""${ogp_path}"/zsh-org-pages.org\"))' "
 
     if [[ $template == "twbs" ]]; then
         emacs_base_cmd+="--load ${tmp_dir}/ox-twbs.el --eval \"(require 'ox-twbs)\" "
