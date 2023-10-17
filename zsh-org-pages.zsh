@@ -67,8 +67,8 @@ function org-pages ()
                 generate_floating_footnote=false
             elif [[ ${opt} == "--generate-home-link" ]]; then
                 generate_home_link=true
-            elif [[ ${opt} == "--generate-github-link" ]]; then
-                generate_github_link=true
+            elif [[ ${opt} == "--generate-git-link" ]]; then
+                generate_git_link=true
             elif [[ ${opt} == "--generate-org-link" ]]; then
                 generate_org_link=true
             elif [[ ${opt} == "--no-image-conversion" ]]; then
@@ -405,7 +405,7 @@ function op::post_process()
                 fi
 
             fi
-            pkgtools::msg_debug "Changing postamble CVS version: ${cvs_version}"
+            pkgtools::msg_debug "Changing postamble CVS version"
             if  [[ "${cvs_version}" = *"github"* ]]; then
                 cvs_icon="fa-github-alt"
             elif  [[ "${cvs_version}" = *"gitlab"* ]]; then
@@ -416,9 +416,9 @@ function op::post_process()
             cvs_version="File under <i class=\"fa-brands ${cvs_icon} fa-flip\"></i> version control - ${cvs_version}"
             sed -i -e 's@__cvs_version__@'${cvs_version}'@' $file
 
-            pkgtools::msg_debug "Changing preamble github link"
-            if ${generate_github_link}; then
-                sed -i -e 's@__github_link__@<a href="'${cvs_path}'"><i class=\"fa-brands ${cvs_icon}\"></i></a><br/>@g' $file
+            pkgtools::msg_debug "Changing preamble git link"
+            if ${generate_git_link}; then
+                sed -i -e 's@__github_link__@<a href="'${cvs_path}'"><i class=\"fa-brands '${cvs_icon}'\"></i></a><br/>@g' $file
             else
                 sed -i -e 's@__github_link__@@g' $file
             fi

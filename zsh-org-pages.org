@@ -703,7 +703,6 @@ Nothing for the time being...
       top: 35px;
       right: 20px;
       padding-right: 5px;
-      position: fixed;
       cursor: pointer;
       font-size: 20px;
   }
@@ -1079,18 +1078,27 @@ To be used, we would have to install [[https://github.com/xgarrido/latex-templat
 #+NAME: vc-status
 #+BEGIN_SRC sh :results output :tangle no
   (
-  cd $OGP_EXPORT_DIR
-  if [ -d .svn ]; then
-    status=$(LC_MESSAGES=en svn info)
-    rev=$(echo -e $status | sed -n 's/.*Revision: *\([^ ]*\).*/\1/p')
-    date=$(echo -e $status | sed -n 's/.*Last Changed Date: *\([^ ]*\).*/\1/p')
-    url=$(echo -e $status | sed -n 's/.*URL: *\([^ ]*\).*/\1/p')
-    log="\texttt{svn} revision \href{$url}{\color{gray}\texttt{${rev}}} \$-\$ ${date}"
-  else
-    url=$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')
-    log=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"{\scriptsize\faGithub*} \ttfamily commit\href{$url/commit/%H}{\color{gray}\texttt{%h}} - %ad")
-  fi
-  echo "\renewcommand*{\PrelimText}{\small\textnormal{\color{gray}${log}}}"
+      cd $OGP_EXPORT_DIR
+      if [ -d .svn ]; then
+          status=$(LC_MESSAGES=en svn info)
+          rev=$(echo -e $status | sed -n 's/.*Revision: *\([^ ]*\).*/\1/p')
+          date=$(echo -e $status | sed -n 's/.*Last Changed Date: *\([^ ]*\).*/\1/p')
+          url=$(echo -e $status | sed -n 's/.*URL: *\([^ ]*\).*/\1/p')
+          log="\texttt{svn} revision \href{$url}{\color{gray}\texttt{${rev}}} \$-\$ ${date}"
+      else
+          url=$(git config --get remote.origin.url | sed -e 's#git@\(.*\):#https://\1/#' -e 's#\.git##')
+          if  [[ "${url}" = *"github"* ]]; then
+              icon="github-alt"
+          elif  [[ "${url}" = *"gitlab"* ]]; then
+              # icon="gitlab"
+              icon="git-square"
+          elif [[ "${url}" = *"git"* ]]; then
+              icon="git-square"
+          fi
+
+          log=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"{\scriptsize\faIcon{$icon}} \ttfamily commit\href{$url/commit/%H}{\color{gray}\texttt{%h}} - %ad")
+      fi
+      echo "\renewcommand*{\PrelimText}{\small\textnormal{\color{gray}${log}}}"
   )
 #+END_SRC
 
