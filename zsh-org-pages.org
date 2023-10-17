@@ -121,7 +121,7 @@ We also globally define the current directory
               var n = this.GetBrackets(name),
               unit = this.GetArgument(name)
               if (n == null) {n = \"\"}
-              var tex = n + '\\\\,\\\\text{'+unit+'}';
+              var tex = n + '\\\\,\\\\mathrm{'+unit+'}';
               this.string = tex + this.string.slice(this.i); this.i = 0;
           },
           jaxfrac: function (name) {
