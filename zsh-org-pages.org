@@ -137,72 +137,78 @@ We also globally define the current directory
 #+END_SRC
 ** Project definition
 #+BEGIN_SRC emacs-lisp :noweb yes
-  (unless (boundp 'org-publish-project-alist)
-    (setq org-publish-project-alist nil))
+    (unless (boundp 'org-publish-project-alist)
+      (setq org-publish-project-alist nil))
 
-  (setq org-html-style-default "")
-  (setq org-html-htmlize-output-type 'css)
+    (setq org-html-style-default "")
+    (setq org-html-htmlize-output-type 'css)
 
-  (add-to-list
-   'org-publish-project-alist
-   `("html-documentation"
-     :base-directory ,this-directory
-     :base-extension "org"
-     :publishing-directory ,(expand-file-name "html" doc-directory)
-     :publishing-function org-html-publish-to-html
-     :exclude "toc.org\\|macro"
-     :recursive nil
-     :section-numbers 3
-     :with-toc        2
-     :time-stamp-file nil
-     :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\" />
-                 <link rel=\"stylesheet\" href=\"css/org-pygments.css\" />
-                 <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css\" />"
-     :html-preamble "__home_link__ __github_link__ __org_link__"
-     :html-postamble "__cvs_version__"))
-  (add-to-list
-   'org-publish-project-alist
-   `("html-documentation-recursive"
-     :base-directory ,this-directory
-     :base-extension "org"
-     :publishing-directory ,(expand-file-name "html" doc-directory)
-     :publishing-function org-html-publish-to-html
-     :exclude "toc.org\\|macro"
-     :recursive t
-     :section-numbers 3
-     :with-toc        2
-     :time-stamp-file nil
-     :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\" />
-                 <link rel=\"stylesheet\" href=\"css/org-pygments.css\" />
-                 <link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css\" />"
-     :html-preamble "__home_link__ __github_link__ __org_link__"
-     :html-postamble "__cvs_version__"))
-  (add-to-list
-   'org-publish-project-alist
-   `("html-documentation-twbs"
-     :base-directory ,this-directory
-     :base-extension "org"
-     :publishing-directory ,(expand-file-name "html" doc-directory)
-     :publishing-function org-twbs-publish-to-html
-     :exclude "toc.org\\|macro"
-     :recursive nil
-     :section-numbers 3
-     :with-toc        2
-     :time-stamp-file nil
-     :html-postamble "__cvs_version__"))
-  (add-to-list
-   'org-publish-project-alist
-   `("html-documentation-twbs-recursive"
-     :base-directory ,this-directory
-     :base-extension "org"
-     :publishing-directory ,(expand-file-name "html" doc-directory)
-     :publishing-function org-twbs-publish-to-html
-     :exclude "toc.org\\|macro"
-     :recursive t
-     :section-numbers 3
-     :with-toc        2
-     :time-stamp-file nil
-     :html-postamble "__cvs_version__"))
+    (add-to-list
+     'org-publish-project-alist
+     `("html-documentation"
+       :base-directory ,this-directory
+       :base-extension "org"
+       :publishing-directory ,(expand-file-name "html" doc-directory)
+       :publishing-function org-html-publish-to-html
+       :exclude "toc.org\\|macro"
+       :recursive nil
+       :section-numbers 3
+       :with-toc        2
+       :time-stamp-file nil
+       :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\" />
+                   <link rel=\"stylesheet\" href=\"css/org-pygments.css\" />
+                   <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css\">
+                   <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/brands.min.css\">
+                   <link rel=\"icon\" href=\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0
+                         0 448 512' fill='gray'><path d='M96 0C43 0 0 43 0 96V416c0 53 43 96 96 96H384h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V384c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H384 96zm0 384H352v64H96c-17.7 0-32-14.3-32-32s14.3-32 32-32zm32-240c0-8.8 7.2-16 16-16H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16zm16 48H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16s7.2-16 16-16z'/></svg>\">"
+       :html-preamble "__home_link__ __github_link__ __org_link__"
+       :html-postamble "__cvs_version__"))
+    (add-to-list
+     'org-publish-project-alist
+     `("html-documentation-recursive"
+       :base-directory ,this-directory
+       :base-extension "org"
+       :publishing-directory ,(expand-file-name "html" doc-directory)
+       :publishing-function org-html-publish-to-html
+       :exclude "toc.org\\|macro"
+       :recursive t
+       :section-numbers 3
+       :with-toc        2
+       :time-stamp-file nil
+       :html-head "<link rel=\"stylesheet\" href=\"css/styles.css\" />
+                   <link rel=\"stylesheet\" href=\"css/org-pygments.css\" />
+                   <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css\">
+                   <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/brands.min.css\">
+                   <link rel=\"icon\" href=\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0
+                         0 448 512' fill='gray'><path d='M96 0C43 0 0 43 0 96V416c0 53 43 96 96 96H384h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V384c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H384 96zm0 384H352v64H96c-17.7 0-32-14.3-32-32s14.3-32 32-32zm32-240c0-8.8 7.2-16 16-16H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16zm16 48H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16s7.2-16 16-16z'/></svg>\">"
+       :html-preamble "__home_link__ __github_link__ __org_link__"
+       :html-postamble "__cvs_version__"))
+    (add-to-list
+     'org-publish-project-alist
+     `("html-documentation-twbs"
+       :base-directory ,this-directory
+       :base-extension "org"
+       :publishing-directory ,(expand-file-name "html" doc-directory)
+       :publishing-function org-twbs-publish-to-html
+       :exclude "toc.org\\|macro"
+       :recursive nil
+       :section-numbers 3
+       :with-toc        2
+       :time-stamp-file nil
+       :html-postamble "__cvs_version__"))
+    (add-to-list
+     'org-publish-project-alist
+     `("html-documentation-twbs-recursive"
+       :base-directory ,this-directory
+       :base-extension "org"
+       :publishing-directory ,(expand-file-name "html" doc-directory)
+       :publishing-function org-twbs-publish-to-html
+       :exclude "toc.org\\|macro"
+       :recursive t
+       :section-numbers 3
+       :with-toc        2
+       :time-stamp-file nil
+       :html-postamble "__cvs_version__"))
   #+END_SRC
 ** Markup filtering
 *** SN@ilWare keyword                                               :notused:
