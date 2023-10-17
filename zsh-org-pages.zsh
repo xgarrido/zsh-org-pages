@@ -392,7 +392,7 @@ function op::post_process()
             local cvs_path
             local cvs_branch
             if [ -d .git ]; then
-                cvs_path=$(git config --get remote.origin.url | sed -e 's#git@github.com:#https://github.com/#' -e 's#\.git##')
+                cvs_path=$(git config --get remote.origin.url | sed -e 's#git@\(.*\):#https://\1/#' -e 's#\.git##')
                 if [ "${cvs_path}" = "" ]; then
                     pkgtools::msg_debug "Using git svn info"
                     cvs_path=$(git svn info | grep URL: | awk '{print $2}')
@@ -405,22 +405,23 @@ function op::post_process()
                 fi
 
             fi
+            pkgtools::msg_debug "Changing postamble CVS version: ${cvs_version}"
+            if  [[ "${cvs_version}" = *"github"* ]]; then
+                cvs_icon="fa-github-alt"
+            elif  [[ "${cvs_version}" = *"gitlab"* ]]; then
+                cvs_icon="fa-gitlab"
+            elif [[ "${cvs_version}" = *"git"* ]]; then
+                cvs_icon="fa-git"
+            fi
+            cvs_version="File under <i class=\"fa-brands ${cvs_icon} fa-flip\"></i> version control - ${cvs_version}"
+            sed -i -e 's@__cvs_version__@'${cvs_version}'@' $file
+
             pkgtools::msg_debug "Changing preamble github link"
             if ${generate_github_link}; then
-                sed -i -e 's@__github_link__@<a href="'${cvs_path}'"><i class=\"fa fa-github\"></i></a><br/>@g' $file
+                sed -i -e 's@__github_link__@<a href="'${cvs_path}'"><i class=\"fa-brands ${cvs_icon}\"></i></a><br/>@g' $file
             else
                 sed -i -e 's@__github_link__@@g' $file
             fi
-            pkgtools::msg_debug "Changing postamble CVS version"
-            if  [[ "${cvs_version}" = *"github"* ]]; then
-                cvs_version="File under <i class=\"fa fa-github-alt\"></i> version control - ${cvs_version}"
-            elif [[ "${cvs_version}" = *"git"* ]]; then
-                cvs_version="File under <i class=\"fa fa-git\"></i> version control - ${cvs_version}"
-            elif [[ "${cvs_version}" = *"revision"* ]]; then
-                cvs_version="File under <code>svn</code> version control - ${cvs_version}"
-            fi
-            sed -i -e 's@__cvs_version__@'${cvs_version}'@' $file
-
             pkgtools::msg_debug "Changing org link"
             if ${generate_org_link}; then
                 filename=$(basename $file)
