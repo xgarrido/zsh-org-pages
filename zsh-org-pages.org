@@ -79,7 +79,7 @@ We also globally define the current directory
   (setq org-html-mathjax-template "<script type=\"text/x-mathjax-config\">
     <<mathjax.js>>
     </script>
-    <script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>
+    <script type=\"text/javascript\" src=\"https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>
     <div id=\"spinner\">
       <div id=\"bounce1\"></div>
       <div id=\"bounce2\"></div>
