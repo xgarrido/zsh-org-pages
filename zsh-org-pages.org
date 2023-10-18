@@ -484,7 +484,7 @@ headline trees but hide their content in the resulting html.
       border-left:2px solid #67ad00;
       margin:0;
       padding:0 0 0 20px;
-      font-style:italic;
+      /* font-style:italic; */
       color: #67ad00;
   }
 #+END_SRC
