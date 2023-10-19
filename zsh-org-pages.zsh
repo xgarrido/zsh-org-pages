@@ -238,6 +238,8 @@ function op::prepare_process()
             if ${replace_pdf_ext}; then
                 sed -i -e 's@\.pdf@\.png@g' $file
             fi
+            pkgtools::msg_debug "Changing jupyter-python to python"
+	    sed -i -e 's/jupyter-python/python/g' -e '/SNIPPET/d' -e 's/#+RESULTS://g' $file
         fi
         if ${generate_pdf}; then
             if [ ${color_scheme} != "default" ]; then
