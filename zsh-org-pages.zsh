@@ -134,8 +134,20 @@ function org-pages ()
     pkgtools::msg_notice "Start export process..."
 
     op::prepare_process
+    if $(pkgtools::last_command_fails); then
+        pkgtools::msg_error "Something gets wrong when preparing export!"
+        return 1
+    fi
     op::process
+    if $(pkgtools::last_command_fails); then
+        pkgtools::msg_error "Something gets wrong when exporting!"
+        return 1
+    fi
     op::post_process
+    if $(pkgtools::last_command_fails); then
+        pkgtools::msg_error "Something gets wrong during post-process operations!"
+        return 1
+    fi
 
     pkgtools::msg_notice "Export successfully done"
 
@@ -377,6 +389,9 @@ function op::post_process()
                 -e 's@cmark@\(\\unicode{x2713}\\)@g' \
                 -e 's@xmark@\(\\unicode{x2717}\\)@g' \
                 $file
+
+            pkgtools::msg_debug "Removing org unique label"
+	    sed -i -e 's/id=".*org[^"]*"//g' $file
 
             pkgtools::msg_debug "Changing preamble home link"
             if ${generate_home_link}; then
