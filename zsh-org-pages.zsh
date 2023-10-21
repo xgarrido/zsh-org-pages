@@ -550,7 +550,7 @@ function op::post_process()
                                 png=doc/html/${img/.pdf/.png}
                                 if [[ ! -a $png || $img -nt $png ]]; then
                                     pkgtools::msg_debug "Convert $img to $png"
-                                    convert -quiet -density 100 $img $png
+                                    convert -strip -quiet -density 100 $img $png
                                 fi
                             fi
                         else
