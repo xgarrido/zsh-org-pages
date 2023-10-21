@@ -195,11 +195,14 @@ function op::prepare_process()
     __split_file()
     {
         pkgtools::msg_notice "Split file $1"
+        pkgtools::msg_debug "Extract footnote section"
+        sed -n '/Footnote/,$p' $1 > footnotes.org
         cat $1 | awk -v current=$1 '
                          BEGIN{j=-1}
                          {
         		     if ($1 == "*") {
                                      if (match($0, "COMMENT")) comment=1
+                                     else if (match($0, "Footnote")) footnote=1
                                      else {
                                           comment=0
         			          j++
@@ -226,6 +229,10 @@ function op::prepare_process()
         			 }
                              print "#+HTML: </div>" >> "toc.org"
         		 }'
+        split_files=$(find . -name "*.split.org")
+        for f in ${=split_files}; do
+            cat footnotes.org >> $f
+        done
         mv $1 $1.noexport
     }
 
@@ -354,7 +361,21 @@ function op::process()
 function op::post_process()
 {
     pkgtools::at_function_enter op::post_process
+    pkgtools::msg_debug "Getting back to original files..."
 
+    for file in $(find . -name "*.org.noexport"); do
+        \mv $file ${file/.noexport/}
+    done
+    for file in $(find . -name "*.org.save"); do
+        \mv $file ${file/.save/}
+    done
+    for file in $(find . -name "*.org"); do
+        if [[ "$file" = *".split"* ]]; then
+            \rm -f $file
+        elif [[ "$file" = *"toc."* ]];then
+            \rm  -f $file
+        fi
+    done
     if ${generate_html}; then
         pkgtools::msg_notice "Tweak html files..."
         for file in $(find doc/html -name "*.html"); do
@@ -525,7 +546,7 @@ function op::post_process()
         if [[ ! -z "${files}" ]]; then
             for file in ${=files}; do
                 imgs=$(sed -n '/\[\[.*\(\.jpg\|\.jpeg\|\.png\|\.gif\|\.svg\|.pdf\)\]\]/p' $file | \
-                              sed -e 's/\(\[\[\|\]\]\)//g' -e 's/|/\n/g' -e 's/file://g')
+                           sed -e 's/\(\[\[\|\]\]\)//g' -e 's/|/\n/g' -e 's/file://g')
                 for img in ${=imgs}; do
                     dir=$(dirname $file)
                     img=$dir/$img
@@ -598,20 +619,16 @@ function op::clean()
     pkgtools::at_function_enter op::clean
 
     pkgtools::msg_info "Cleaning current directory..."
-    pkgtools::msg_debug "Getting back to original files..."
-
     for file in $(find . -name "*.org.noexport"); do
         \mv $file ${file/.noexport/}
     done
     for file in $(find . -name "*.org.save"); do
         \mv $file ${file/.save/}
     done
-
+    rm -f footnotes.org toc.org
     for file in $(find . -name "*.org"); do
         if [[ "$file" = *".split"* ]]; then
             \rm -f $file
-        elif [[ "$file" = *"toc."* ]];then
-            \rm  -f $file
         fi
     done
 

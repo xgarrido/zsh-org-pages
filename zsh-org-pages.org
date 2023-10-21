@@ -165,7 +165,7 @@ We also globally define the current directory
            :base-extension "org"
            :publishing-directory ,(expand-file-name "html" doc-directory)
            :publishing-function org-html-publish-to-html
-           :exclude "toc.org\\|macro"
+           :exclude "footnotes.org\\|toc.org\\|macro"
            :recursive nil
            :section-numbers 3
            :with-toc        2
@@ -181,7 +181,7 @@ We also globally define the current directory
            :base-extension "org"
            :publishing-directory ,(expand-file-name "html" doc-directory)
            :publishing-function org-html-publish-to-html
-           :exclude "toc.org\\|macro"
+           :exclude "footnotes.org\\|toc.org\\|macro"
            :recursive t
            :section-numbers 3
            :with-toc        2
@@ -197,7 +197,7 @@ We also globally define the current directory
            :base-extension "org"
            :publishing-directory ,(expand-file-name "html" doc-directory)
            :publishing-function org-twbs-publish-to-html
-           :exclude "toc.org\\|macro"
+           :exclude "footnotes.org\\|toc.org\\|macro"
            :recursive nil
            :section-numbers 3
            :with-toc        2
@@ -210,7 +210,7 @@ We also globally define the current directory
            :base-extension "org"
            :publishing-directory ,(expand-file-name "html" doc-directory)
            :publishing-function org-twbs-publish-to-html
-           :exclude "toc.org\\|macro"
+           :exclude "footnotes.org\\|toc.org\\|macro"
            :recursive t
            :section-numbers 3
            :with-toc        2
@@ -1437,7 +1437,7 @@ Prevent "Too many unprocessed floats" error
      :base-extension "org"
      :publishing-directory ,(expand-file-name "pdf" doc-directory)
      :publishing-function org-latex-publish-to-pdf
-     :exclude "toc.org\\|README.org"
+     :exclude "footnotes.org\\|toc.org\\|README.org"
      :recursive nil
      :section-numbers 2
      :with-toc        t
@@ -1451,7 +1451,7 @@ Prevent "Too many unprocessed floats" error
      :base-extension "org"
      :publishing-directory ,(expand-file-name "pdf" doc-directory)
      :publishing-function org-latex-publish-to-pdf
-     :exclude "toc.org\\|README.org"
+     :exclude "footnotes.org\\|toc.org\\|README.org"
      :recursive t
      :section-numbers 2
      :with-toc        t
