@@ -136,19 +136,23 @@ function org-pages ()
     op::prepare_process
     if $(pkgtools::last_command_fails); then
         pkgtools::msg_error "Something gets wrong when preparing export!"
+        op::clean
         return 1
     fi
     op::process
     if $(pkgtools::last_command_fails); then
         pkgtools::msg_error "Something gets wrong when exporting!"
+        op::clean
         return 1
     fi
     op::post_process
     if $(pkgtools::last_command_fails); then
         pkgtools::msg_error "Something gets wrong during post-process operations!"
+        op::clean
         return 1
     fi
 
+    op::clean
     pkgtools::msg_notice "Export successfully done"
 
     if ${publish}; then
@@ -330,7 +334,7 @@ function op::process()
     fi
 
     pkgtools::msg_debug ${emacs_cmd}
-    if [ ${__pkgtools__msg_debug} -eq 1 ]; then
+    if [[ ${__pkgtools__msg_debug} -eq 1 || "x${PKGTOOLS_MSG_DEBUG}" == "x1" ]]; then
         echo $emacs_cmd | sh
     else
         echo $emacs_cmd | sh > /dev/null 2>&1
@@ -350,22 +354,6 @@ function op::process()
 function op::post_process()
 {
     pkgtools::at_function_enter op::post_process
-
-    pkgtools::msg_debug "Getting back to original files..."
-
-    for file in $(find . -name "*.org.noexport"); do
-        \mv $file ${file/.noexport/}
-    done
-    for file in $(find . -name "*.org.save"); do
-        \mv $file ${file/.save/}
-    done
-    for file in $(find . -name "*.org"); do
-        if [[ "$file" = *".split"* ]]; then
-            \rm -f $file
-        elif [[ "$file" = *"toc."* ]];then
-            \rm  -f $file
-        fi
-    done
 
     if ${generate_html}; then
         pkgtools::msg_notice "Tweak html files..."
@@ -601,7 +589,32 @@ function op::post_process()
         fi
     fi
 
-    pkgtools::msg_debug "Remove logfiles"
+    pkgtools::at_function_exit
+    return 0
+}
+
+function op::clean()
+{
+    pkgtools::at_function_enter op::clean
+
+    pkgtools::msg_info "Cleaning current directory..."
+    pkgtools::msg_debug "Getting back to original files..."
+
+    for file in $(find . -name "*.org.noexport"); do
+        \mv $file ${file/.noexport/}
+    done
+    for file in $(find . -name "*.org.save"); do
+        \mv $file ${file/.save/}
+    done
+
+    for file in $(find . -name "*.org"); do
+        if [[ "$file" = *".split"* ]]; then
+            \rm -f $file
+        elif [[ "$file" = *"toc."* ]];then
+            \rm  -f $file
+        fi
+    done
+
     if ! ${keep_tmp_files}; then
         pkgtools::msg_debug "Remove useless files"
         # find . -regex ".*\.\(pyg\|auxlock\|toc\|out\|fls\|aux\|log\|fdb_latexmk\|tex\)" \
