@@ -208,7 +208,7 @@ function op::prepare_process()
         		 }
                          END{
                              print "#+HTML: <div id=\"text-table-of-contents\">" > "toc.org"
-                             for (i in heading) {
+                             for (i=0; i<length(heading); i++) {
                                      current_filename=current
                                      sub(".org", "_"i".org", current_filename)
                                      printf("- [[./%s][%s]]\n", current_filename, heading[i]) >> "toc.org"
@@ -550,7 +550,7 @@ function op::post_process()
                                 png=doc/html/${img/.pdf/.png}
                                 if [[ ! -a $png || $img -nt $png ]]; then
                                     pkgtools::msg_debug "Convert $img to $png"
-                                    convert -density 100 $img $png
+                                    convert -quiet -density 100 $img $png
                                 fi
                             fi
                         else
