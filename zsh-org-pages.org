@@ -93,6 +93,7 @@ We also globally define the current directory
   MathJax.Hub.Config({
       messageStyle: \"none\",
       TeX: {
+          equationNumbers: {autoNumber: \"AMS\"},
           extensions: [\"cancel.js\"],
           Macros: {
               vv: [\"{\\\\vec{#1}}\",1],
