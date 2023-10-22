@@ -405,6 +405,7 @@ headline trees but hide their content in the resulting html.
       background: #f8f8f8;
       border-radius:5px;
       border:1px solid #e5e5e5;
+      border-left: 3px solid lightgrey;
       overflow-x: auto;
   }
 
@@ -797,14 +798,16 @@ Nothing for the time being...
 #+BEGIN_SRC css
   .org-string,
   .org-type {
-      color: #DEB542;
+      color: #54790d;
   }
 
-  .org-builtin,
+  .org-builtin {
+    color: #803378;
+  }
   .org-variable-name,
   .org-constant,
   .org-function-name {
-      color: #67ad00;
+      color: #b75501;
   }
 
   .org-comment,
@@ -814,7 +817,7 @@ Nothing for the time being...
   }
 
   .org-keyword {
-      color: #69B7F0;/*#D33682;*/
+      color: #015692;
   }
 
   pre {
